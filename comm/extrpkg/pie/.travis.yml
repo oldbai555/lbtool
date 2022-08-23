@@ -1,0 +1,23 @@
+language: go
+
+go:
+  - "1.13"
+  - "1.14"
+  - "1.15"
+
+script:
+  # Make sure everything is formatted correctly.
+  - $(exit $(go fmt ./... | wc -l))
+
+  # Record all assertions for stats.
+  - $(exit $(grep -r '"github.com/stretchr/testify"' . --include \*.go | wc -l))
+
+  # Make sure go generate is in sync.
+  - go generate ./... && go install && go generate ./...
+  - $(exit $(git status --porcelain | wc -l))
+
+  # Run tests.
+  - go test -race ./pie -coverprofile=coverage.txt -covermode=atomic
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

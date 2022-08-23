@@ -79,7 +79,7 @@ func (s *SimpleLoggerWriter) Write(ctx context.Context, level fmt2.Level, format
 	}
 
 	s.bufCh <- []byte(logContent)
-	if s.env != common.PROD {
+	if s.env != comm.PROD {
 		log.Println(logContent)
 	}
 	return nil

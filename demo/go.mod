@@ -2,6 +2,8 @@ module github.com/oldbai555/example
 
 go 1.18
 
+replace github.com/oldbai555/comm/mail => ../comm/mail
+
 replace github.com/oldbai555/comm => ./../comm
 
 replace github.com/oldbai555/log => ../log
@@ -16,6 +18,7 @@ require (
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/oldbai555/comm v0.0.0-20220806102209-f378817e4c79
+	github.com/oldbai555/comm/mail v0.0.0-00010101000000-000000000000
 	github.com/oldbai555/log v0.0.0-00010101000000-000000000000
 	github.com/oldbai555/web v0.0.0-00010101000000-000000000000
 	github.com/spf13/viper v1.12.0
@@ -25,6 +28,7 @@ require (
 require (
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/elliotchance/pie v1.39.0 // indirect
+	github.com/emersion/go-imap-id v0.0.0-20190926060100-f94a56b9ecde // indirect
 	github.com/emersion/go-sasl v0.0.0-20200509203442-7bfe0ed36a21 // indirect
 	github.com/emersion/go-textwrapper v0.0.0-20200911093747-65d896831594 // indirect
 	github.com/forgoer/openssl v1.2.1 // indirect
