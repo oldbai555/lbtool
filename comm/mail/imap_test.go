@@ -12,10 +12,8 @@ import (
 // 个邮 授权码被风控
 func TestReadMail(t *testing.T) {
 	var sync1 sync.WaitGroup
-	// var sync2 sync.WaitGroup
 	for i := 0; i < 1; i++ {
-		go dologic(&sync1, "zhangjianjun@aquanliang.com", "password")
-		// go dologic(&sync2,"1005777562@qq.com","password")
+		go dologic(&sync1, "username", "password")
 	}
 	sync1.Wait()
 	// sync2.Wait()
@@ -61,18 +59,7 @@ func TestClient(t *testing.T) {
 		return
 	}
 
-	err = Login(NewUser("1005777562@qq.com", "yjxawxmhqwozbcbg"), c)
-	if err != nil {
-		log.Errorf("err is %v", err)
-		return
-	}
-
-	err = c.Logout()
-	if err != nil {
-		log.Errorf("err is %v", err)
-	}
-
-	err = Login(NewUser("1005777562@qq.com", "yjxawxmhqwozbcbg"), c)
+	err = Login(NewUser("username", "password"), c)
 	if err != nil {
 		log.Errorf("err is %v", err)
 		return
