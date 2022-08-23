@@ -15,7 +15,7 @@ import (
 	"text/template"
 	"unicode/utf8"
 
-	"github.com/elliotchance/pie/functions"
+	"github.com/oldbai555/comm/extrpkg/pie/functions"
 )
 
 var packageTemplate = template.Must(template.New("").

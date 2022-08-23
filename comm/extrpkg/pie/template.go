@@ -907,7 +907,7 @@ func (ss SliceType) Sequence(params ...int) SliceType {
 `,
 	"SequenceUsing": `package functions
 
-import "github.com/elliotchance/pie/pie/util"
+import "github.com/oldbai555/comm/extrpkg/pie/pie/util"
 
 // SequenceUsing generates slice in range using creator function
 //
@@ -960,7 +960,7 @@ func (ss SliceType) Shift() (ElementType, SliceType) {
 	"Shuffle": `package functions
 
 import (
-	"github.com/elliotchance/pie/pie/util"
+	"github.com/oldbai555/comm/extrpkg/pie/pie/util"
 	"math/rand"
 )
 

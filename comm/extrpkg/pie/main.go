@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/oldbai555/comm/extrpkg/pie/functions"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -12,8 +13,6 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-
-	"github.com/elliotchance/pie/functions"
 )
 
 func check(err error) {

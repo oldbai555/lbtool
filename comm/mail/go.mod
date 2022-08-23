@@ -19,6 +19,7 @@ require (
 
 require (
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
+	github.com/elliotchance/pie v1.39.0 // indirect
 	github.com/emersion/go-sasl v0.0.0-20200509203442-7bfe0ed36a21 // indirect
 	github.com/emersion/go-textwrapper v0.0.0-20200911093747-65d896831594 // indirect
 	github.com/forgoer/openssl v1.2.1 // indirect
