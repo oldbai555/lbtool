@@ -2,20 +2,11 @@ package main
 
 import (
 	"github.com/oldbai555/lb/comm"
-	"github.com/oldbai555/lb/example/conf"
 	"github.com/oldbai555/lb/log"
 	"github.com/oldbai555/lb/web"
 	"net/http"
 	"time"
 )
-
-func init() {
-	if err := conf.SetupSetting(); err != nil {
-		log.Errorf("init.setupSetting err: %v", err)
-	}
-	conf.ValidateConfig(conf.Settings)
-	log.SetUpLogger(conf.Settings.Server.Env)
-}
 
 func main() {
 	engine := web.New()
@@ -31,12 +22,12 @@ func main() {
 		return nil
 	})
 
-	engine.GET("/assets/*filepath", func(c *web.Context) error {
+	engine.GET("/assets/*filepath/no", func(c *web.Context) error {
 		c.JSON(http.StatusOK, web.H{"filepath": c.Param("filepath")})
 		return nil
 	})
 
-	err := engine.Run(conf.Settings.Server.HttpPort)
+	err := engine.Run(12431)
 	if err != nil {
 		panic(any(err))
 	}

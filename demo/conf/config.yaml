@@ -1,6 +1,0 @@
-# API服务配置
-Server:
-  # 主服务监听端口
-  HttpPort: 9001
-  # 开发环境
-  Env: DEV
