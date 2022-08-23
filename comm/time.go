@@ -90,7 +90,7 @@ func GetDateList(startDate, endDate uint32) (out []uint32) {
 	startDate = uint32(0)
 	for startDate != endDate {
 		startDate64, _ := strconv.ParseUint(st.Format("20060102"), 10, 64)
-		startDate := uint32(startDate64)
+		startDate = uint32(startDate64)
 		out = append(out, startDate)
 		st = st.Add(time.Second * 3600 * 24)
 		if startDate >= endDate {

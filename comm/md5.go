@@ -20,6 +20,7 @@ func GetFileMd5(filePath string) (string, error) {
 	}
 	return fmt.Sprintf("%x", m.Sum(nil)), nil
 }
+
 func StrMd5(s string) string {
 	m := md5.New()
 	_, _ = m.Write([]byte(s))

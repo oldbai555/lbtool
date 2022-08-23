@@ -37,7 +37,7 @@ func TestSliceStruct2MapValueByBool(t *testing.T) {
 			Age: 3,
 		},
 	}
-	val := SliceStruct2MapValueByBool(&strList, "Age").(map[int]bool)
+	val := SliceStruct2MapKeyFieldValueByBool(&strList, "Age").(map[int]bool)
 	fmt.Println(val[4])
 	fmt.Println(val[3])
 }

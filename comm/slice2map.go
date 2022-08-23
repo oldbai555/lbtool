@@ -8,7 +8,7 @@ import (
 // 获取类型信息：reflect.TypeOf，是静态的
 // 获取值信息：reflect.ValueOf，是动态的
 
-// Slice2MapKeyByStructField 结构体Slice转换成Map，key field , val Struct
+// Slice2MapKeyByStructField 提取Slice结构体的某个字段转换成Map，key field , val Struct
 func Slice2MapKeyByStructField(list interface{}, fieldName string) interface{} {
 	val := reflect.ValueOf(list)
 	if val.Kind() == reflect.Ptr {
@@ -73,8 +73,8 @@ func Slice2MapKeyByStructField(list interface{}, fieldName string) interface{} {
 	return resultMap.Interface()
 }
 
-// SliceStruct2MapValueByBool 结构体Slice转换成Map，key field , val bool
-func SliceStruct2MapValueByBool(list interface{}, fieldName string) interface{} {
+// SliceStruct2MapKeyFieldValueByBool 提取Slice结构体的某个字段转换成 field-bool Map，key field , val bool
+func SliceStruct2MapKeyFieldValueByBool(list interface{}, fieldName string) interface{} {
 	val := reflect.ValueOf(list)
 	if val.Kind() == reflect.Ptr {
 		val = val.Elem()
@@ -131,7 +131,7 @@ func SliceStruct2MapValueByBool(list interface{}, fieldName string) interface{} 
 	return resultMap.Interface()
 }
 
-// SliceBasis2MapValueByBool 基本数据类型Slice 转换成 map , key sliceVal val bool .
+// SliceBasis2MapValueByBool 基本数据类型Slice 转换成 bool Map , key sliceVal , val bool .
 // 目前只支持整形和字符串
 func SliceBasis2MapValueByBool(list interface{}) interface{} {
 	val := reflect.ValueOf(list)
