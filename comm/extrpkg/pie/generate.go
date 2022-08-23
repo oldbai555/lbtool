@@ -54,13 +54,13 @@ func updateREADME() {
 	for _, function := range functions.Functions {
 		file, err := ioutil.ReadFile("functions/" + function.File)
 		if err != nil {
-			panic(err)
+			panic(any(err))
 		}
 
 		fset := token.NewFileSet()
 		f, err := parser.ParseFile(fset, "", file, parser.ParseComments)
 		if err != nil {
-			panic(err)
+			panic(any(err))
 		}
 
 		var qualifiers []string
@@ -120,7 +120,7 @@ func updateREADME() {
 
 	readme, err := ioutil.ReadFile("README.md")
 	if err != nil {
-		panic(err)
+		panic(any(err))
 	}
 
 	newReadme := regexp.MustCompile(`(?s)\| Function.*# FAQ`).
@@ -128,7 +128,7 @@ func updateREADME() {
 
 	err = ioutil.WriteFile("README.md", []byte(newReadme), 0644)
 	if err != nil {
-		panic(err)
+		panic(any(err))
 	}
 }
 
@@ -188,7 +188,7 @@ func main() {
 	for _, function := range functions.Functions {
 		tmpl, err := ioutil.ReadFile("functions/" + function.File)
 		if err != nil {
-			panic(err)
+			panic(any(err))
 		}
 
 		data[function.Name] = string(tmpl)
@@ -196,7 +196,7 @@ func main() {
 
 	f, err := os.Create("template.go")
 	if err != nil {
-		panic(err)
+		panic(any(err))
 	}
 	defer f.Close()
 

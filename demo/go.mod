@@ -2,13 +2,13 @@ module github.com/oldbai555/example
 
 go 1.18
 
-replace github.com/oldbai555/comm/mail => ../comm/mail
-
-replace github.com/oldbai555/comm => ./../comm
-
-replace github.com/oldbai555/log => ../log
-
-replace github.com/oldbai555/web => ../web
+replace (
+	github.com/oldbai555/comm => ../comm
+	github.com/oldbai555/comm/extrpkg => ../comm/extrpkg
+	github.com/oldbai555/comm/mail => ../comm/mail
+	github.com/oldbai555/log => ../log
+	github.com/oldbai555/web => ../web
+)
 
 require (
 	github.com/emersion/go-imap v1.2.1
@@ -18,11 +18,11 @@ require (
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/oldbai555/comm v0.0.0-20220806102209-f378817e4c79
+	github.com/oldbai555/comm/extrpkg v0.0.0-00010101000000-000000000000
 	github.com/oldbai555/comm/mail v0.0.0-00010101000000-000000000000
 	github.com/oldbai555/log v0.0.0-00010101000000-000000000000
 	github.com/oldbai555/web v0.0.0-00010101000000-000000000000
 	github.com/spf13/viper v1.12.0
-	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 )
 
 require (

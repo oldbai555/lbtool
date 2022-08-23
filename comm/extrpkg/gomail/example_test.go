@@ -23,7 +23,7 @@ func Example() {
 
 	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {
-		panic(err)
+		panic(any(err))
 	}
 }
 
@@ -45,7 +45,7 @@ func Example_daemon() {
 				}
 				if !open {
 					if s, err = d.Dial(); err != nil {
-						panic(err)
+						panic(any(err))
 					}
 					open = true
 				}
@@ -57,7 +57,7 @@ func Example_daemon() {
 			case <-time.After(30 * time.Second):
 				if open {
 					if err := s.Close(); err != nil {
-						panic(err)
+						panic(any(err))
 					}
 					open = false
 				}
@@ -82,7 +82,7 @@ func Example_newsletter() {
 	d := gomail.NewDialer("smtp.example.com", 587, "user", "123456")
 	s, err := d.Dial()
 	if err != nil {
-		panic(err)
+		panic(any(err))
 	}
 
 	m := gomail.NewMessage()
@@ -109,7 +109,7 @@ func Example_noAuth() {
 
 	d := gomail.Dialer{Host: "localhost", Port: 587}
 	if err := d.DialAndSend(m); err != nil {
-		panic(err)
+		panic(any(err))
 	}
 }
 
@@ -130,7 +130,7 @@ func Example_noSMTP() {
 	})
 
 	if err := gomail.Send(s, m); err != nil {
-		panic(err)
+		panic(any(err))
 	}
 	// Output:
 	// From: from@example.com

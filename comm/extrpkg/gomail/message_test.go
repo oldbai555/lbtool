@@ -738,7 +738,7 @@ func BenchmarkFull(b *testing.B) {
 		m.Embed(mockCopyFile("benchmark.jpg"))
 
 		if err := Send(discardFunc, m); err != nil {
-			panic(err)
+			panic(any(err))
 		}
 		m.Reset()
 	}

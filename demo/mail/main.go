@@ -7,10 +7,10 @@ import (
 
 func main() {
 	err := mail.SendMail(&mail.Sender{
-		AuthEmail: "oldbai1005777562@163.com",
-		AuthCode:  "OOHQRFSRSNTJJVOK",
-		SmtpHost:  "smtp.163.com",
-		SmtpPort:  465,
+		AuthEmail: "sc_rtxkw0_test_o0szgV",
+		AuthCode:  "b4d22b6261626eccc359254ca8530a53",
+		SmtpHost:  "smtp.sendcloud.net",
+		SmtpPort:  25,
 	}, &mail.Details{
 		Form:        "q346407440@gmail.com",
 		Alias:       "liheng",
@@ -24,3 +24,7 @@ func main() {
 		return
 	}
 }
+
+// sc_rtxkw0_test_o0szgV api_user
+// b4d22b6261626eccc359254ca8530a53 api_code
+// 9g6OlrWtRaKKt8vqL8FTWugxKsoK9Rel.sendcloud.org send_host
