@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	"lb/extrpkg/gomail"
+	"github.com/oldbai555/lb/extrpkg/gomail"
 )
 
 func Example() {

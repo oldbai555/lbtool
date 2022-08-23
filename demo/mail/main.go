@@ -1,8 +1,8 @@
 package main
 
 import (
-	"lb/comm/mail"
-	"lb/log"
+	"github.com/oldbai555/lb/comm/mail"
+	"github.com/oldbai555/lb/log"
 )
 
 func main() {

@@ -3,8 +3,8 @@ package mail
 import (
 	"crypto/tls"
 	"fmt"
-	"lb/extrpkg/gomail"
-	"lb/log"
+	"github.com/oldbai555/lb/extrpkg/gomail"
+	"github.com/oldbai555/lb/log"
 	"mime"
 	"strings"
 )

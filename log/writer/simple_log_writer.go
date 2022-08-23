@@ -3,8 +3,8 @@ package writer
 import (
 	"context"
 	"fmt"
-	"lb/comm"
-	fmt2 "lb/log/fmt"
+	"github.com/oldbai555/lb/comm"
+	fmt2 "github.com/oldbai555/lb/log/fmt"
 	"log"
 	"os"
 	"path/filepath"

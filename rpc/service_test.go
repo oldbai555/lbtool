@@ -2,7 +2,7 @@ package rpc
 
 import (
 	"fmt"
-	"lb/rpc/test"
+	"github.com/oldbai555/lb/rpc/test"
 	"reflect"
 	"testing"
 	"time"

@@ -1,7 +1,7 @@
 package functions
 
 import (
-	"lb/extrpkg/pie/pie"
+	"github.com/oldbai555/lb/extrpkg/pie/pie"
 	"strconv"
 )
 

@@ -3,8 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/oldbai555/lb/extrpkg/pie/pie"
 	"io"
-	"lb/extrpkg/pie/pie"
 	"os"
 )
 

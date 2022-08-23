@@ -8,7 +8,7 @@ import (
 	val "github.com/go-playground/validator/v10"
 	zh_translations "github.com/go-playground/validator/v10/translations/zh"
 	"github.com/spf13/viper"
-	"lb/comm"
+	"github.com/oldbai555/lb/comm"
 	"reflect"
 	"sync"
 )
