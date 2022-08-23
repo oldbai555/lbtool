@@ -2,7 +2,7 @@ package mail
 
 import (
 	"encoding/json"
-	"github.com/oldbai555/gkdlog"
+	"github.com/oldbai555/log"
 	"sync"
 	"testing"
 	"time"
@@ -28,7 +28,7 @@ func dologic(s *sync.WaitGroup, username, password string) {
 	defer s.Done()
 	c, err := NewImapClient(ConnectTypeQQ)
 	if err != nil {
-		gkdlog.Errorf("err is %v", err)
+		log.Errorf("err is %v", err)
 		return
 	}
 
@@ -41,13 +41,13 @@ func dologic(s *sync.WaitGroup, username, password string) {
 		func(msgList []*ReceiveMailMessage) error {
 			for _, msg := range msgList {
 				marshal, _ := json.Marshal(msg)
-				gkdlog.Infof("msg = %v ", string(marshal))
+				log.Infof("msg = %v ", string(marshal))
 			}
-			gkdlog.Infof("len(msgList) = %d ", len(msgList))
+			log.Infof("len(msgList) = %d ", len(msgList))
 			return nil
 		})
 	if err != nil {
-		gkdlog.Errorf("err is %v", err)
+		log.Errorf("err is %v", err)
 		return
 	}
 
@@ -57,29 +57,29 @@ func TestClient(t *testing.T) {
 	// 连接邮件服务器
 	c, err := NewImapClient(ConnectTypeQQ)
 	if err != nil {
-		gkdlog.Errorf("err is %v", err)
+		log.Errorf("err is %v", err)
 		return
 	}
 
 	err = Login(NewUser("1005777562@qq.com", "yjxawxmhqwozbcbg"), c)
 	if err != nil {
-		gkdlog.Errorf("err is %v", err)
+		log.Errorf("err is %v", err)
 		return
 	}
 
 	err = c.Logout()
 	if err != nil {
-		gkdlog.Errorf("err is %v", err)
+		log.Errorf("err is %v", err)
 	}
 
 	err = Login(NewUser("1005777562@qq.com", "yjxawxmhqwozbcbg"), c)
 	if err != nil {
-		gkdlog.Errorf("err is %v", err)
+		log.Errorf("err is %v", err)
 		return
 	}
 
 	err = c.Logout()
 	if err != nil {
-		gkdlog.Errorf("err is %v", err)
+		log.Errorf("err is %v", err)
 	}
 }
