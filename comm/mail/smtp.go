@@ -42,10 +42,10 @@ func SendMail(sender *Sender, detail *Details) error {
 	)
 
 	// 设置发件人信息
-	m.SetHeader(HeaderFrom, fmt.Sprintf("%s <%s>", detail.Alias, detail.Form))
+	m.SetHeader(HeaderFrom, m.FormatAddress(detail.Form, detail.Alias))
 
-	// 设置授权的发送者
-	m.SetHeader(HeaderSender, sender.AuthEmail)
+	// 设置授权的发送者 - 这里可以理解为代发人，配制个邮时需要配制
+	// m.SetHeader(HeaderSender, sender.AuthEmail)
 
 	// 设置收件人信息
 	m.SetHeader(HeaderTo, detail.ToList...)
