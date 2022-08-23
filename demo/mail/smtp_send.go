@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/jordan-wright/email"
-	"github.com/oldbai555/comm/extrpkg/gomail"
-	"github.com/oldbai555/log"
+	"lb/extrpkg/gomail"
+	"lb/log"
 	"net/smtp"
 )
 

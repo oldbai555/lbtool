@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/oldbai555/comm/extrpkg/pie/pie/util"
+	"lb/extrpkg/pie/pie/util"
 	"math/rand"
 	"sort"
 	"strconv"
@@ -15,7 +15,7 @@ import (
 // as the all() function in Python.
 //
 // If the list is empty then true is always returned.
-func (ss cars) All(fn func(value car) bool) bool {
+func (ss carPointers) All(fn func(value *car) bool) bool {
 	for _, value := range ss {
 		if !fn(value) {
 			return false
@@ -29,7 +29,7 @@ func (ss cars) All(fn func(value car) bool) bool {
 // as the any() function in Python.
 //
 // If the list is empty then false is always returned.
-func (ss cars) Any(fn func(value car) bool) bool {
+func (ss carPointers) Any(fn func(value *car) bool) bool {
 	for _, value := range ss {
 		if fn(value) {
 			return true
@@ -42,10 +42,10 @@ func (ss cars) Any(fn func(value car) bool) bool {
 // Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss cars) Append(elements ...car) cars {
+func (ss carPointers) Append(elements ...*car) carPointers {
 	// Copy ss, to make sure no memory is overlapping between input and
 	// output. See issue #97.
-	result := append(cars{}, ss...)
+	result := append(carPointers{}, ss...)
 
 	result = append(result, elements...)
 	return result
@@ -57,7 +57,7 @@ func (ss cars) Append(elements ...car) cars {
 // for this [1,2,3] slice with n == 2 will be returned [3,2]
 // if the slice has less elements then n that'll return all elements
 // if n < 0 it'll return empty slice.
-func (ss cars) Bottom(n int) (top cars) {
+func (ss carPointers) Bottom(n int) (top carPointers) {
 	var lastIndex = len(ss) - 1
 	for i := lastIndex; i > -1 && n > 0; i-- {
 		top = append(top, ss[i])
@@ -70,9 +70,9 @@ func (ss cars) Bottom(n int) (top cars) {
 // Contains returns true if the element exists in the slice.
 //
 // When using slices of pointers it will only compare by address, not value.
-func (ss cars) Contains(lookingFor car) bool {
+func (ss carPointers) Contains(lookingFor *car) bool {
 	for _, s := range ss {
-		if lookingFor == s {
+		if lookingFor.Equals(s) {
 			return true
 		}
 	}
@@ -88,19 +88,19 @@ func (ss cars) Contains(lookingFor car) bool {
 //
 // The added and removed returned may be blank respectively, or contain upto as
 // many elements that exists in the largest slice.
-func (ss cars) Diff(against cars) (added, removed cars) {
+func (ss carPointers) Diff(against carPointers) (added, removed carPointers) {
 	// This is probably not the best way to do it. We do an O(n^2) between the
 	// slices to see which items are missing in each direction.
 
-	diffOneWay := func(ss1, ss2raw cars) (result cars) {
-		ss2 := make(cars, len(ss2raw))
+	diffOneWay := func(ss1, ss2raw carPointers) (result carPointers) {
+		ss2 := make(carPointers, len(ss2raw))
 		copy(ss2, ss2raw)
 
 		for _, s := range ss1 {
 			found := false
 
 			for i, element := range ss2 {
-				if s == element {
+				if s.Equals(element) {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
 					break
@@ -124,14 +124,14 @@ func (ss cars) Diff(against cars) (added, removed cars) {
 // DropTop will return the rest slice after dropping the top n elements
 // if the slice has less elements then n that'll return empty slice
 // if n < 0 it'll return empty slice.
-func (ss cars) DropTop(n int) (drop cars) {
+func (ss carPointers) DropTop(n int) (drop carPointers) {
 	if n < 0 || n >= len(ss) {
 		return
 	}
 
 	// Copy ss, to make sure no memory is overlapping between input and
 	// output. See issue #145.
-	drop = make([]car, len(ss)-n)
+	drop = make([]*car, len(ss)-n)
 	copy(drop, ss[n:])
 
 	return
@@ -139,15 +139,15 @@ func (ss cars) DropTop(n int) (drop cars) {
 
 // Drop items from the slice while f(item) is true.
 // Afterwards, return every element until the slice is empty. It follows the same logic as the dropwhile() function from itertools in Python.
-func (ss cars) DropWhile(f func(s car) bool) (ss2 cars) {
-	ss2 = make([]car, len(ss))
+func (ss carPointers) DropWhile(f func(s *car) bool) (ss2 carPointers) {
+	ss2 = make([]*car, len(ss))
 	copy(ss2, ss)
 	for i, value := range ss2 {
 		if !f(value) {
 			return ss2[i:]
 		}
 	}
-	return cars{}
+	return carPointers{}
 }
 
 // Each is more condensed version of Transform that allows an action to happen
@@ -165,7 +165,7 @@ func (ss cars) DropWhile(f func(s car) bool) (ss2 cars) {
 //       car.Color = "Red"
 //   })
 //
-func (ss cars) Each(fn func(car)) cars {
+func (ss carPointers) Each(fn func(*car)) carPointers {
 	for _, s := range ss {
 		fn(s)
 	}
@@ -179,13 +179,13 @@ func (ss cars) Each(fn func(car)) cars {
 // if each slice == nil is considered that they're equal
 //
 // if element realizes Equals interface it uses that method, in other way uses default compare
-func (ss cars) Equals(rhs cars) bool {
+func (ss carPointers) Equals(rhs carPointers) bool {
 	if len(ss) != len(rhs) {
 		return false
 	}
 
 	for i := range ss {
-		if !(ss[i] == rhs[i]) {
+		if !ss[i].Equals(rhs[i]) {
 			return false
 		}
 	}
@@ -197,7 +197,7 @@ func (ss cars) Equals(rhs cars) bool {
 // end.
 //
 // It is acceptable to provide zero arguments.
-func (ss cars) Extend(slices ...cars) (ss2 cars) {
+func (ss carPointers) Extend(slices ...carPointers) (ss2 carPointers) {
 	ss2 = ss
 
 	for _, slice := range slices {
@@ -211,7 +211,7 @@ func (ss cars) Extend(slices ...cars) (ss2 cars) {
 // true from the condition. The returned slice may contain zero elements (nil).
 //
 // FilterNot works in the opposite way of Filter.
-func (ss cars) Filter(condition func(car) bool) (ss2 cars) {
+func (ss carPointers) Filter(condition func(*car) bool) (ss2 carPointers) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -223,7 +223,7 @@ func (ss cars) Filter(condition func(car) bool) (ss2 cars) {
 // FilterNot works the same as Filter, with a negated condition. That is, it will
 // return a new slice only containing the elements that returned false from the
 // condition. The returned slice may contain zero elements (nil).
-func (ss cars) FilterNot(condition func(car) bool) (ss2 cars) {
+func (ss carPointers) FilterNot(condition func(*car) bool) (ss2 carPointers) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
@@ -237,7 +237,7 @@ func (ss cars) FilterNot(condition func(car) bool) (ss2 cars) {
 // It follows the same logic as the findIndex() function in Javascript.
 //
 // If the list is empty then -1 is always returned.
-func (ss cars) FindFirstUsing(fn func(value car) bool) int {
+func (ss carPointers) FindFirstUsing(fn func(value *car) bool) int {
 	for idx, value := range ss {
 		if fn(value) {
 			return idx
@@ -248,13 +248,13 @@ func (ss cars) FindFirstUsing(fn func(value car) bool) int {
 }
 
 // First returns the first element, or zero. Also see FirstOr().
-func (ss cars) First() car {
-	return ss.FirstOr(car{})
+func (ss carPointers) First() *car {
+	return ss.FirstOr(nil)
 }
 
 // FirstOr returns the first element or a default value if there are no
 // elements.
-func (ss cars) FirstOr(defaultValue car) car {
+func (ss carPointers) FirstOr(defaultValue *car) *car {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -263,7 +263,7 @@ func (ss cars) FirstOr(defaultValue car) car {
 }
 
 // Float64s transforms each element to a float64.
-func (ss cars) Float64s() Float64s {
+func (ss carPointers) Float64s() Float64s {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -281,16 +281,16 @@ func (ss cars) Float64s() Float64s {
 }
 
 // Insert a value at an index
-func (ss cars) Insert(index int, values ...car) cars {
+func (ss carPointers) Insert(index int, values ...*car) carPointers {
 	if index >= ss.Len() {
-		return cars.Extend(ss, cars(values))
+		return carPointers.Extend(ss, carPointers(values))
 	}
 
-	return cars.Extend(ss[:index], cars(values), ss[index:])
+	return carPointers.Extend(ss[:index], carPointers(values), ss[index:])
 }
 
 // Ints transforms each element to an integer.
-func (ss cars) Ints() Ints {
+func (ss carPointers) Ints() Ints {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -309,8 +309,8 @@ func (ss cars) Ints() Ints {
 }
 
 // Join returns a string from joining each of the elements.
-func (ss cars) Join(glue string) (s string) {
-	var slice interface{} = []car(ss)
+func (ss carPointers) Join(glue string) (s string) {
+	var slice interface{} = []*car(ss)
 
 	if y, ok := slice.([]string); ok {
 		// The stdlib is efficient for type []string
@@ -330,7 +330,7 @@ func (ss cars) Join(glue string) (s string) {
 //
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array.
-func (ss cars) JSONBytes() []byte {
+func (ss carPointers) JSONBytes() []byte {
 	if ss == nil {
 		return []byte("[]")
 	}
@@ -346,7 +346,7 @@ func (ss cars) JSONBytes() []byte {
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array. See
 // json.MarshalIndent for details.
-func (ss cars) JSONBytesIndent(prefix, indent string) []byte {
+func (ss carPointers) JSONBytesIndent(prefix, indent string) []byte {
 	if ss == nil {
 		return []byte("[]")
 	}
@@ -361,7 +361,7 @@ func (ss cars) JSONBytesIndent(prefix, indent string) []byte {
 //
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array.
-func (ss cars) JSONString() string {
+func (ss carPointers) JSONString() string {
 	if ss == nil {
 		return "[]"
 	}
@@ -377,7 +377,7 @@ func (ss cars) JSONString() string {
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array. See
 // json.MarshalIndent for details.
-func (ss cars) JSONStringIndent(prefix, indent string) string {
+func (ss carPointers) JSONStringIndent(prefix, indent string) string {
 	if ss == nil {
 		return "[]"
 	}
@@ -389,12 +389,12 @@ func (ss cars) JSONStringIndent(prefix, indent string) string {
 }
 
 // Last returns the last element, or zero. Also see LastOr().
-func (ss cars) Last() car {
-	return ss.LastOr(car{})
+func (ss carPointers) Last() *car {
+	return ss.LastOr(nil)
 }
 
 // LastOr returns the last element or a default value if there are no elements.
-func (ss cars) LastOr(defaultValue car) car {
+func (ss carPointers) LastOr(defaultValue *car) *car {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -403,7 +403,7 @@ func (ss cars) LastOr(defaultValue car) car {
 }
 
 // Len returns the number of elements.
-func (ss cars) Len() int {
+func (ss carPointers) Len() int {
 	return len(ss)
 }
 
@@ -413,12 +413,12 @@ func (ss cars) Len() int {
 // Be careful when using this with slices of pointers. If you modify the input
 // value it will affect the original slice. Be sure to return a new allocated
 // object or deep copy the existing one.
-func (ss cars) Map(fn func(car) car) (ss2 cars) {
+func (ss carPointers) Map(fn func(*car) *car) (ss2 carPointers) {
 	if ss == nil {
 		return nil
 	}
 
-	ss2 = make([]car, len(ss))
+	ss2 = make([]*car, len(ss))
 	for i, s := range ss {
 		ss2[i] = fn(s)
 	}
@@ -430,11 +430,11 @@ func (ss cars) Map(fn func(car) car) (ss2 cars) {
 //
 // The number of items returned may be the same as the input or less. It will
 // never return zero items unless the input slice has zero items.
-func (ss cars) Mode() cars {
+func (ss carPointers) Mode() carPointers {
 	if len(ss) == 0 {
 		return nil
 	}
-	values := make(map[car]int)
+	values := make(map[*car]int)
 	for _, s := range ss {
 		values[s]++
 	}
@@ -446,7 +446,7 @@ func (ss cars) Mode() cars {
 		}
 	}
 
-	var maxValues cars
+	var maxValues carPointers
 	for k, v := range values {
 		if v == maxFrequency {
 			maxValues = append(maxValues, k)
@@ -465,7 +465,7 @@ func (ss cars) Mode() cars {
 //   for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
 //       fmt.Println(*greeting)
 //   }
-func (ss *cars) Pop() (popped *car) {
+func (ss *carPointers) Pop() (popped **car) {
 
 	if len(*ss) == 0 {
 		return
@@ -477,12 +477,12 @@ func (ss *cars) Pop() (popped *car) {
 }
 
 // Random returns a random element by your rand.Source, or zero
-func (ss cars) Random(source rand.Source) car {
+func (ss carPointers) Random(source rand.Source) *car {
 	n := len(ss)
 
 	// Avoid the extra allocation.
 	if n < 1 {
-		return car{}
+		return nil
 	}
 	if n < 2 {
 		return ss[0]
@@ -497,14 +497,14 @@ func (ss cars) Random(source rand.Source) car {
 //
 //   ss.Sort().Reverse()
 //
-func (ss cars) Reverse() cars {
+func (ss carPointers) Reverse() carPointers {
 	// Avoid the allocation. If there is one element or less it is already
 	// reversed.
 	if len(ss) < 2 {
 		return ss
 	}
 
-	sorted := make([]car, len(ss))
+	sorted := make([]*car, len(ss))
 	for i := 0; i < len(ss); i++ {
 		sorted[i] = ss[len(ss)-i-1]
 	}
@@ -518,7 +518,7 @@ func (ss cars) Reverse() cars {
 // it locks execution of gorutine
 // it doesn't close channel after work
 // returns sended elements if len(this) != len(old) considered func was canceled
-func (ss cars) Send(ctx context.Context, ch chan<- car) cars {
+func (ss carPointers) Send(ctx context.Context, ch chan<- *car) carPointers {
 	for i, s := range ss {
 		select {
 		case <-ctx.Done():
@@ -545,14 +545,14 @@ func (ss cars) Send(ctx context.Context, ch chan<- car) cars {
 // if len(params) > 2 considered that will be returned slice between min and max with step,
 // where min is the first param, max is the second, step is the third one, [min, max) with step,
 // others params will be ignored
-func (ss cars) SequenceUsing(creator func(int) car, params ...int) cars {
-	var seq = func(min, max, step int) (seq cars) {
+func (ss carPointers) SequenceUsing(creator func(int) *car, params ...int) carPointers {
+	var seq = func(min, max, step int) (seq carPointers) {
 		lenght := int(util.Round(float64(max-min) / float64(step)))
 		if lenght < 1 {
 			return
 		}
 
-		seq = make(cars, lenght)
+		seq = make(carPointers, lenght)
 		for i := 0; i < lenght; min += step {
 			seq[i] = creator(min)
 			i++
@@ -573,12 +573,12 @@ func (ss cars) SequenceUsing(creator func(int) car, params ...int) cars {
 }
 
 // Shift will return two values: the shifted value and the rest slice.
-func (ss cars) Shift() (car, cars) {
+func (ss carPointers) Shift() (*car, carPointers) {
 	return ss.First(), ss.DropTop(1)
 }
 
 // Shuffle returns shuffled slice by your rand.Source
-func (ss cars) Shuffle(source rand.Source) cars {
+func (ss carPointers) Shuffle(source rand.Source) carPointers {
 	n := len(ss)
 
 	// Avoid the extra allocation.
@@ -589,7 +589,7 @@ func (ss cars) Shuffle(source rand.Source) cars {
 	// go 1.10+ provides rnd.Shuffle. However, to support older versions we copy
 	// the algorithm directly from the go source: src/math/rand/rand.go below,
 	// with some adjustments:
-	shuffled := make([]car, n)
+	shuffled := make([]*car, n)
 	copy(shuffled, ss)
 
 	rnd := rand.New(source)
@@ -603,14 +603,14 @@ func (ss cars) Shuffle(source rand.Source) cars {
 
 // SortStableUsing works similar to sort.SliceStable. However, unlike sort.SliceStable the
 // slice returned will be reallocated as to not modify the input slice.
-func (ss cars) SortStableUsing(less func(a, b car) bool) cars {
+func (ss carPointers) SortStableUsing(less func(a, b *car) bool) carPointers {
 	// Avoid the allocation. If there is one element or less it is already
 	// sorted.
 	if len(ss) < 2 {
 		return ss
 	}
 
-	sorted := make(cars, len(ss))
+	sorted := make(carPointers, len(ss))
 	copy(sorted, ss)
 	sort.SliceStable(sorted, func(i, j int) bool {
 		return less(sorted[i], sorted[j])
@@ -621,14 +621,14 @@ func (ss cars) SortStableUsing(less func(a, b car) bool) cars {
 
 // SortUsing works similar to sort.Slice. However, unlike sort.Slice the
 // slice returned will be reallocated as to not modify the input slice.
-func (ss cars) SortUsing(less func(a, b car) bool) cars {
+func (ss carPointers) SortUsing(less func(a, b *car) bool) carPointers {
 	// Avoid the allocation. If there is one element or less it is already
 	// sorted.
 	if len(ss) < 2 {
 		return ss
 	}
 
-	sorted := make(cars, len(ss))
+	sorted := make(carPointers, len(ss))
 	copy(sorted, ss)
 	sort.Slice(sorted, func(i, j int) bool {
 		return less(sorted[i], sorted[j])
@@ -644,7 +644,7 @@ func (ss cars) SortUsing(less func(a, b car) bool) cars {
 //
 //   fmt.Sprintf("%v")
 //
-func (ss cars) Strings() Strings {
+func (ss carPointers) Strings() Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -667,7 +667,7 @@ func (ss cars) Strings() Strings {
 // Condition 2: If start >= end, nil is returned.
 // Condition 3: Return all elements that exist in the range provided,
 // if start or end is out of bounds, zero items will be placed.
-func (ss cars) SubSlice(start int, end int) (subSlice cars) {
+func (ss carPointers) SubSlice(start int, end int) (subSlice carPointers) {
 	if start < 0 || end < 0 {
 		return
 	}
@@ -681,11 +681,11 @@ func (ss cars) SubSlice(start int, end int) (subSlice cars) {
 		if end <= length {
 			subSlice = ss[start:end]
 		} else {
-			zeroArray := make([]car, end-length)
+			zeroArray := make([]*car, end-length)
 			subSlice = ss[start:length].Append(zeroArray[:]...)
 		}
 	} else {
-		zeroArray := make([]car, end-start)
+		zeroArray := make([]*car, end-start)
 		subSlice = zeroArray[:]
 	}
 
@@ -695,7 +695,7 @@ func (ss cars) SubSlice(start int, end int) (subSlice cars) {
 // Top will return n elements from head of the slice
 // if the slice has less elements then n that'll return all elements
 // if n < 0 it'll return empty slice.
-func (ss cars) Top(n int) (top cars) {
+func (ss carPointers) Top(n int) (top carPointers) {
 	for i := 0; i < len(ss) && n > 0; i++ {
 		top = append(top, ss[i])
 		n--
@@ -705,7 +705,7 @@ func (ss cars) Top(n int) (top cars) {
 }
 
 // StringsUsing transforms each element to a string.
-func (ss cars) StringsUsing(transform func(car) string) Strings {
+func (ss carPointers) StringsUsing(transform func(*car) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -723,8 +723,8 @@ func (ss cars) StringsUsing(transform func(car) string) Strings {
 
 // Unshift adds one or more elements to the beginning of the slice
 // and returns the new slice.
-func (ss cars) Unshift(elements ...car) (unshift cars) {
-	unshift = append(cars{}, elements...)
+func (ss carPointers) Unshift(elements ...*car) (unshift carPointers) {
+	unshift = append(carPointers{}, elements...)
 	unshift = append(unshift, ss...)
 
 	return

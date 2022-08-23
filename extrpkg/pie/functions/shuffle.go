@@ -1,7 +1,7 @@
 package functions
 
 import (
-	"github.com/oldbai555/comm/extrpkg/pie/pie/util"
+	"lb/extrpkg/pie/pie/util"
 	"math/rand"
 )
 

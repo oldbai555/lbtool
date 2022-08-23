@@ -4,33 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/oldbai555/comm/extrpkg/pie/pie/util"
-	"math"
+	"lb/extrpkg/pie/pie/util"
 	"math/rand"
 	"sort"
 	"strconv"
 	"strings"
 )
 
-// Abs is a function which returns the absolute value of all the
-// elements in the slice.
-func (ss Ints) Abs() Ints {
-	result := make(Ints, len(ss))
-	for i, val := range ss {
-		if val < 0 {
-			result[i] = -val
-		} else {
-			result[i] = val
-		}
-	}
-	return result
-}
-
 // All will return true if all callbacks return true. It follows the same logic
 // as the all() function in Python.
 //
 // If the list is empty then true is always returned.
-func (ss Ints) All(fn func(value int) bool) bool {
+func (ss Strings) All(fn func(value string) bool) bool {
 	for _, value := range ss {
 		if !fn(value) {
 			return false
@@ -44,7 +29,7 @@ func (ss Ints) All(fn func(value int) bool) bool {
 // as the any() function in Python.
 //
 // If the list is empty then false is always returned.
-func (ss Ints) Any(fn func(value int) bool) bool {
+func (ss Strings) Any(fn func(value string) bool) bool {
 	for _, value := range ss {
 		if fn(value) {
 			return true
@@ -57,18 +42,18 @@ func (ss Ints) Any(fn func(value int) bool) bool {
 // Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss Ints) Append(elements ...int) Ints {
+func (ss Strings) Append(elements ...string) Strings {
 	// Copy ss, to make sure no memory is overlapping between input and
 	// output. See issue #97.
-	result := append(Ints{}, ss...)
+	result := append(Strings{}, ss...)
 
 	result = append(result, elements...)
 	return result
 }
 
 // AreSorted will return true if the slice is already sorted. It is a wrapper
-// for sort.IntsAreSorted.
-func (ss Ints) AreSorted() bool {
+// for sort.StringsAreSorted.
+func (ss Strings) AreSorted() bool {
 	return sort.SliceIsSorted(ss, func(i, j int) bool {
 		return ss[i] < ss[j]
 	})
@@ -76,18 +61,8 @@ func (ss Ints) AreSorted() bool {
 
 // AreUnique will return true if the slice contains elements that are all
 // different (unique) from each other.
-func (ss Ints) AreUnique() bool {
+func (ss Strings) AreUnique() bool {
 	return ss.Unique().Len() == ss.Len()
-}
-
-// Average is the average of all of the elements, or zero if there are no
-// elements.
-func (ss Ints) Average() float64 {
-	if l := int(len(ss)); l > 0 {
-		return float64(ss.Sum()) / float64(l)
-	}
-
-	return 0
 }
 
 // Bottom will return n elements from bottom
@@ -96,7 +71,7 @@ func (ss Ints) Average() float64 {
 // for this [1,2,3] slice with n == 2 will be returned [3,2]
 // if the slice has less elements then n that'll return all elements
 // if n < 0 it'll return empty slice.
-func (ss Ints) Bottom(n int) (top Ints) {
+func (ss Strings) Bottom(n int) (top Strings) {
 	var lastIndex = len(ss) - 1
 	for i := lastIndex; i > -1 && n > 0; i-- {
 		top = append(top, ss[i])
@@ -109,7 +84,7 @@ func (ss Ints) Bottom(n int) (top Ints) {
 // Contains returns true if the element exists in the slice.
 //
 // When using slices of pointers it will only compare by address, not value.
-func (ss Ints) Contains(lookingFor int) bool {
+func (ss Strings) Contains(lookingFor string) bool {
 	for _, s := range ss {
 		if lookingFor == s {
 			return true
@@ -127,12 +102,12 @@ func (ss Ints) Contains(lookingFor int) bool {
 //
 // The added and removed returned may be blank respectively, or contain upto as
 // many elements that exists in the largest slice.
-func (ss Ints) Diff(against Ints) (added, removed Ints) {
+func (ss Strings) Diff(against Strings) (added, removed Strings) {
 	// This is probably not the best way to do it. We do an O(n^2) between the
 	// slices to see which items are missing in each direction.
 
-	diffOneWay := func(ss1, ss2raw Ints) (result Ints) {
-		ss2 := make(Ints, len(ss2raw))
+	diffOneWay := func(ss1, ss2raw Strings) (result Strings) {
+		ss2 := make(Strings, len(ss2raw))
 		copy(ss2, ss2raw)
 
 		for _, s := range ss1 {
@@ -163,14 +138,14 @@ func (ss Ints) Diff(against Ints) (added, removed Ints) {
 // DropTop will return the rest slice after dropping the top n elements
 // if the slice has less elements then n that'll return empty slice
 // if n < 0 it'll return empty slice.
-func (ss Ints) DropTop(n int) (drop Ints) {
+func (ss Strings) DropTop(n int) (drop Strings) {
 	if n < 0 || n >= len(ss) {
 		return
 	}
 
 	// Copy ss, to make sure no memory is overlapping between input and
 	// output. See issue #145.
-	drop = make([]int, len(ss)-n)
+	drop = make([]string, len(ss)-n)
 	copy(drop, ss[n:])
 
 	return
@@ -178,15 +153,15 @@ func (ss Ints) DropTop(n int) (drop Ints) {
 
 // Drop items from the slice while f(item) is true.
 // Afterwards, return every element until the slice is empty. It follows the same logic as the dropwhile() function from itertools in Python.
-func (ss Ints) DropWhile(f func(s int) bool) (ss2 Ints) {
-	ss2 = make([]int, len(ss))
+func (ss Strings) DropWhile(f func(s string) bool) (ss2 Strings) {
+	ss2 = make([]string, len(ss))
 	copy(ss2, ss)
 	for i, value := range ss2 {
 		if !f(value) {
 			return ss2[i:]
 		}
 	}
-	return Ints{}
+	return Strings{}
 }
 
 // Each is more condensed version of Transform that allows an action to happen
@@ -204,7 +179,7 @@ func (ss Ints) DropWhile(f func(s int) bool) (ss2 Ints) {
 //       car.Color = "Red"
 //   })
 //
-func (ss Ints) Each(fn func(int)) Ints {
+func (ss Strings) Each(fn func(string)) Strings {
 	for _, s := range ss {
 		fn(s)
 	}
@@ -218,7 +193,7 @@ func (ss Ints) Each(fn func(int)) Ints {
 // if each slice == nil is considered that they're equal
 //
 // if element realizes Equals interface it uses that method, in other way uses default compare
-func (ss Ints) Equals(rhs Ints) bool {
+func (ss Strings) Equals(rhs Strings) bool {
 	if len(ss) != len(rhs) {
 		return false
 	}
@@ -236,7 +211,7 @@ func (ss Ints) Equals(rhs Ints) bool {
 // end.
 //
 // It is acceptable to provide zero arguments.
-func (ss Ints) Extend(slices ...Ints) (ss2 Ints) {
+func (ss Strings) Extend(slices ...Strings) (ss2 Strings) {
 	ss2 = ss
 
 	for _, slice := range slices {
@@ -250,7 +225,7 @@ func (ss Ints) Extend(slices ...Ints) (ss2 Ints) {
 // true from the condition. The returned slice may contain zero elements (nil).
 //
 // FilterNot works in the opposite way of Filter.
-func (ss Ints) Filter(condition func(int) bool) (ss2 Ints) {
+func (ss Strings) Filter(condition func(string) bool) (ss2 Strings) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -262,7 +237,7 @@ func (ss Ints) Filter(condition func(int) bool) (ss2 Ints) {
 // FilterNot works the same as Filter, with a negated condition. That is, it will
 // return a new slice only containing the elements that returned false from the
 // condition. The returned slice may contain zero elements (nil).
-func (ss Ints) FilterNot(condition func(int) bool) (ss2 Ints) {
+func (ss Strings) FilterNot(condition func(string) bool) (ss2 Strings) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
@@ -276,7 +251,7 @@ func (ss Ints) FilterNot(condition func(int) bool) (ss2 Ints) {
 // It follows the same logic as the findIndex() function in Javascript.
 //
 // If the list is empty then -1 is always returned.
-func (ss Ints) FindFirstUsing(fn func(value int) bool) int {
+func (ss Strings) FindFirstUsing(fn func(value string) bool) int {
 	for idx, value := range ss {
 		if fn(value) {
 			return idx
@@ -287,13 +262,13 @@ func (ss Ints) FindFirstUsing(fn func(value int) bool) int {
 }
 
 // First returns the first element, or zero. Also see FirstOr().
-func (ss Ints) First() int {
-	return ss.FirstOr(0)
+func (ss Strings) First() string {
+	return ss.FirstOr("")
 }
 
 // FirstOr returns the first element or a default value if there are no
 // elements.
-func (ss Ints) FirstOr(defaultValue int) int {
+func (ss Strings) FirstOr(defaultValue string) string {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -302,7 +277,7 @@ func (ss Ints) FirstOr(defaultValue int) int {
 }
 
 // Float64s transforms each element to a float64.
-func (ss Ints) Float64s() Float64s {
+func (ss Strings) Float64s() Float64s {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -321,8 +296,8 @@ func (ss Ints) Float64s() Float64s {
 
 // Group returns a map of the value with an individual count.
 //
-func (ss Ints) Group() map[int]int {
-	group := map[int]int{}
+func (ss Strings) Group() map[string]int {
+	group := map[string]int{}
 	for _, n := range ss {
 		group[n]++
 	}
@@ -333,14 +308,14 @@ func (ss Ints) Group() map[int]int {
 //
 // It returns slice without any duplicates.
 // If zero slice arguments are provided, then nil is returned.
-func (ss Ints) Intersect(slices ...Ints) (ss2 Ints) {
+func (ss Strings) Intersect(slices ...Strings) (ss2 Strings) {
 	if slices == nil {
 		return nil
 	}
 
-	var uniqs = make([]map[int]struct{}, len(slices))
+	var uniqs = make([]map[string]struct{}, len(slices))
 	for i := 0; i < len(slices); i++ {
-		m := make(map[int]struct{})
+		m := make(map[string]struct{})
 		for _, el := range slices[i] {
 			m[el] = struct{}{}
 		}
@@ -365,16 +340,16 @@ func (ss Ints) Intersect(slices ...Ints) (ss2 Ints) {
 }
 
 // Insert a value at an index
-func (ss Ints) Insert(index int, values ...int) Ints {
+func (ss Strings) Insert(index int, values ...string) Strings {
 	if index >= ss.Len() {
-		return Ints.Extend(ss, Ints(values))
+		return Strings.Extend(ss, Strings(values))
 	}
 
-	return Ints.Extend(ss[:index], Ints(values), ss[index:])
+	return Strings.Extend(ss[:index], Strings(values), ss[index:])
 }
 
 // Ints transforms each element to an integer.
-func (ss Ints) Ints() Ints {
+func (ss Strings) Ints() Ints {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -393,8 +368,8 @@ func (ss Ints) Ints() Ints {
 }
 
 // Join returns a string from joining each of the elements.
-func (ss Ints) Join(glue string) (s string) {
-	var slice interface{} = []int(ss)
+func (ss Strings) Join(glue string) (s string) {
+	var slice interface{} = []string(ss)
 
 	if y, ok := slice.([]string); ok {
 		// The stdlib is efficient for type []string
@@ -414,7 +389,7 @@ func (ss Ints) Join(glue string) (s string) {
 //
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array.
-func (ss Ints) JSONBytes() []byte {
+func (ss Strings) JSONBytes() []byte {
 	if ss == nil {
 		return []byte("[]")
 	}
@@ -430,7 +405,7 @@ func (ss Ints) JSONBytes() []byte {
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array. See
 // json.MarshalIndent for details.
-func (ss Ints) JSONBytesIndent(prefix, indent string) []byte {
+func (ss Strings) JSONBytesIndent(prefix, indent string) []byte {
 	if ss == nil {
 		return []byte("[]")
 	}
@@ -445,7 +420,7 @@ func (ss Ints) JSONBytesIndent(prefix, indent string) []byte {
 //
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array.
-func (ss Ints) JSONString() string {
+func (ss Strings) JSONString() string {
 	if ss == nil {
 		return "[]"
 	}
@@ -461,7 +436,7 @@ func (ss Ints) JSONString() string {
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array. See
 // json.MarshalIndent for details.
-func (ss Ints) JSONStringIndent(prefix, indent string) string {
+func (ss Strings) JSONStringIndent(prefix, indent string) string {
 	if ss == nil {
 		return "[]"
 	}
@@ -473,12 +448,12 @@ func (ss Ints) JSONStringIndent(prefix, indent string) string {
 }
 
 // Last returns the last element, or zero. Also see LastOr().
-func (ss Ints) Last() int {
-	return ss.LastOr(0)
+func (ss Strings) Last() string {
+	return ss.LastOr("")
 }
 
 // LastOr returns the last element or a default value if there are no elements.
-func (ss Ints) LastOr(defaultValue int) int {
+func (ss Strings) LastOr(defaultValue string) string {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -487,7 +462,7 @@ func (ss Ints) LastOr(defaultValue int) int {
 }
 
 // Len returns the number of elements.
-func (ss Ints) Len() int {
+func (ss Strings) Len() int {
 	return len(ss)
 }
 
@@ -497,12 +472,12 @@ func (ss Ints) Len() int {
 // Be careful when using this with slices of pointers. If you modify the input
 // value it will affect the original slice. Be sure to return a new allocated
 // object or deep copy the existing one.
-func (ss Ints) Map(fn func(int) int) (ss2 Ints) {
+func (ss Strings) Map(fn func(string) string) (ss2 Strings) {
 	if ss == nil {
 		return nil
 	}
 
-	ss2 = make([]int, len(ss))
+	ss2 = make([]string, len(ss))
 	for i, s := range ss {
 		ss2[i] = fn(s)
 	}
@@ -511,7 +486,7 @@ func (ss Ints) Map(fn func(int) int) (ss2 Ints) {
 }
 
 // Max is the maximum value, or zero.
-func (ss Ints) Max() (max int) {
+func (ss Strings) Max() (max string) {
 	if len(ss) == 0 {
 		return
 	}
@@ -526,73 +501,8 @@ func (ss Ints) Max() (max int) {
 	return
 }
 
-// Median returns the value separating the higher half from the lower half of a
-// data sample.
-//
-// Zero is returned if there are no elements in the slice.
-//
-// If the number of elements is even, then the int mean of the two "median values"
-// is returned.
-func (ss Ints) Median() int {
-	n := len(ss)
-	if n == 0 {
-		return 0
-	}
-	if n == 1 {
-		return ss[0]
-	}
-
-	// This implementation aims at linear time O(n) on average.
-	// It uses the same idea as QuickSort, but makes only 1 recursive
-	// call instead of 2. See also Quickselect.
-
-	work := make(Ints, len(ss))
-	copy(work, ss)
-
-	limit1, limit2 := n/2, n/2+1
-	if n%2 == 0 {
-		limit1, limit2 = n/2-1, n/2+1
-	}
-
-	var rec func(a, b int)
-	rec = func(a, b int) {
-		if b-a <= 1 {
-			return
-		}
-		ipivot := (a + b) / 2
-		pivot := work[ipivot]
-		work[a], work[ipivot] = work[ipivot], work[a]
-		j := a
-		k := b
-		for j+1 < k {
-			if work[j+1] < pivot {
-				work[j+1], work[j] = work[j], work[j+1]
-				j++
-			} else {
-				work[j+1], work[k-1] = work[k-1], work[j+1]
-				k--
-			}
-		}
-		// 1 or 0 recursive calls
-		if j > limit1 {
-			rec(a, j)
-		}
-		if j+1 < limit2 {
-			rec(j+1, b)
-		}
-	}
-
-	rec(0, len(work))
-
-	if n%2 == 1 {
-		return work[n/2]
-	} else {
-		return (work[n/2-1] + work[n/2]) / 2
-	}
-}
-
 // Min is the minimum value, or zero.
-func (ss Ints) Min() (min int) {
+func (ss Strings) Min() (min string) {
 	if len(ss) == 0 {
 		return
 	}
@@ -611,11 +521,11 @@ func (ss Ints) Min() (min int) {
 //
 // The number of items returned may be the same as the input or less. It will
 // never return zero items unless the input slice has zero items.
-func (ss Ints) Mode() Ints {
+func (ss Strings) Mode() Strings {
 	if len(ss) == 0 {
 		return nil
 	}
-	values := make(map[int]int)
+	values := make(map[string]int)
 	for _, s := range ss {
 		values[s]++
 	}
@@ -627,7 +537,7 @@ func (ss Ints) Mode() Ints {
 		}
 	}
 
-	var maxValues Ints
+	var maxValues Strings
 	for k, v := range values {
 		if v == maxFrequency {
 			maxValues = append(maxValues, k)
@@ -646,7 +556,7 @@ func (ss Ints) Mode() Ints {
 //   for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
 //       fmt.Println(*greeting)
 //   }
-func (ss *Ints) Pop() (popped *int) {
+func (ss *Strings) Pop() (popped *string) {
 
 	if len(*ss) == 0 {
 		return
@@ -657,26 +567,13 @@ func (ss *Ints) Pop() (popped *int) {
 	return
 }
 
-// Product is the product of all of the elements.
-func (ss Ints) Product() (product int) {
-	if len(ss) == 0 {
-		return
-	}
-	product = ss[0]
-	for _, s := range ss[1:] {
-		product *= s
-	}
-
-	return
-}
-
 // Random returns a random element by your rand.Source, or zero
-func (ss Ints) Random(source rand.Source) int {
+func (ss Strings) Random(source rand.Source) string {
 	n := len(ss)
 
 	// Avoid the extra allocation.
 	if n < 1 {
-		return 0
+		return ""
 	}
 	if n < 2 {
 		return ss[0]
@@ -689,9 +586,9 @@ func (ss Ints) Random(source rand.Source) int {
 // Reduce continually applies the provided function
 // over the slice. Reducing the elements to a single value.
 //
-// Returns a zero value of int if there are no elements in the slice. It will panic if the reducer is nil and the slice has more than one element (required to invoke reduce).
+// Returns a zero value of string if there are no elements in the slice. It will panic if the reducer is nil and the slice has more than one element (required to invoke reduce).
 // Otherwise returns result of applying reducer from left to right.
-func (ss Ints) Reduce(reducer func(int, int) int) (el int) {
+func (ss Strings) Reduce(reducer func(string, string) string) (el string) {
 	if len(ss) == 0 {
 		return
 	}
@@ -707,14 +604,14 @@ func (ss Ints) Reduce(reducer func(int, int) int) (el int) {
 //
 //   ss.Sort().Reverse()
 //
-func (ss Ints) Reverse() Ints {
+func (ss Strings) Reverse() Strings {
 	// Avoid the allocation. If there is one element or less it is already
 	// reversed.
 	if len(ss) < 2 {
 		return ss
 	}
 
-	sorted := make([]int, len(ss))
+	sorted := make([]string, len(ss))
 	for i := 0; i < len(ss); i++ {
 		sorted[i] = ss[len(ss)-i-1]
 	}
@@ -728,7 +625,7 @@ func (ss Ints) Reverse() Ints {
 // it locks execution of gorutine
 // it doesn't close channel after work
 // returns sended elements if len(this) != len(old) considered func was canceled
-func (ss Ints) Send(ctx context.Context, ch chan<- int) Ints {
+func (ss Strings) Send(ctx context.Context, ch chan<- string) Strings {
 	for i, s := range ss {
 		select {
 		case <-ctx.Done():
@@ -739,28 +636,6 @@ func (ss Ints) Send(ctx context.Context, ch chan<- int) Ints {
 	}
 
 	return ss
-}
-
-// Sequence generates all numbers in range or returns nil if params invalid
-//
-// There are 3 variations to generate:
-// 		1. [0, n).
-//		2. [min, max).
-//		3. [min, max) with step.
-//
-// if len(params) == 1 considered that will be returned slice between 0 and n,
-// where n is the first param, [0, n).
-// if len(params) == 2 considered that will be returned slice between min and max,
-// where min is the first param, max is the second, [min, max).
-// if len(params) > 2 considered that will be returned slice between min and max with step,
-// where min is the first param, max is the second, step is the third one, [min, max) with step,
-// others params will be ignored
-func (ss Ints) Sequence(params ...int) Ints {
-	var creator = func(i int) int {
-		return int(i)
-	}
-
-	return ss.SequenceUsing(creator, params...)
 }
 
 // SequenceUsing generates slice in range using creator function
@@ -777,14 +652,14 @@ func (ss Ints) Sequence(params ...int) Ints {
 // if len(params) > 2 considered that will be returned slice between min and max with step,
 // where min is the first param, max is the second, step is the third one, [min, max) with step,
 // others params will be ignored
-func (ss Ints) SequenceUsing(creator func(int) int, params ...int) Ints {
-	var seq = func(min, max, step int) (seq Ints) {
+func (ss Strings) SequenceUsing(creator func(int) string, params ...int) Strings {
+	var seq = func(min, max, step int) (seq Strings) {
 		lenght := int(util.Round(float64(max-min) / float64(step)))
 		if lenght < 1 {
 			return
 		}
 
-		seq = make(Ints, lenght)
+		seq = make(Strings, lenght)
 		for i := 0; i < lenght; min += step {
 			seq[i] = creator(min)
 			i++
@@ -805,12 +680,12 @@ func (ss Ints) SequenceUsing(creator func(int) int, params ...int) Ints {
 }
 
 // Shift will return two values: the shifted value and the rest slice.
-func (ss Ints) Shift() (int, Ints) {
+func (ss Strings) Shift() (string, Strings) {
 	return ss.First(), ss.DropTop(1)
 }
 
 // Shuffle returns shuffled slice by your rand.Source
-func (ss Ints) Shuffle(source rand.Source) Ints {
+func (ss Strings) Shuffle(source rand.Source) Strings {
 	n := len(ss)
 
 	// Avoid the extra allocation.
@@ -821,7 +696,7 @@ func (ss Ints) Shuffle(source rand.Source) Ints {
 	// go 1.10+ provides rnd.Shuffle. However, to support older versions we copy
 	// the algorithm directly from the go source: src/math/rand/rand.go below,
 	// with some adjustments:
-	shuffled := make([]int, n)
+	shuffled := make([]string, n)
 	copy(shuffled, ss)
 
 	rnd := rand.New(source)
@@ -833,18 +708,18 @@ func (ss Ints) Shuffle(source rand.Source) Ints {
 	return shuffled
 }
 
-// Sort works similar to sort.Ints(). However, unlike sort.Ints the
+// Sort works similar to sort.Strings(). However, unlike sort.Strings the
 // slice returned will be reallocated as to not modify the input slice.
 //
 // See Reverse() and AreSorted().
-func (ss Ints) Sort() Ints {
+func (ss Strings) Sort() Strings {
 	// Avoid the allocation. If there is one element or less it is already
 	// sorted.
 	if len(ss) < 2 {
 		return ss
 	}
 
-	sorted := make(Ints, len(ss))
+	sorted := make(Strings, len(ss))
 	copy(sorted, ss)
 	sort.Slice(sorted, func(i, j int) bool {
 		return sorted[i] < sorted[j]
@@ -853,21 +728,40 @@ func (ss Ints) Sort() Ints {
 	return sorted
 }
 
-// Stddev is the standard deviation
-func (ss Ints) Stddev() float64 {
-	if len(ss) == 0 {
-		return 0.0
+// SortStableUsing works similar to sort.SliceStable. However, unlike sort.SliceStable the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss Strings) SortStableUsing(less func(a, b string) bool) Strings {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
 	}
 
-	avg := ss.Average()
+	sorted := make(Strings, len(ss))
+	copy(sorted, ss)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
+	})
 
-	var sd float64
-	for i := range ss {
-		sd += math.Pow(float64(ss[i])-avg, 2)
+	return sorted
+}
+
+// SortUsing works similar to sort.Slice. However, unlike sort.Slice the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss Strings) SortUsing(less func(a, b string) bool) Strings {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
 	}
-	sd = math.Sqrt(sd / float64(len(ss)))
 
-	return sd
+	sorted := make(Strings, len(ss))
+	copy(sorted, ss)
+	sort.Slice(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
+	})
+
+	return sorted
 }
 
 // Strings transforms each element to a string.
@@ -877,7 +771,7 @@ func (ss Ints) Stddev() float64 {
 //
 //   fmt.Sprintf("%v")
 //
-func (ss Ints) Strings() Strings {
+func (ss Strings) Strings() Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -900,7 +794,7 @@ func (ss Ints) Strings() Strings {
 // Condition 2: If start >= end, nil is returned.
 // Condition 3: Return all elements that exist in the range provided,
 // if start or end is out of bounds, zero items will be placed.
-func (ss Ints) SubSlice(start int, end int) (subSlice Ints) {
+func (ss Strings) SubSlice(start int, end int) (subSlice Strings) {
 	if start < 0 || end < 0 {
 		return
 	}
@@ -914,21 +808,12 @@ func (ss Ints) SubSlice(start int, end int) (subSlice Ints) {
 		if end <= length {
 			subSlice = ss[start:end]
 		} else {
-			zeroArray := make([]int, end-length)
+			zeroArray := make([]string, end-length)
 			subSlice = ss[start:length].Append(zeroArray[:]...)
 		}
 	} else {
-		zeroArray := make([]int, end-start)
+		zeroArray := make([]string, end-start)
 		subSlice = zeroArray[:]
-	}
-
-	return
-}
-
-// Sum is the sum of all of the elements.
-func (ss Ints) Sum() (sum int) {
-	for _, s := range ss {
-		sum += s
 	}
 
 	return
@@ -937,7 +822,7 @@ func (ss Ints) Sum() (sum int) {
 // Top will return n elements from head of the slice
 // if the slice has less elements then n that'll return all elements
 // if n < 0 it'll return empty slice.
-func (ss Ints) Top(n int) (top Ints) {
+func (ss Strings) Top(n int) (top Strings) {
 	for i := 0; i < len(ss) && n > 0; i++ {
 		top = append(top, ss[i])
 		n--
@@ -947,7 +832,7 @@ func (ss Ints) Top(n int) (top Ints) {
 }
 
 // StringsUsing transforms each element to a string.
-func (ss Ints) StringsUsing(transform func(int) string) Strings {
+func (ss Strings) StringsUsing(transform func(string) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -973,20 +858,20 @@ func (ss Ints) StringsUsing(transform func(int) string) Strings {
 // A slice with zero elements is considered to be unique.
 //
 // See AreUnique().
-func (ss Ints) Unique() Ints {
+func (ss Strings) Unique() Strings {
 	// Avoid the allocation. If there is one element or less it is already
 	// unique.
 	if len(ss) < 2 {
 		return ss
 	}
 
-	values := map[int]struct{}{}
+	values := map[string]struct{}{}
 
 	for _, value := range ss {
 		values[value] = struct{}{}
 	}
 
-	var uniqueValues Ints
+	var uniqueValues Strings
 	for value := range values {
 		uniqueValues = append(uniqueValues, value)
 	}
@@ -996,8 +881,8 @@ func (ss Ints) Unique() Ints {
 
 // Unshift adds one or more elements to the beginning of the slice
 // and returns the new slice.
-func (ss Ints) Unshift(elements ...int) (unshift Ints) {
-	unshift = append(Ints{}, elements...)
+func (ss Strings) Unshift(elements ...string) (unshift Strings) {
+	unshift = append(Strings{}, elements...)
 	unshift = append(unshift, ss...)
 
 	return

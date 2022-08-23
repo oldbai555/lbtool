@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/oldbai555/comm"
-	"github.com/oldbai555/example/conf"
-	"github.com/oldbai555/log"
-	"github.com/oldbai555/web"
+	"lb/comm"
+	"lb/example/conf"
+	"lb/log"
+	"lb/web"
 	"net/http"
 	"time"
 )

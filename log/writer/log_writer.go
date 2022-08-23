@@ -2,7 +2,7 @@ package writer
 
 import (
 	"context"
-	"github.com/oldbai555/log/fmt"
+	"lb/log/fmt"
 )
 
 type LoggerWriter interface {

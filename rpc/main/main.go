@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/oldbai555/rpc"
+	"lb/rpc"
 	"log"
 	"net"
 	"sync"

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	fmt2 "github.com/oldbai555/log/fmt"
-	"github.com/oldbai555/log/writer"
+	fmt2 "lb/log/fmt"
+	"lb/log/writer"
 	"sync"
 )
 

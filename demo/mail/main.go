@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/oldbai555/comm/mail"
-	"github.com/oldbai555/log"
+	"lb/comm/mail"
+	"lb/log"
 )
 
 func main() {
-
+	SendCloudDemo()
 }
 
 // SendCloudDemo sendcloud 配制

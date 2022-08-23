@@ -338,7 +338,7 @@ func (ss SliceType) FirstOr(defaultValue ElementType) ElementType {
 	"Float64s": `package functions
 
 import (
-	"github.com/oldbai555/comm/extrpkg/pie/pie"
+	"lb/extrpkg/pie/pie"
 	"strconv"
 )
 
@@ -423,7 +423,7 @@ func (ss SliceType) Intersect(slices ...SliceType) (ss2 SliceType) {
 	"Ints": `package functions
 
 import (
-	"github.com/oldbai555/comm/extrpkg/pie/pie"
+	"lb/extrpkg/pie/pie"
 	"strconv"
 )
 
@@ -907,7 +907,7 @@ func (ss SliceType) Sequence(params ...int) SliceType {
 `,
 	"SequenceUsing": `package functions
 
-import "github.com/oldbai555/comm/extrpkg/pie/pie/util"
+import "lb/extrpkg/pie/pie/util"
 
 // SequenceUsing generates slice in range using creator function
 //
@@ -960,7 +960,7 @@ func (ss SliceType) Shift() (ElementType, SliceType) {
 	"Shuffle": `package functions
 
 import (
-	"github.com/oldbai555/comm/extrpkg/pie/pie/util"
+	"lb/extrpkg/pie/pie/util"
 	"math/rand"
 )
 
@@ -1086,7 +1086,7 @@ func (ss SliceType) Stddev() float64 {
 	"Strings": `package functions
 
 import (
-	"github.com/oldbai555/comm/extrpkg/pie/pie"
+	"lb/extrpkg/pie/pie"
 )
 
 // Strings transforms each element to a string.
@@ -1116,7 +1116,7 @@ func (ss SliceType) Strings() pie.Strings {
 	"StringsUsing": `package functions
 
 import (
-	"github.com/oldbai555/comm/extrpkg/pie/pie"
+	"lb/extrpkg/pie/pie"
 )
 
 // StringsUsing transforms each element to a string.

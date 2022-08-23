@@ -7,10 +7,10 @@ import (
 	"github.com/emersion/go-imap/client"
 	"github.com/emersion/go-message/charset"
 	"github.com/emersion/go-message/mail"
-	"github.com/oldbai555/comm"
-	"github.com/oldbai555/log"
 	"io"
 	"io/ioutil"
+	"lb/comm"
+	"lb/log"
 	"sort"
 	"time"
 )

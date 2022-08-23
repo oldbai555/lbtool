@@ -3,8 +3,8 @@ package mail
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/oldbai555/comm/extrpkg/gomail"
-	"github.com/oldbai555/log"
+	"lb/extrpkg/gomail"
+	"lb/log"
 	"mime"
 	"strings"
 )
@@ -85,7 +85,7 @@ func SendMail(sender *Sender, detail *Details) error {
 
 	// 开始发送
 	if err = gomail.Send(s, m); err != nil {
-		log.Errorf("send mail err:", err)
+		log.Errorf("send mail err: %v", err)
 		if strings.Contains(err.Error(), "invalid address") {
 			return fmt.Errorf("invalid address")
 		}

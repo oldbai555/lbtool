@@ -1,7 +1,7 @@
 package fmt
 
 import (
-	"github.com/oldbai555/log"
+	"lb/log"
 	"testing"
 	"time"
 )

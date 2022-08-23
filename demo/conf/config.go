@@ -7,8 +7,8 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	val "github.com/go-playground/validator/v10"
 	zh_translations "github.com/go-playground/validator/v10/translations/zh"
-	"github.com/oldbai555/comm"
 	"github.com/spf13/viper"
+	"lb/comm"
 	"reflect"
 	"sync"
 )
