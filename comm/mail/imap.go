@@ -30,17 +30,18 @@ const (
 
 // NewImapClient 创建IMAP客户端
 func NewImapClient(connectType uint32) (*client.Client, error) {
+
 	conn, err := GetConnect(connectType)
 	if err != nil {
 		log.Errorf("err is %v", err)
 		return nil, err
 	}
+	log.Debugf("Connecting to server...")
+
 	// 【字符集】  处理us-ascii和utf-8以外的字符集(例如gbk,gb2313等)时,
 	//  需要加上这行代码。
 	// 【参考】 https://github.com/emersion/go-imap/wiki/Charset-handling
 	imap.CharsetReader = charset.Reader
-
-	log.Infof("Connecting to server...")
 
 	// 连接邮件服务器
 	c, err := client.DialTLS(fmt.Sprintf("%s:%d", conn.ImapHost, conn.ImapPost), nil)
@@ -48,7 +49,8 @@ func NewImapClient(connectType uint32) (*client.Client, error) {
 		log.Errorf("err is %v", err)
 		return nil, err
 	}
-	log.Infof("Connected")
+	log.Debugf("Connected")
+
 	idClient := id.NewClient(c)
 	_, err = idClient.ID(
 		id.ID{id.FieldName: "IMAPClient", id.FieldVersion: "1.2.0"}, // 随便定义申明自己身份就行
@@ -57,24 +59,18 @@ func NewImapClient(connectType uint32) (*client.Client, error) {
 		log.Errorf("err is %v", err)
 		return nil, err
 	}
+
 	return c, nil
 }
 
 // Login 创建IMAP客户端
 func Login(u *user, c *client.Client) error {
-	// 【字符集】  处理us-ascii和utf-8以外的字符集(例如gbk,gb2313等)时,
-	//  需要加上这行代码。
-	// 【参考】 https://github.com/emersion/go-imap/wiki/Charset-handling
-	imap.CharsetReader = charset.Reader
-
 	// 使用账号密码登录
 	if err := c.Login(u.Username, u.Password); err != nil {
 		log.Errorf("err is %v", err)
 		return err
 	}
-
 	log.Infof("Logged in")
-
 	return nil
 }
 
@@ -101,11 +97,6 @@ func ReadMail(req *ReadMailReq, f func(msgList []*ReceiveMailMessage) error) err
 	}
 
 	err := Login(req.U, req.C)
-	if err != nil {
-		log.Errorf("err is %v", err)
-		return err
-	}
-
 	// Don't forget to logout
 	defer func() {
 		logoutErr := req.C.Logout()
@@ -113,6 +104,10 @@ func ReadMail(req *ReadMailReq, f func(msgList []*ReceiveMailMessage) error) err
 			log.Errorf("err is %v", logoutErr)
 		}
 	}()
+	if err != nil {
+		log.Errorf("err is %v", err)
+		return err
+	}
 
 	// 选择收件箱
 	if req.SelectBox == "" {
@@ -178,6 +173,7 @@ func ReadMail(req *ReadMailReq, f func(msgList []*ReceiveMailMessage) error) err
 	}
 
 	for msg := range chanMessage {
+		// todo 扩展 此处可以做时间校验，获取几分钟前到现在的邮件
 		if msg.Envelope == nil {
 			log.Warnf("val.Envelope is nil ,%v", msg)
 			continue
@@ -229,13 +225,10 @@ func ReadMail(req *ReadMailReq, f func(msgList []*ReceiveMailMessage) error) err
 
 			switch h := p.Header.(type) {
 			case *mail.InlineHeader:
-				// This is the message's text (can be plain-text or HTML)
 				// 获取正文内容, text或者html
 				b, _ := ioutil.ReadAll(p.Body)
-				// log.Debugf("Got text: ", string(b))
 				receMsg.MsgBodyList = append(receMsg.MsgBodyList, b)
 			case *mail.AttachmentHeader:
-				// This is an attachment
 				// 下载附件
 				filename, err := h.Filename()
 				if err != nil {
@@ -243,14 +236,15 @@ func ReadMail(req *ReadMailReq, f func(msgList []*ReceiveMailMessage) error) err
 					return err
 				}
 				if filename != "" {
-					log.Debugf("Got attachment: %s", filename)
 					b, _ := ioutil.ReadAll(p.Body)
 					receMsg.AttachList = append(receMsg.AttachList, &Attach{
 						Buf:      b,
 						FileName: filename,
 					})
 				}
+
 			}
+
 		}
 		log.Debugf("find end")
 		err = setSeenFlag(req.C, msg.SeqNum)
