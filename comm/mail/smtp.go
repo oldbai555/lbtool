@@ -15,6 +15,7 @@ const (
 	HeaderFrom    = "From"
 	HeaderSender  = "Sender"
 	HeaderTo      = "To"
+	HeaderReplyTo = "Reply-to"
 	HeaderSubject = "Subject"
 	HeaderCc      = "Cc"
 	HeaderBcc     = "Bcc"
@@ -49,6 +50,9 @@ func SendMail(sender *Sender, detail *Details) error {
 
 	// 设置收件人信息
 	m.SetHeader(HeaderTo, detail.ToList...)
+
+	// 指定回复人
+	// m.SetHeader(HeaderReplyTo, "934105499@qq.com")
 
 	// 设置邮箱主题
 	m.SetHeader(HeaderSubject, detail.Subject)
