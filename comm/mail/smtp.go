@@ -12,13 +12,13 @@ import (
 const (
 	DefaultContentType = "text/html"
 
-	HeaderFrom    = "From"
-	HeaderSender  = "Sender"
-	HeaderTo      = "To"
-	HeaderReplyTo = "Reply-to"
-	HeaderSubject = "Subject"
-	HeaderCc      = "Cc"
-	HeaderBcc     = "Bcc"
+	HeaderFrom    = "From"     // 发件人
+	HeaderSender  = "Sender"   // 发件人
+	HeaderTo      = "To"       // 收件人
+	HeaderReplyTo = "Reply-to" // 答复
+	HeaderSubject = "Subject"  // 主题
+	HeaderCc      = "Cc"       // 抄送
+	HeaderBcc     = "Bcc"      // 密件抄送
 )
 
 // SendMail 发送邮件
@@ -45,7 +45,7 @@ func SendMail(sender *Sender, detail *Details) error {
 	// 设置发件人信息
 	m.SetHeader(HeaderFrom, m.FormatAddress(detail.Form, detail.Alias))
 
-	// 设置授权的发送者 - 这里可以理解为代发人，配制个邮时需要配制
+	// 设置实际的发件人,部分邮件服务商允许 From 和 Sender 不一致,实际使用时使用 From 即可;
 	// m.SetHeader(HeaderSender, sender.AuthEmail)
 
 	// 设置收件人信息
