@@ -43,9 +43,9 @@ func main() {
 	v1 := engine.Group("/v1")
 	v1.Use(onlyForV1())
 	{
-		v1.GET("/", func(c *web.Context) error {
-			return c.HTML(http.StatusOK, "<h1>Hello Gee</h1>")
-		})
+		//v1.GET("/", func(c *web.Context) error {
+		//	return c.HTML(http.StatusOK, "<h1>Hello Gee</h1>")
+		//})
 
 		v1.GET("/hello", func(c *web.Context) error {
 			// expect /hello?name=geektutu
