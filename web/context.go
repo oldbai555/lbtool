@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/oldbai555/lb/log"
 	"github.com/oldbai555/lb/utils"
-	"log"
 	"net/http"
 )
 
@@ -60,7 +60,7 @@ func (c *Context) Next() {
 	for ; c.index < s; c.index++ {
 		err := c.handlers[c.index](c)
 		if err != nil {
-			log.Printf("error: %v", err)
+			log.Errorf("error: %v", err)
 		}
 	}
 }
@@ -116,6 +116,11 @@ func (c *Context) Data(code int, data []byte) error {
 	c.Status(code)
 	_, err := c.Writer.Write(data)
 	return err
+}
+
+func (c *Context) Fail(code int, err string) {
+	c.index = len(c.handlers)
+	c.JSON(code, H{"message": err})
 }
 
 // HTML html网页 先不支持html

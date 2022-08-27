@@ -18,6 +18,7 @@ type HandlerFunc func(c *Context) error
 
 // Engine implement the internal of ServeHTTP
 type Engine struct {
+	env        string
 	serverName string
 	port       uint32
 
@@ -32,15 +33,23 @@ type Engine struct {
 var _ http.Handler = (*Engine)(nil)
 
 // New is the constructor of gee.Engine
-func New(serverName string, port uint32) *Engine {
+func New(serverName, env string, port uint32) *Engine {
 	e := &Engine{
 		serverName: serverName,
+		env:        env,
 		port:       port,
 
 		router: newRouter(),
 	}
 	e.RouterGroup = &RouterGroup{engine: e}
 	e.groups = []*RouterGroup{e.RouterGroup}
+	e.Use(Recovery(), func(c *Context) error {
+		log.SetLogHint(c.hint)
+		log.SetEnv(e.env)
+		log.SetModuleName(e.serverName)
+		c.Next()
+		return nil
+	})
 	return e
 }
 
@@ -83,6 +92,5 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	c := newContext(w, req, context.TODO(), engine.serverName)
 	c.handlers = middlewares
 	//c.engine = engine 先不支持HTML渲染
-	log.SetLogHint(c.hint)
 	engine.router.handle(c)
 }
