@@ -1,7 +1,6 @@
-package comm
+package utils
 
 import (
-	"fmt"
 	"log"
 	"testing"
 )
@@ -20,5 +19,5 @@ func TestMap2Struct(t *testing.T) {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(testStructure)
+	log.Println(testStructure)
 }

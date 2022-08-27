@@ -7,8 +7,8 @@ import (
 	"github.com/emersion/go-imap/client"
 	"github.com/emersion/go-message/charset"
 	"github.com/emersion/go-message/mail"
-	"github.com/oldbai555/lb/comm"
 	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lb/utils"
 	"io"
 	"io/ioutil"
 	"sort"
@@ -353,5 +353,5 @@ func (a MessageList) Swap(i, j int) {
 
 // Less 重写 Less() 方法
 func (a MessageList) Less(i, j int) bool {
-	return comm.ReflectCompareFieldDesc(a[j], a[i], "SeqNum")
+	return utils.ReflectCompareFieldDesc(a[j], a[i], "SeqNum")
 }

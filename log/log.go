@@ -3,7 +3,8 @@ package log
 import (
 	"errors"
 	"fmt"
-	"github.com/oldbai555/lb/comm"
+	"github.com/oldbai555/lb/internal/lb_interface"
+	"github.com/oldbai555/lb/utils"
 	"github.com/petermattis/goid"
 	"sync"
 )
@@ -18,7 +19,7 @@ var (
 
 func init() {
 	if env == "" {
-		env = comm.DEV
+		env = utils.DEV
 	}
 	log = newLogger(env)
 }
@@ -52,26 +53,26 @@ func SetModuleName(name string) {
 
 func Debugf(format string, args ...interface{}) {
 
-	if err := log.write(levelDebug, append([]interface{}{format}, args...)...); err != nil {
+	if err := log.write(utils.LevelDebug, append([]interface{}{format}, args...)...); err != nil {
 		panic(any(err))
 	}
 }
 
 func Infof(format string, args ...interface{}) {
-	if err := log.write(levelInfo, append([]interface{}{format}, args...)...); err != nil {
+	if err := log.write(utils.LevelInfo, append([]interface{}{format}, args...)...); err != nil {
 		panic(any(err))
 	}
 }
 
 func Warnf(format string, args ...interface{}) {
-	if err := log.write(levelWarn, append([]interface{}{format}, args...)...); err != nil {
+	if err := log.write(utils.LevelWarn, append([]interface{}{format}, args...)...); err != nil {
 		panic(any(err))
 	}
 
 }
 
 func Errorf(format string, args ...interface{}) {
-	if err := log.write(levelError, append([]interface{}{format}, args...)...); err != nil {
+	if err := log.write(utils.LevelError, append([]interface{}{format}, args...)...); err != nil {
 		panic(any(err))
 	}
 }
@@ -80,8 +81,8 @@ func Errorf(format string, args ...interface{}) {
 
 // Logger 日志业务
 type logger struct {
-	logLevel  Level
-	logWriter logWriter
+	logLevel  utils.Level
+	logWriter lb_interface.LogWriter
 	mu        sync.RWMutex
 }
 
@@ -91,7 +92,7 @@ func newLogger(e string) *logger {
 	}
 }
 
-func (l *logger) write(level Level, args ...interface{}) error {
+func (l *logger) write(level utils.Level, args ...interface{}) error {
 	if l.logLevel > level {
 		return nil
 	}

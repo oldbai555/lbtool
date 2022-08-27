@@ -9,7 +9,7 @@ import (
 )
 
 func TestSimpleLoggerWriter_tryOpenNewFile(t *testing.T) {
-	var defaultBaseDir = "./log"
+	defaultBaseDir = "./log"
 	if ex, err := os.Executable(); err == nil {
 		defaultBaseDir = filepath.Dir(ex) + "/log"
 	}

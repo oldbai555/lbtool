@@ -1,4 +1,4 @@
-package comm
+package utils
 
 const (
 	PROD = "PROD"

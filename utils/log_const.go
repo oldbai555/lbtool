@@ -1,4 +1,4 @@
-package log
+package utils
 
 import "fmt"
 
@@ -17,28 +17,28 @@ const (
 type Level int
 
 const (
-	levelDebug Level = iota
-	levelInfo
-	levelWarn
-	levelError
+	LevelDebug Level = iota
+	LevelInfo
+	LevelWarn
+	LevelError
 	levelPanic
 	levelFatal
 )
 
-var levelToStrMap = map[Level]string{
-	levelDebug: "DBG",
-	levelInfo:  "INFO",
-	levelWarn:  "WARN",
-	levelError: "ERR",
+var LevelToStrMap = map[Level]string{
+	LevelDebug: "DBG",
+	LevelInfo:  "INFO",
+	LevelWarn:  "WARN",
+	LevelError: "ERR",
 	levelPanic: "FATAL",
 	levelFatal: "PANIC",
 }
 
-var levelToStdoutColorMap = map[Level]Color{
-	levelDebug: colorBlue,
-	levelInfo:  colorGreen,
-	levelWarn:  colorYellow,
-	levelError: colorRed,
+var LevelToStdoutColorMap = map[Level]Color{
+	LevelDebug: colorBlue,
+	LevelInfo:  colorGreen,
+	LevelWarn:  colorYellow,
+	LevelError: colorRed,
 	levelFatal: colorPurple,
 	levelPanic: colorRed,
 }
@@ -55,7 +55,7 @@ const (
 	colorPurple
 )
 
-const colorEnd = "\x1b[0m"
+const ColorEnd = "\x1b[0m"
 
 var colorToStdoutMap = map[Color]string{
 	colorRed:    fmt.Sprintf("\x1b[%dm", 91),

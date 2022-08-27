@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/oldbai555/lb/comm"
+	"github.com/oldbai555/lb/utils"
 	"net/http"
 )
 
@@ -52,7 +52,7 @@ func newContext(w http.ResponseWriter, req *http.Request, ctx context.Context, s
 		ctx: ctx,
 
 		serverName: serverName,
-		hint:       comm.GetRandomString(16, comm.RandomStringModNumberPlusLetter),
+		hint:       utils.GetRandomString(16, utils.RandomStringModNumberPlusLetter),
 	}
 }
 

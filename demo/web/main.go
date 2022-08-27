@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/oldbai555/lb/comm"
 	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lb/utils"
 	"github.com/oldbai555/lb/web"
 	"net/http"
 	"time"
@@ -15,7 +15,7 @@ func init() {
 func main() {
 	engine := web.New("myWebTest", 12431)
 	engine.GET("/hello", func(c *web.Context) error {
-		log.Infof("hello %s", time.Now().Format(comm.DateTimeLayout))
+		log.Infof("hello %s", time.Now().Format(utils.DateTimeLayout))
 		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
 		return nil
 	})
