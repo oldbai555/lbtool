@@ -192,7 +192,7 @@ func (ss Strings) Each(fn func(string)) Strings {
 // if they are the same is considered the slices are equal if all elements are the same is considered the slices are equal
 // if each slice == nil is considered that they're equal
 //
-// if element realizes Equals interface it uses that method, in other way uses default compare
+// if element realizes Equals internal it uses that method, in other way uses default compare
 func (ss Strings) Equals(rhs Strings) bool {
 	if len(ss) != len(rhs) {
 		return false

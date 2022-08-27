@@ -26,7 +26,7 @@ func ValueOfData(data interface{}) reflect.Value {
 	return valueType
 }
 
-// ToSlice 将slice 转换成 []interface{}
+// ToSlice 将slice 转换成 []internal{}
 func ToSlice(arr interface{}) []interface{} {
 	v := reflect.ValueOf(arr)
 	if v.Kind() != reflect.Slice {

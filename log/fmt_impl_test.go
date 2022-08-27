@@ -1,13 +1,12 @@
-package fmt
+package log
 
 import (
-	"github.com/oldbai555/lb/log"
 	"testing"
 	"time"
 )
 
 func Hello() {
-	log.Infof("hello %d, %d", time.Now().Unix(), time.Now().Unix())
+	Infof("hello %d, %d", time.Now().Unix(), time.Now().Unix())
 }
 
 func TestSimpleTraceFormatter_Sprintf(t *testing.T) {

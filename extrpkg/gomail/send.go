@@ -7,14 +7,14 @@ import (
 	"net/mail"
 )
 
-// Sender is the interface that wraps the Send method.
+// Sender is the internal that wraps the Send method.
 //
 // Send sends an email to the given addresses.
 type Sender interface {
 	Send(from string, to []string, msg io.WriterTo) error
 }
 
-// SendCloser is the interface that groups the Send and Close methods.
+// SendCloser is the internal that groups the Send and Close methods.
 type SendCloser interface {
 	Sender
 	Close() error

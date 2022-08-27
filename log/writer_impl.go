@@ -1,13 +1,11 @@
-package writer
+package log
 
 import (
-	"context"
 	"fmt"
 	"github.com/oldbai555/lb/comm"
-	fmt2 "github.com/oldbai555/lb/log/fmt"
-	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sync/atomic"
 	"time"
 )
@@ -25,32 +23,42 @@ const (
 	DefaultChannelNumber = 1
 )
 
-func NewDefaultSimpleLoggerWriter(e string) *SimpleLoggerWriter {
-	var defaultBaseDir = "./log"
-	if ex, err := os.Executable(); err == nil {
-		defaultBaseDir = filepath.Dir(ex) + "/log"
-	}
+// default linux path
+var defaultBaseDir = "/home/lb/log"
 
-	writer := SimpleLoggerWriter{
+func init() {
+	if runtime.GOOS == "windows" {
+		defaultBaseDir = "./log"
+		if ex, err := os.Executable(); err == nil {
+			defaultBaseDir = filepath.Dir(ex) + "/log"
+		}
+	}
+	comm.CreateDir(defaultBaseDir)
+}
+func newLogWriterImpl(e string) *logWriterImpl {
+
+	writer := logWriterImpl{
 		env:                      e,
 		baseDir:                  defaultBaseDir,
 		maxFileSize:              DefaultMaxFileSize,
 		checkFileFullIntervalSec: UnitSeconds * 5,
-		fmt:                      fmt2.NewDefaultSimpleFormatter(),
+		fmt:                      newSimpleFormatter(),
 		bufCh:                    make(chan []byte, DefaultChannelNumber),
 		flushSignChan:            make(chan struct{}, DefaultChannelNumber),
 		flushDoneSignChan:        make(chan error, DefaultChannelNumber),
 	}
+
 	go func() {
 		err := writer.LoopDoLogic()
 		panic(any(err))
 	}()
+
 	writer.isFlushing.Store(false)
 	return &writer
 }
 
-// SimpleLoggerWriter 写日志
-type SimpleLoggerWriter struct {
+// logWriterImpl 写日志
+type logWriterImpl struct {
 	fp                       *os.File
 	env                      string
 	baseDir                  string
@@ -59,7 +67,7 @@ type SimpleLoggerWriter struct {
 	lastCheckIsFullAt        int64  // 上一次检查文件大小时间
 	isFileFull               bool   // 文件是否已经满了
 	currentFileName          string // 当前文件名
-	fmt                      fmt2.Formatter
+	fmt                      formatter
 	openCurrentFileTime      *time.Time // 打开文件时间
 	bufCh                    chan []byte
 	isFlushing               atomic.Value
@@ -68,25 +76,23 @@ type SimpleLoggerWriter struct {
 }
 
 // Write 写日志
-func (s *SimpleLoggerWriter) Write(ctx context.Context, level fmt2.Level, format string, args ...interface{}) error {
-	stdoutColor, ok := fmt2.LevelToStdoutColorMap[level]
-	if !ok {
-		stdoutColor = fmt2.ColorNil
-	}
-	logContent, err := s.fmt.Sprintf(ctx, level, stdoutColor, format, args...)
+func (s *logWriterImpl) Write(level Level, buf string) error {
+	stdoutColor := levelToStdoutColorMap[level]
+	logContent, err := s.fmt.Sprintf(level, stdoutColor, buf)
 	if err != nil {
 		return err
 	}
 
 	s.bufCh <- []byte(logContent)
 	if s.env != comm.PROD {
-		log.Println(logContent)
+		fmt.Printf(logContent)
 	}
 	return nil
 }
 
 // LoopDoLogic 循环执行写日志逻辑
-func (s *SimpleLoggerWriter) LoopDoLogic() error {
+func (s *logWriterImpl) LoopDoLogic() error {
+	// 看看需不需要追加继续写文件
 	doWriteMoreAsPossible := func(buf []byte) error {
 		for {
 			var moreBuf []byte
@@ -153,7 +159,7 @@ func (s *SimpleLoggerWriter) LoopDoLogic() error {
 }
 
 // checkFileIsFull 检查文件是否满了
-func (s *SimpleLoggerWriter) checkFileIsFull() (bool, error) {
+func (s *logWriterImpl) checkFileIsFull() (bool, error) {
 
 	// 检查时间间隔
 	if s.lastCheckIsFullAt+s.checkFileFullIntervalSec < time.Now().Unix() {
@@ -172,7 +178,7 @@ func (s *SimpleLoggerWriter) checkFileIsFull() (bool, error) {
 }
 
 // tryOpenNewFile 尝试开启新文件
-func (s *SimpleLoggerWriter) tryOpenNewFile() error {
+func (s *logWriterImpl) tryOpenNewFile() error {
 	var err error
 	fileName := fmt.Sprintf("%s.log", time.Now().Format("2006010215"))
 
@@ -201,21 +207,21 @@ func (s *SimpleLoggerWriter) tryOpenNewFile() error {
 }
 
 // isFlushingNow 是否正在刷缓冲区
-func (s *SimpleLoggerWriter) isFlushingNow() bool {
+func (s *logWriterImpl) isFlushingNow() bool {
 	return s.isFlushing.Load().(bool)
 }
 
 // Flush 刷缓冲区
-func (s *SimpleLoggerWriter) Flush() error {
+func (s *logWriterImpl) Flush() error {
 	s.isFlushing.Store(true)
 	s.flushSignChan <- struct{}{}
 	return <-s.flushDoneSignChan
 }
 
 // finishFlush 结束刷缓冲区
-func (s *SimpleLoggerWriter) finishFlush(err error) {
+func (s *logWriterImpl) finishFlush(err error) {
 	s.isFlushing.Store(false)
 	s.flushDoneSignChan <- err
 }
 
-var _ LoggerWriter = (*SimpleLoggerWriter)(nil)
+var _ logWriter = (*logWriterImpl)(nil)

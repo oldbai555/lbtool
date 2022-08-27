@@ -2,8 +2,8 @@ package rpc
 
 import (
 	"context"
+	"github.com/oldbai555/lb/rpc/test"
 	"net"
-	"rpc/test"
 	"strings"
 	"testing"
 	"time"

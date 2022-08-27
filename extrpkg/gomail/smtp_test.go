@@ -59,10 +59,10 @@ func TestDialerSSL(t *testing.T) {
 
 func TestDialerConfig(t *testing.T) {
 	d := NewDialer(testHost, testPort, "user", "pwd")
-	d.LocalName = "test"
+	d.LocalName = "demo"
 	d.TLSConfig = testConfig
 	testSendMail(t, d, []string{
-		"Hello test",
+		"Hello demo",
 		"Extension STARTTLS",
 		"StartTLS",
 		"Extension AUTH",
@@ -80,10 +80,10 @@ func TestDialerConfig(t *testing.T) {
 
 func TestDialerSSLConfig(t *testing.T) {
 	d := NewDialer(testHost, testSSLPort, "user", "pwd")
-	d.LocalName = "test"
+	d.LocalName = "demo"
 	d.TLSConfig = testConfig
 	testSendMail(t, d, []string{
-		"Hello test",
+		"Hello demo",
 		"Extension AUTH",
 		"Auth",
 		"Mail " + testFrom,

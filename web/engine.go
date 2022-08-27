@@ -1,7 +1,9 @@
 package web
 
 import (
+	"context"
 	"fmt"
+	"github.com/oldbai555/lb/log"
 	"net/http"
 )
 
@@ -13,16 +15,29 @@ const (
 // HandlerFunc defines the request handler used by web
 type HandlerFunc func(c *Context) error
 
-// Engine implement the interface of ServeHTTP
+// Engine implement the internal of ServeHTTP
 type Engine struct {
+	serverName string
+	port       uint32
+
+	*RouterGroup
 	router *router
+	groups []*RouterGroup // store all groups
 }
 
 var _ http.Handler = (*Engine)(nil)
 
 // New is the constructor of gee.Engine
-func New() *Engine {
-	return &Engine{router: newRouter()}
+func New(serverName string, port uint32) *Engine {
+	e := &Engine{
+		serverName: serverName,
+		port:       port,
+
+		router: newRouter(),
+	}
+	e.RouterGroup = &RouterGroup{engine: e}
+	e.groups = []*RouterGroup{e.RouterGroup}
+	return e
 }
 
 func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
@@ -40,11 +55,12 @@ func (engine *Engine) POST(pattern string, handler HandlerFunc) {
 }
 
 // Run defines the method to start a http server
-func (engine *Engine) Run(port uint32) (err error) {
-	return http.ListenAndServe(fmt.Sprintf(":%d", port), engine)
+func (engine *Engine) Run() (err error) {
+	return http.ListenAndServe(fmt.Sprintf(":%d", engine.port), engine)
 }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	c := newContext(w, req)
+	c := newContext(w, req, context.TODO(), engine.serverName)
+	log.SetLogHint(c.hint)
 	engine.router.handle(c)
 }

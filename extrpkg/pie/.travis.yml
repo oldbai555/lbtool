@@ -17,7 +17,7 @@ script:
   - $(exit $(git status --porcelain | wc -l))
 
   # Run tests.
-  - go test -race ./pie -coverprofile=coverage.txt -covermode=atomic
+  - go demo -race ./pie -coverprofile=coverage.txt -covermode=atomic
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

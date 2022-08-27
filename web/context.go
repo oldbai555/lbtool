@@ -1,8 +1,10 @@
 package web
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/oldbai555/lb/comm"
 	"net/http"
 )
 
@@ -18,14 +20,39 @@ type Context struct {
 	Params map[string]string
 	// response info
 	StatusCode int
+
+	//
+	ctx       context.Context
+	parentCtx *context.Context
+
+	//
+	serverName string
+	hint       string
 }
 
-func newContext(w http.ResponseWriter, req *http.Request) *Context {
+func (c *Context) GetCtx() context.Context {
+	return c.ctx
+}
+
+func (c *Context) GetServiceName() string {
+	return c.serverName
+}
+
+func (c *Context) GetHint() string {
+	return c.hint
+}
+
+func newContext(w http.ResponseWriter, req *http.Request, ctx context.Context, serverName string) *Context {
 	return &Context{
 		Writer: w,
 		Req:    req,
 		Path:   req.URL.Path,
 		Method: req.Method,
+
+		ctx: ctx,
+
+		serverName: serverName,
+		hint:       comm.GetRandomString(16, comm.RandomStringModNumberPlusLetter),
 	}
 }
 

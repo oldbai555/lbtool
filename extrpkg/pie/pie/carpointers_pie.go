@@ -178,7 +178,7 @@ func (ss carPointers) Each(fn func(*car)) carPointers {
 // if they are the same is considered the slices are equal if all elements are the same is considered the slices are equal
 // if each slice == nil is considered that they're equal
 //
-// if element realizes Equals interface it uses that method, in other way uses default compare
+// if element realizes Equals internal it uses that method, in other way uses default compare
 func (ss carPointers) Equals(rhs carPointers) bool {
 	if len(ss) != len(rhs) {
 		return false

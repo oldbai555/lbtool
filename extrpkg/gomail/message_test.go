@@ -241,18 +241,18 @@ func TestAttachmentOnly(t *testing.T) {
 	m := NewMessage()
 	m.SetHeader("From", "from@example.com")
 	m.SetHeader("To", "to@example.com")
-	m.Attach(mockCopyFile("/tmp/test.pdf"))
+	m.Attach(mockCopyFile("/tmp/demo.pdf"))
 
 	want := &message{
 		from: "from@example.com",
 		to:   []string{"to@example.com"},
 		content: "From: from@example.com\r\n" +
 			"To: to@example.com\r\n" +
-			"Content-Type: application/pdf; name=\"test.pdf\"\r\n" +
-			"Content-Disposition: attachment; filename=\"test.pdf\"\r\n" +
+			"Content-Type: application/pdf; name=\"demo.pdf\"\r\n" +
+			"Content-Disposition: attachment; filename=\"demo.pdf\"\r\n" +
 			"Content-Transfer-Encoding: base64\r\n" +
 			"\r\n" +
-			base64.StdEncoding.EncodeToString([]byte("Content of test.pdf")),
+			base64.StdEncoding.EncodeToString([]byte("Content of demo.pdf")),
 	}
 
 	testMessage(t, m, 0, want)
@@ -263,7 +263,7 @@ func TestAttachment(t *testing.T) {
 	m.SetHeader("From", "from@example.com")
 	m.SetHeader("To", "to@example.com")
 	m.SetBody("text/plain", "Test")
-	m.Attach(mockCopyFile("/tmp/test.pdf"))
+	m.Attach(mockCopyFile("/tmp/demo.pdf"))
 
 	want := &message{
 		from: "from@example.com",
@@ -279,11 +279,11 @@ func TestAttachment(t *testing.T) {
 			"\r\n" +
 			"Test\r\n" +
 			"--_BOUNDARY_1_\r\n" +
-			"Content-Type: application/pdf; name=\"test.pdf\"\r\n" +
-			"Content-Disposition: attachment; filename=\"test.pdf\"\r\n" +
+			"Content-Type: application/pdf; name=\"demo.pdf\"\r\n" +
+			"Content-Disposition: attachment; filename=\"demo.pdf\"\r\n" +
 			"Content-Transfer-Encoding: base64\r\n" +
 			"\r\n" +
-			base64.StdEncoding.EncodeToString([]byte("Content of test.pdf")) + "\r\n" +
+			base64.StdEncoding.EncodeToString([]byte("Content of demo.pdf")) + "\r\n" +
 			"--_BOUNDARY_1_--\r\n",
 	}
 
@@ -295,7 +295,7 @@ func TestRename(t *testing.T) {
 	m.SetHeader("From", "from@example.com")
 	m.SetHeader("To", "to@example.com")
 	m.SetBody("text/plain", "Test")
-	name, copy := mockCopyFile("/tmp/test.pdf")
+	name, copy := mockCopyFile("/tmp/demo.pdf")
 	rename := Rename("another.pdf")
 	m.Attach(name, copy, rename)
 
@@ -317,7 +317,7 @@ func TestRename(t *testing.T) {
 			"Content-Disposition: attachment; filename=\"another.pdf\"\r\n" +
 			"Content-Transfer-Encoding: base64\r\n" +
 			"\r\n" +
-			base64.StdEncoding.EncodeToString([]byte("Content of test.pdf")) + "\r\n" +
+			base64.StdEncoding.EncodeToString([]byte("Content of demo.pdf")) + "\r\n" +
 			"--_BOUNDARY_1_--\r\n",
 	}
 
@@ -328,8 +328,8 @@ func TestAttachmentsOnly(t *testing.T) {
 	m := NewMessage()
 	m.SetHeader("From", "from@example.com")
 	m.SetHeader("To", "to@example.com")
-	m.Attach(mockCopyFile("/tmp/test.pdf"))
-	m.Attach(mockCopyFile("/tmp/test.zip"))
+	m.Attach(mockCopyFile("/tmp/demo.pdf"))
+	m.Attach(mockCopyFile("/tmp/demo.zip"))
 
 	want := &message{
 		from: "from@example.com",
@@ -340,17 +340,17 @@ func TestAttachmentsOnly(t *testing.T) {
 			" boundary=_BOUNDARY_1_\r\n" +
 			"\r\n" +
 			"--_BOUNDARY_1_\r\n" +
-			"Content-Type: application/pdf; name=\"test.pdf\"\r\n" +
-			"Content-Disposition: attachment; filename=\"test.pdf\"\r\n" +
+			"Content-Type: application/pdf; name=\"demo.pdf\"\r\n" +
+			"Content-Disposition: attachment; filename=\"demo.pdf\"\r\n" +
 			"Content-Transfer-Encoding: base64\r\n" +
 			"\r\n" +
-			base64.StdEncoding.EncodeToString([]byte("Content of test.pdf")) + "\r\n" +
+			base64.StdEncoding.EncodeToString([]byte("Content of demo.pdf")) + "\r\n" +
 			"--_BOUNDARY_1_\r\n" +
-			"Content-Type: application/zip; name=\"test.zip\"\r\n" +
-			"Content-Disposition: attachment; filename=\"test.zip\"\r\n" +
+			"Content-Type: application/zip; name=\"demo.zip\"\r\n" +
+			"Content-Disposition: attachment; filename=\"demo.zip\"\r\n" +
 			"Content-Transfer-Encoding: base64\r\n" +
 			"\r\n" +
-			base64.StdEncoding.EncodeToString([]byte("Content of test.zip")) + "\r\n" +
+			base64.StdEncoding.EncodeToString([]byte("Content of demo.zip")) + "\r\n" +
 			"--_BOUNDARY_1_--\r\n",
 	}
 
@@ -362,8 +362,8 @@ func TestAttachments(t *testing.T) {
 	m.SetHeader("From", "from@example.com")
 	m.SetHeader("To", "to@example.com")
 	m.SetBody("text/plain", "Test")
-	m.Attach(mockCopyFile("/tmp/test.pdf"))
-	m.Attach(mockCopyFile("/tmp/test.zip"))
+	m.Attach(mockCopyFile("/tmp/demo.pdf"))
+	m.Attach(mockCopyFile("/tmp/demo.zip"))
 
 	want := &message{
 		from: "from@example.com",
@@ -379,17 +379,17 @@ func TestAttachments(t *testing.T) {
 			"\r\n" +
 			"Test\r\n" +
 			"--_BOUNDARY_1_\r\n" +
-			"Content-Type: application/pdf; name=\"test.pdf\"\r\n" +
-			"Content-Disposition: attachment; filename=\"test.pdf\"\r\n" +
+			"Content-Type: application/pdf; name=\"demo.pdf\"\r\n" +
+			"Content-Disposition: attachment; filename=\"demo.pdf\"\r\n" +
 			"Content-Transfer-Encoding: base64\r\n" +
 			"\r\n" +
-			base64.StdEncoding.EncodeToString([]byte("Content of test.pdf")) + "\r\n" +
+			base64.StdEncoding.EncodeToString([]byte("Content of demo.pdf")) + "\r\n" +
 			"--_BOUNDARY_1_\r\n" +
-			"Content-Type: application/zip; name=\"test.zip\"\r\n" +
-			"Content-Disposition: attachment; filename=\"test.zip\"\r\n" +
+			"Content-Type: application/zip; name=\"demo.zip\"\r\n" +
+			"Content-Disposition: attachment; filename=\"demo.zip\"\r\n" +
 			"Content-Transfer-Encoding: base64\r\n" +
 			"\r\n" +
-			base64.StdEncoding.EncodeToString([]byte("Content of test.zip")) + "\r\n" +
+			base64.StdEncoding.EncodeToString([]byte("Content of demo.zip")) + "\r\n" +
 			"--_BOUNDARY_1_--\r\n",
 	}
 
@@ -400,7 +400,7 @@ func TestEmbedded(t *testing.T) {
 	m := NewMessage()
 	m.SetHeader("From", "from@example.com")
 	m.SetHeader("To", "to@example.com")
-	m.Embed(mockCopyFileWithHeader(m, "image1.jpg", map[string][]string{"Content-ID": {"<test-content-id>"}}))
+	m.Embed(mockCopyFileWithHeader(m, "image1.jpg", map[string][]string{"Content-ID": {"<demo-content-id>"}}))
 	m.Embed(mockCopyFile("image2.jpg"))
 	m.SetBody("text/plain", "Test")
 
@@ -420,7 +420,7 @@ func TestEmbedded(t *testing.T) {
 			"--_BOUNDARY_1_\r\n" +
 			"Content-Type: image/jpeg; name=\"image1.jpg\"\r\n" +
 			"Content-Disposition: inline; filename=\"image1.jpg\"\r\n" +
-			"Content-ID: <test-content-id>\r\n" +
+			"Content-ID: <demo-content-id>\r\n" +
 			"Content-Transfer-Encoding: base64\r\n" +
 			"\r\n" +
 			base64.StdEncoding.EncodeToString([]byte("Content of image1.jpg")) + "\r\n" +
@@ -443,7 +443,7 @@ func TestFullMessage(t *testing.T) {
 	m.SetHeader("To", "to@example.com")
 	m.SetBody("text/plain", "¡Hola, señor!")
 	m.AddAlternative("text/html", "¡<b>Hola</b>, <i>señor</i>!</h1>")
-	m.Attach(mockCopyFile("test.pdf"))
+	m.Attach(mockCopyFile("demo.pdf"))
 	m.Embed(mockCopyFile("image.jpg"))
 
 	want := &message{
@@ -484,11 +484,11 @@ func TestFullMessage(t *testing.T) {
 			"--_BOUNDARY_2_--\r\n" +
 			"\r\n" +
 			"--_BOUNDARY_1_\r\n" +
-			"Content-Type: application/pdf; name=\"test.pdf\"\r\n" +
-			"Content-Disposition: attachment; filename=\"test.pdf\"\r\n" +
+			"Content-Type: application/pdf; name=\"demo.pdf\"\r\n" +
+			"Content-Disposition: attachment; filename=\"demo.pdf\"\r\n" +
 			"Content-Transfer-Encoding: base64\r\n" +
 			"\r\n" +
-			base64.StdEncoding.EncodeToString([]byte("Content of test.pdf")) + "\r\n" +
+			base64.StdEncoding.EncodeToString([]byte("Content of demo.pdf")) + "\r\n" +
 			"--_BOUNDARY_1_--\r\n",
 	}
 
@@ -647,7 +647,7 @@ func compareBodies(t *testing.T, got, want string) {
 	gotLines := strings.Split(got, "\r\n")
 	wantLines := strings.Split(want, "\r\n")
 
-	// We only test for too many lines, missing lines are tested after
+	// We only demo for too many lines, missing lines are tested after
 	if len(gotLines) > len(wantLines) {
 		t.Fatalf("Message has too many lines, \ngot %d:\n%s\nwant %d:\n%s", len(gotLines), got, len(wantLines), want)
 	}
