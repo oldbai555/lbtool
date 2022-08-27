@@ -6,7 +6,6 @@ import (
 )
 
 const MagicNumber = 0x3bef5c
-const DefaultBufferSize = 10
 const DefaultTimeOut = time.Second * 10
 
 // Option 设置固定长度的字节以及编码方法来和客户端进行交互

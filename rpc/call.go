@@ -1,8 +1,9 @@
 package rpc
 
 // Call represents an active RPC.
+// 承载一次 RPC 调用所需要的信息
 type Call struct {
-	Seq           uint64
+	Seq           string
 	ServiceMethod string      // format "<service>.<method>"
 	Args          interface{} // arguments to the function
 	Reply         interface{} // reply from the function
