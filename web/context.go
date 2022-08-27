@@ -23,14 +23,13 @@ type Context struct {
 	StatusCode int
 
 	//
-	ctx       context.Context
-	parentCtx *context.Context
+	ctx context.Context
 
-	//
+	// 服务相关属性
 	serverName string
 	hint       string
 
-	// middleware
+	// 中间件
 	handlers []HandlerFunc
 	index    int
 
@@ -39,7 +38,7 @@ type Context struct {
 }
 
 func newContext(w http.ResponseWriter, req *http.Request, ctx context.Context, serverName string) *Context {
-	return &Context{
+	c := &Context{
 		Writer: w,
 		Req:    req,
 		Path:   req.URL.Path,
@@ -52,6 +51,14 @@ func newContext(w http.ResponseWriter, req *http.Request, ctx context.Context, s
 
 		index: -1,
 	}
+	return c
+}
+
+func (c *Context) GetHint() string {
+	return c.hint
+}
+func (c *Context) GetServerName() string {
+	return c.serverName
 }
 
 func (c *Context) Next() {

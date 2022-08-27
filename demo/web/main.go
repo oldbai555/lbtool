@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/oldbai555/lb/log"
 	"github.com/oldbai555/lb/utils"
 	"github.com/oldbai555/lb/web"
@@ -21,9 +20,21 @@ func onlyForV1() web.HandlerFunc {
 	}
 }
 
+func loadLog() web.HandlerFunc {
+	return func(c *web.Context) error {
+		log.SetLogHint(c.GetHint())
+		log.SetModuleName(c.GetServerName())
+		return nil
+	}
+}
+
+func init() {
+	log.SetEnv(utils.DEV)
+}
+
 func main() {
-	log.SetModuleName(serviceName)
-	engine := web.New(serviceName, utils.DEV, 12431)
+	engine := web.New(serviceName, 12431)
+	engine.Use(loadLog())
 	engine.GET("/hello", func(c *web.Context) error {
 		log.Infof("hello %s", time.Now().Format(utils.DateTimeLayout))
 		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
@@ -50,7 +61,6 @@ func main() {
 
 		v1.GET("/hello", func(c *web.Context) error {
 			// expect /hello?name=geektutu
-			panic(any(fmt.Sprintf("123")))
 			c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
 			return nil
 		})

@@ -3,7 +3,6 @@ package web
 import (
 	"context"
 	"fmt"
-	"github.com/oldbai555/lb/log"
 	"net/http"
 	"strings"
 )
@@ -33,23 +32,16 @@ type Engine struct {
 var _ http.Handler = (*Engine)(nil)
 
 // New is the constructor of gee.Engine
-func New(serverName, env string, port uint32) *Engine {
+func New(serverName string, port uint32) *Engine {
 	e := &Engine{
 		serverName: serverName,
-		env:        env,
 		port:       port,
 
 		router: newRouter(),
 	}
 	e.RouterGroup = &RouterGroup{engine: e}
 	e.groups = []*RouterGroup{e.RouterGroup}
-	e.Use(Recovery(), func(c *Context) error {
-		log.SetLogHint(c.hint)
-		log.SetEnv(e.env)
-		log.SetModuleName(e.serverName)
-		c.Next()
-		return nil
-	})
+	e.Use(Recovery())
 	return e
 }
 
