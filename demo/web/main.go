@@ -8,12 +8,21 @@ import (
 	"time"
 )
 
-func init() {
-	log.SetModuleName("LBW")
+var serviceName = "LBW"
+
+func onlyForV1() web.HandlerFunc {
+	return func(c *web.Context) error {
+		// Start timer
+		t := time.Now()
+		// Calculate resolution time
+		log.Infof("[%d] %s in %v for group v2", c.StatusCode, c.Req.RequestURI, time.Since(t))
+		return nil
+	}
 }
 
 func main() {
-	engine := web.New("myWebTest", 12431)
+	log.SetModuleName(serviceName)
+	engine := web.New(serviceName, 12431)
 	engine.GET("/hello", func(c *web.Context) error {
 		log.Infof("hello %s", time.Now().Format(utils.DateTimeLayout))
 		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
@@ -32,6 +41,7 @@ func main() {
 	})
 
 	v1 := engine.Group("/v1")
+	v1.Use(onlyForV1())
 	{
 		v1.GET("/", func(c *web.Context) error {
 			return c.HTML(http.StatusOK, "<h1>Hello Gee</h1>")

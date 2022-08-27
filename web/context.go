@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/oldbai555/lb/utils"
+	"log"
 	"net/http"
 )
 
@@ -28,18 +29,10 @@ type Context struct {
 	//
 	serverName string
 	hint       string
-}
 
-func (c *Context) GetCtx() context.Context {
-	return c.ctx
-}
-
-func (c *Context) GetServiceName() string {
-	return c.serverName
-}
-
-func (c *Context) GetHint() string {
-	return c.hint
+	// middleware
+	handlers []HandlerFunc
+	index    int
 }
 
 func newContext(w http.ResponseWriter, req *http.Request, ctx context.Context, serverName string) *Context {
@@ -53,6 +46,19 @@ func newContext(w http.ResponseWriter, req *http.Request, ctx context.Context, s
 
 		serverName: serverName,
 		hint:       utils.GetRandomString(16, utils.RandomStringModNumberPlusLetter),
+
+		index: -1,
+	}
+}
+
+func (c *Context) Next() {
+	c.index++
+	s := len(c.handlers)
+	for ; c.index < s; c.index++ {
+		err := c.handlers[c.index](c)
+		if err != nil {
+			log.Printf("error: %v", err)
+		}
 	}
 }
 

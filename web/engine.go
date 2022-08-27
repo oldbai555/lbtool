@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/oldbai555/lb/log"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -60,7 +61,15 @@ func (engine *Engine) Run() (err error) {
 }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middlewares []HandlerFunc
+	for _, group := range engine.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
+
 	c := newContext(w, req, context.TODO(), engine.serverName)
+	c.handlers = middlewares
 	log.SetLogHint(c.hint)
 	engine.router.handle(c)
 }
