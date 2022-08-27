@@ -33,6 +33,9 @@ type Context struct {
 	// middleware
 	handlers []HandlerFunc
 	index    int
+
+	// engine pointer
+	//engine *Engine
 }
 
 func newContext(w http.ResponseWriter, req *http.Request, ctx context.Context, serverName string) *Context {
@@ -115,10 +118,11 @@ func (c *Context) Data(code int, data []byte) error {
 	return err
 }
 
-// HTML html网页
-func (c *Context) HTML(code int, html string) error {
-	c.SetHeader("Content-Type", "text/html")
-	c.Status(code)
-	_, err := c.Writer.Write([]byte(html))
-	return err
-}
+// HTML html网页 先不支持html
+//func (c *Context) HTML(code int, name string, data interface{}) {
+//	c.SetHeader("Content-Type", "text/html")
+//	c.Status(code)
+//	if err := c.engine.htmlTemplates.ExecuteTemplate(c.Writer, name, data); err != nil {
+//		c.String(500, err.Error())
+//	}
+//}

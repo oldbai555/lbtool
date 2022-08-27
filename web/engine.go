@@ -24,6 +24,9 @@ type Engine struct {
 	*RouterGroup
 	router *router
 	groups []*RouterGroup // store all groups
+
+	//htmlTemplates *template.Template // 将所有的模板加载进内存
+	//funcMap       template.FuncMap   // 所有的自定义模板渲染函数
 }
 
 var _ http.Handler = (*Engine)(nil)
@@ -40,6 +43,15 @@ func New(serverName string, port uint32) *Engine {
 	e.groups = []*RouterGroup{e.RouterGroup}
 	return e
 }
+
+//
+//func (engine *Engine) SetFuncMap(funcMap template.FuncMap) {
+//	engine.funcMap = funcMap
+//}
+//
+//func (engine *Engine) LoadHTMLGlob(pattern string) {
+//	engine.htmlTemplates = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(pattern))
+//}
 
 func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
 	engine.router.addRoute(method, pattern, handler)
@@ -70,6 +82,7 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	c := newContext(w, req, context.TODO(), engine.serverName)
 	c.handlers = middlewares
+	//c.engine = engine 先不支持HTML渲染
 	log.SetLogHint(c.hint)
 	engine.router.handle(c)
 }
