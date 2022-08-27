@@ -5,17 +5,23 @@ import (
 	"sync/atomic"
 )
 
+// methodType 结构体与服务的映射关系
 type methodType struct {
-	method    reflect.Method // 方法本身
-	ArgType   reflect.Type   // 第一个参数的类型
-	ReplyType reflect.Type   // 第二个参数的类型
-	numCalls  uint64         // 后续统计方法调用次数时会用到
+	// method 方法本身
+	method reflect.Method
+	// ArgType 入参的类型
+	ArgType reflect.Type
+	// ReplyType 回参的类型
+	ReplyType reflect.Type
+	// numCalls 统计方法调用次数时会用到
+	numCalls uint64
 }
 
 func (m *methodType) NumCalls() uint64 {
 	return atomic.LoadUint64(&m.numCalls)
 }
 
+// newArgv 构建入参
 func (m *methodType) newArgv() reflect.Value {
 	var argv reflect.Value
 	// arg may be a pointer type, or a value type
@@ -27,6 +33,7 @@ func (m *methodType) newArgv() reflect.Value {
 	return argv
 }
 
+// newReplyv 构建回参
 func (m *methodType) newReplyv() reflect.Value {
 	// reply must be a pointer type
 	replyv := reflect.New(m.ReplyType.Elem())

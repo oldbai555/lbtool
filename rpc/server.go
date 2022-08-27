@@ -157,7 +157,9 @@ func (s *Server) readRequest(cc codec.Codec) (*request, error) {
 // sendResponse回复请求
 func (s *Server) sendResponse(cc codec.Codec, h *codec.Header, body interface{}, sending *sync.Mutex) {
 	sending.Lock()
-	defer sending.Unlock()
+	defer func() {
+		sending.Unlock()
+	}()
 	if err := cc.Write(h, body); err != nil {
 		log.Println("rpc server: write response error:", err)
 	}

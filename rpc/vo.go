@@ -6,6 +6,7 @@ type IFunc func(ctx *Context, req *IRequest) (*IResponse, error)
 
 type ServerCmd struct {
 	ServerName string      `json:"serverName"`
+	Path       string      `json:"path"`
 	IFun       interface{} `json:"i_fun"`
 }
 
