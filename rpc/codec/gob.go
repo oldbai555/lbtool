@@ -10,8 +10,8 @@ import (
 type GobCodec struct {
 	conn io.ReadWriteCloser
 	buf  *bufio.Writer
-	dec  *gob.Decoder // 解码
 	enc  *gob.Encoder // 编码
+	dec  *gob.Decoder // 解码
 }
 
 // 检测 GobCodec 是否实现了 Codec 接口
@@ -20,18 +20,22 @@ type GobCodec struct {
 // 这种定义方式主要用于在源码编译的时候。
 var _ Codec = (*GobCodec)(nil)
 
+// Close 关闭连接流
 func (g *GobCodec) Close() error {
 	return g.conn.Close()
 }
 
+// ReadHeader 读请求头
 func (g *GobCodec) ReadHeader(h *Header) error {
 	return g.dec.Decode(h)
 }
 
+// ReadBody 读请求体
 func (g *GobCodec) ReadBody(body interface{}) error {
 	return g.dec.Decode(body)
 }
 
+// Write 响应结果
 func (g *GobCodec) Write(h *Header, body interface{}) error {
 	defer func() {
 		err := g.buf.Flush()
@@ -39,14 +43,17 @@ func (g *GobCodec) Write(h *Header, body interface{}) error {
 			_ = g.Close()
 		}
 	}()
+
 	if err := g.enc.Encode(h); err != nil {
 		log.Println("rpc codec: gob error encoding header:", err)
 		return err
 	}
+
 	if err := g.enc.Encode(body); err != nil {
 		log.Println("rpc codec: gob error encoding body:", err)
 		return err
 	}
+
 	return nil
 }
 
@@ -55,7 +62,7 @@ func NewGobCodec(conn io.ReadWriteCloser) Codec {
 	return &GobCodec{
 		conn: conn,
 		buf:  buf,
-		dec:  gob.NewDecoder(conn),
 		enc:  gob.NewEncoder(buf),
+		dec:  gob.NewDecoder(conn),
 	}
 }

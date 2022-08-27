@@ -14,33 +14,8 @@ import (
 	"time"
 )
 
-const MagicNumber = 0x3bef5c
-const DefaultBufferSize = 10
-const DefaultTimeOut = time.Second * 10
-
-// 服务端处理超时
-// 1.读取客户端请求报文时，读报文导致的超时
-// 2.发送响应报文时，写报文导致的超时
-// 3.调用映射服务的方法时，处理报文导致的超时
-
-// rpc 在 3 个地方添加了超时处理机制
-// 1.客户端创建连接时
-// 2.客户端 Client.Call() 整个过程导致的超时（包含发送报文，等待处理，接收报文所有阶段）
-// 3.服务端处理报文，即 Server.handleRequest 超时
-
-type Option struct {
-	MagicNumber    int           // MagicNumber marks this's a rpc request
-	CodecType      codec.Type    // client may choose different Codec to encode body
-	ConnectTimeout time.Duration // 0 means no limit
-	HandleTimeout  time.Duration
-}
-
-var DefaultOption = &Option{
-	MagicNumber:    MagicNumber,
-	CodecType:      codec.GobType,
-	ConnectTimeout: DefaultTimeOut,
-	HandleTimeout:  DefaultTimeOut,
-}
+// invalidRequest is a placeholder for response argv when error occurs
+var invalidRequest = struct{}{}
 
 // Server represents an RPC Server.
 type Server struct {
@@ -51,9 +26,6 @@ type Server struct {
 func NewServer() *Server {
 	return &Server{}
 }
-
-// DefaultServer is the default instance of *Server.
-var DefaultServer = NewServer()
 
 // Accept accepts connections on the listener and serves requests
 // for each incoming connection.
@@ -68,12 +40,8 @@ func (server *Server) Accept(lis net.Listener) {
 	}
 }
 
-// Accept accepts connections on the listener and serves requests
-// for each incoming connection.
-func Accept(lis net.Listener) { DefaultServer.Accept(lis) }
-
 // ServeConn runs the server on a single connection.
-// ServeConn blocks, serving the connection until the client hangs up.
+// blocks, serving the connection until the client hangs up.
 func (server *Server) ServeConn(conn io.ReadWriteCloser) {
 	defer func() { _ = conn.Close() }()
 	var opt Option
@@ -92,9 +60,6 @@ func (server *Server) ServeConn(conn io.ReadWriteCloser) {
 	}
 	server.serveCodec(f(conn), &opt)
 }
-
-// invalidRequest is a placeholder for response argv when error occurs
-var invalidRequest = struct{}{}
 
 func (server *Server) serveCodec(cc codec.Codec, opt *Option) {
 	sending := new(sync.Mutex) // make sure to send a complete response
@@ -115,14 +80,6 @@ func (server *Server) serveCodec(cc codec.Codec, opt *Option) {
 	}
 	wg.Wait()
 	_ = cc.Close()
-}
-
-// request stores all information of a call
-type request struct {
-	h            *codec.Header // header of request
-	argv, replyv reflect.Value // argv and replyv of request
-	mtype        *methodType
-	svc          *service
 }
 
 func (server *Server) readRequestHeader(cc codec.Codec) (*codec.Header, error) {
@@ -233,6 +190,3 @@ func (server *Server) findService(serviceMethod string) (svc *service, mtype *me
 	}
 	return
 }
-
-// Register publishes the receiver's methods in the DefaultServer.
-func Register(rcvr interface{}) error { return DefaultServer.Register(rcvr) }

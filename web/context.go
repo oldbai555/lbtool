@@ -27,7 +27,7 @@ type Context struct {
 
 	// 服务相关属性
 	serverName string
-	hint       string
+	seq        string
 
 	// 中间件
 	handlers []HandlerFunc
@@ -47,15 +47,15 @@ func newContext(w http.ResponseWriter, req *http.Request, ctx context.Context, s
 		ctx: ctx,
 
 		serverName: serverName,
-		hint:       utils.GetRandomString(16, utils.RandomStringModNumberPlusLetter),
+		seq:        utils.GetRandomString(16, utils.RandomStringModNumberPlusLetter),
 
 		index: -1,
 	}
 	return c
 }
 
-func (c *Context) GetHint() string {
-	return c.hint
+func (c *Context) GetSeq() string {
+	return c.seq
 }
 func (c *Context) GetServerName() string {
 	return c.serverName

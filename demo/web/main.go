@@ -22,7 +22,7 @@ func onlyForV1() web.HandlerFunc {
 
 func loadLog() web.HandlerFunc {
 	return func(c *web.Context) error {
-		log.SetLogHint(c.GetHint())
+		log.SetLogHint(c.GetSeq())
 		log.SetModuleName(c.GetServerName())
 		return nil
 	}
