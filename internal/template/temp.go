@@ -2,8 +2,9 @@ package template
 
 type Function struct {
 	Package     string `json:"package"`
-	Description string `json:"description"`
 	ModelName   string `json:"model_name"`
+	Variable    string `json:"variable"`
+	Description string `json:"description"`
 	Template    string `json:"template"`
 }
 
