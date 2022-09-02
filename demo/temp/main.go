@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/oldbai555/lb/internal/template"
 	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lb/pkg/template"
 )
 
 func main() {

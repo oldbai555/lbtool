@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/oldbai555/lb/internal/lb_interface"
+	"github.com/oldbai555/lb/pkg/lb_interface"
 	"github.com/oldbai555/lb/utils"
 	"github.com/petermattis/goid"
 	"os"

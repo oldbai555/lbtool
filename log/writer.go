@@ -2,7 +2,7 @@ package log
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/internal/lb_interface"
+	"github.com/oldbai555/lb/pkg/lb_interface"
 	"github.com/oldbai555/lb/utils"
 	"os"
 	"path/filepath"
