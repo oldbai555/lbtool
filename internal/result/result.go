@@ -27,6 +27,10 @@ func NewLbResult(err error, data interface{}) *LbResult {
 	}
 }
 
-func OK(data interface{}) *LbResult {
+func Ok(data interface{}) *LbResult {
 	return NewLbResult(Success, data)
+}
+
+func Fail(msg string) *LbResult {
+	return NewLbResult(NewLbErr(FAILURE, msg), "")
 }
