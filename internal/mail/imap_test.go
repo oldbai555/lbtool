@@ -13,7 +13,7 @@ import (
 func TestReadMail(t *testing.T) {
 	var sync1 sync.WaitGroup
 	for i := 0; i < 1; i++ {
-		go dologic(&sync1, "username", "password")
+		go dologic(&sync1, "zhangjianjun@aquanliang.com", "hauZMjHmiks54ozj")
 	}
 	sync1.Wait()
 	// sync2.Wait()
@@ -24,7 +24,7 @@ func TestReadMail(t *testing.T) {
 func dologic(s *sync.WaitGroup, username, password string) {
 	s.Add(1)
 	defer s.Done()
-	c, err := NewImapClient(ConnectTypeQQ)
+	c, err := NewImapClient(ConnectTypeTxEx)
 	if err != nil {
 		log.Errorf("err is %v", err)
 		return
