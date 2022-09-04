@@ -10,10 +10,12 @@ require (
 	github.com/emersion/go-imap-id v0.0.0-20190926060100-f94a56b9ecde
 	github.com/emersion/go-message v0.16.0
 	github.com/forgoer/openssl v1.2.1
+	github.com/go-basic/ipv4 v1.0.0
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/petermattis/goid v0.0.0-20220824145935-af5520614cb6
 	github.com/satori/go.uuid v1.2.0
 	github.com/xuri/excelize/v2 v2.6.1
+	github.com/xxl-job/xxl-job-executor-go v1.1.0
 	golang.org/x/text v0.3.7
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc
 )
