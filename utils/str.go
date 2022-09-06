@@ -17,3 +17,9 @@ func LowerFirst(str string) string {
 	}
 	return ""
 }
+
+// SubStr 截取字符
+func SubStr(str string, start, end uint32) string {
+	runeTitle := []rune(str)
+	return string(runeTitle[start:end])
+}
