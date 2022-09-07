@@ -2,7 +2,7 @@ package log
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/pkg/lb_interface"
+	lb_interface2 "github.com/oldbai555/lb/internal/lb_interface"
 	"github.com/oldbai555/lb/utils"
 	"os"
 	"path/filepath"
@@ -60,7 +60,7 @@ type logWriterImpl struct {
 	lastCheckIsFullAt        int64  // 上一次检查文件大小时间
 	isFileFull               bool   // 文件是否已经满了
 	currentFileName          string // 当前文件名
-	fmt                      lb_interface.Formatter
+	fmt                      lb_interface2.Formatter
 	openCurrentFileTime      *time.Time // 打开文件时间
 	bufCh                    chan []byte
 	isFlushing               atomic.Value
@@ -217,4 +217,4 @@ func (s *logWriterImpl) finishFlush(err error) {
 	s.flushDoneSignChan <- err
 }
 
-var _ lb_interface.LogWriter = (*logWriterImpl)(nil)
+var _ lb_interface2.LogWriter = (*logWriterImpl)(nil)
