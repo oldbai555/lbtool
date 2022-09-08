@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	engine, err := orm.NewEngine("mysql", "root:123456@tcp(175.178.156.14:3309)/orm")
+	engine, err := orm.NewEngine(orm.DMYSQL, "root:xxxxxx@tcp(xxxxxx:3306)/orm")
 	defer func() {
 		engine.Close()
 	}()

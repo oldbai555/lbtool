@@ -15,7 +15,7 @@ type User struct {
 }
 
 func TestSession_CreateTable(t *testing.T) {
-	engine, err := NewEngine(DMYSQL, "root:123456@tcp(175.178.156.14:3309)/orm")
+	engine, err := NewEngine(DMYSQL, "root:xxxxxx@tcp(xxxxxx:3306)/orm")
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return
