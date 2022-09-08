@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lb/pkg/result"
 	"reflect"
 	"strings"
 )
@@ -28,7 +29,7 @@ func (s *Session) RefTable() *Schema {
 	return s.refTable
 }
 
-func createTable(s *Session) error {
+func genCreateTableSql(s *Session) error {
 	table := s.RefTable()
 
 	if len(table.Fields) == 0 {
@@ -89,8 +90,8 @@ func createTable(s *Session) error {
 			items = append(items, fmt.Sprintf("COMMENT '%s'", field.Comment))
 		}
 
-		createStmt := strings.Join(items, " ")
-		columns = append(columns, linePrefix+createStmt)
+		field.createStmt = strings.Join(items, " ")
+		columns = append(columns, linePrefix+field.createStmt)
 	}
 
 	for _, field := range table.Fields {
@@ -102,9 +103,10 @@ func createTable(s *Session) error {
 	desc := strings.Join(columns, ",\n")
 
 	extra := "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin"
-	genSql := fmt.Sprintf("CREATE TABLE %s(\n%s\n)%s;", quoteName(table.Name), desc, extra)
-	_, err := s.Raw(genSql).Exec()
-	return err
+	table.createStmt = fmt.Sprintf("CREATE TABLE %s(\n%s\n)%s;", quoteName(table.Name), desc, extra)
+
+	// _, err := s.Raw(table.createStmt).Exec()
+	return nil
 }
 
 func dropTable(s *Session) error {
@@ -119,6 +121,10 @@ func doDescTable(s *Session) (*descTable, error) {
 	rows, err := s.Raw(existSql, values...).QueryRows()
 	if err != nil {
 		log.Errorf("err:%v", err)
+
+		if strings.Contains(err.Error(), "doesn't exist") && strings.Contains(err.Error(), "1146: Table ") {
+			return nil, result.NewLbErr(result.ErrOrmTableNotExist, err.Error())
+		}
 		return nil, err
 	}
 	defer func() {
@@ -144,4 +150,76 @@ func doDescTable(s *Session) (*descTable, error) {
 		})
 	}
 	return d, nil
+}
+
+func createTable(s *Session) error {
+	err := genCreateTableSql(s)
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return err
+	}
+	_, err = s.Raw(s.refTable.createStmt).Exec()
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return err
+	}
+	return nil
+}
+func createOrUpdateTable(s *Session) error {
+	table, err := doDescTable(s)
+	if err != nil && result.GetErrCode(err) != result.ErrOrmTableNotExist {
+		log.Errorf("err:%v", err)
+		return err
+	}
+	// 新建
+	err = genCreateTableSql(s)
+
+	// 更新字段
+	err = modifyTableColumn(s, table)
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return err
+	}
+
+	return nil
+}
+
+func modifyTableColumn(s *Session, table *descTable) error {
+
+	// 比一下要加的新列
+	fieldMap2Create := map[string]bool{}
+	var addColumns []string
+
+	refTable := s.refTable
+
+	for _, f := range refTable.Fields {
+		found := false
+		for _, x := range table.columns {
+			if strings.EqualFold(f.Name, x.Field) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			fieldMap2Create[f.Name] = true
+			addColumns = append(addColumns, f.Name)
+		}
+	}
+
+	// 新增字段
+	if len(fieldMap2Create) > 0 {
+		for _, f := range refTable.Fields {
+			if !fieldMap2Create[f.Name] {
+				continue
+			}
+			stmt := fmt.Sprintf("ALTER TABLE %s ADD %s", quoteName(refTable.Name), f.createStmt)
+			_, err := s.DB().Exec(stmt)
+			if err != nil {
+				log.Errorf("err:%v", err)
+				return err
+			}
+		}
+	}
+
+	return nil
 }

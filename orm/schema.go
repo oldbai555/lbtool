@@ -15,6 +15,7 @@ type Field struct {
 	PrimaryKey bool
 	Comment    string
 	Extra      string
+	createStmt string
 }
 
 // Schema represents a table of database
@@ -24,6 +25,7 @@ type Schema struct {
 	Fields     []*Field
 	FieldNames []string
 	fieldMap   map[string]*Field
+	createStmt string
 }
 
 func (schema *Schema) GetField(name string) *Field {
