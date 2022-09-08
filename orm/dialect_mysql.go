@@ -58,8 +58,7 @@ func (m *dMysql) DataTypeOf(typ reflect.Value) string {
 }
 
 func (m *dMysql) TableExistSQL(tableName string) (string, []interface{}) {
-	args := []interface{}{addlrQuotes(tableName)}
-	return "select TABLE_NAME from information_schema.TABLES where TABLE_NAME = ? ;", args
+	return fmt.Sprintf("DESCRIBE %s ;", tableName), []interface{}{}
 }
 
 var _ Dialect = (*dMysql)(nil)

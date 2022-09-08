@@ -57,8 +57,10 @@ func (s *Session) Exec() (result sql.Result, err error) {
 
 // QueryRow gets a record from db
 func (s *Session) QueryRow() *sql.Row {
-	defer s.Clear()
 	log.Infof(strings.ReplaceAll(s.sql.String(), "?", "%v"), s.sqlVars...)
+	defer func() {
+		s.Clear()
+	}()
 	return s.DB().QueryRow(s.sql.String(), s.sqlVars...)
 }
 

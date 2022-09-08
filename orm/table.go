@@ -1,6 +1,7 @@
 package orm
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/oldbai555/lb/log"
@@ -27,7 +28,7 @@ func (s *Session) RefTable() *Schema {
 	return s.refTable
 }
 
-func (s *Session) CreateTable() error {
+func createTable(s *Session) error {
 	table := s.RefTable()
 
 	if len(table.Fields) == 0 {
@@ -106,22 +107,41 @@ func (s *Session) CreateTable() error {
 	return err
 }
 
-func (s *Session) DropTable() error {
+func dropTable(s *Session) error {
 	_, err := s.Raw(fmt.Sprintf("DROP TABLE IF EXISTS %s", s.RefTable().Name)).Exec()
 	return err
 }
 
-func (s *Session) HasTable() bool {
+func doDescTable(s *Session) (*descTable, error) {
 
-	sql, values := s.dialect.TableExistSQL(s.RefTable().Name)
+	existSql, values := s.dialect.TableExistSQL(s.RefTable().Name)
 
-	row := s.Raw(sql, values...).QueryRow()
-
-	var tmp string
-	err := row.Scan(&tmp)
+	rows, err := s.Raw(existSql, values...).QueryRows()
 	if err != nil {
 		log.Errorf("err:%v", err)
-		panic(any(err))
+		return nil, err
 	}
-	return tmp == s.RefTable().Name
+	defer func() {
+		_ = rows.Close()
+	}()
+
+	d := &descTable{}
+	var field, typ, null, key, def, extra sql.NullString
+
+	for rows.Next() {
+		err = rows.Scan(&field, &typ, &null, &key, &def, &extra)
+		if err != nil {
+			log.Errorf("err:%s", err)
+			return nil, err
+		}
+		d.columns = append(d.columns, &descTableColumn{
+			Field:   field.String,
+			Type:    typ.String,
+			Null:    null.String,
+			Key:     key.String,
+			Default: def.String,
+			Extra:   extra.String,
+		})
+	}
+	return d, nil
 }
