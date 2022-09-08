@@ -14,10 +14,18 @@ type Session struct {
 	sql strings.Builder
 	// sqlVars SQL 语句中占位符的对应值
 	sqlVars []interface{}
+
+	// dialect 数据类型转换
+	dialect Dialect
+	// refTable 映射表
+	refTable *Schema
 }
 
-func NewSession(db *sqlx.DB) *Session {
-	return &Session{db: db}
+func NewSession(db *sqlx.DB, dialect Dialect) *Session {
+	return &Session{
+		db:      db,
+		dialect: dialect,
+	}
 }
 
 func (s *Session) Clear() {

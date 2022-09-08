@@ -7,7 +7,8 @@ import (
 )
 
 type Engine struct {
-	db *sqlx.DB
+	db      *sqlx.DB
+	dialect Dialect
 }
 
 func NewEngine(driver, source string) (e *Engine, err error) {
@@ -16,12 +17,24 @@ func NewEngine(driver, source string) (e *Engine, err error) {
 		log.Errorf("err:%v", err)
 		return nil, err
 	}
+
 	// Send a ping to make sure the database connection is alive.
 	if err = db.Ping(); err != nil {
 		log.Errorf("err:%v", err)
 		return nil, err
 	}
-	e = &Engine{db: db}
+
+	// make sure the specific dialect exists
+	dial, err := getDialect(driver)
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return nil, err
+	}
+
+	e = &Engine{
+		db:      db,
+		dialect: dial,
+	}
 	log.Infof("Connect database success")
 	return
 }
@@ -34,5 +47,5 @@ func (engine *Engine) Close() {
 }
 
 func (engine *Engine) NewSession() *Session {
-	return NewSession(engine.db)
+	return NewSession(engine.db, engine.dialect)
 }
