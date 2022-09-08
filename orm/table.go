@@ -35,17 +35,20 @@ func (s *Session) CreateTable() error {
 	}
 
 	primaryKeyCnt := 0
-	for _, f := range table.Fields {
-		rules := parseDbDef(f.Tag)
 
-		if _, ok := rules.ruleMap["primary_key"]; ok {
-			primaryKeyCnt++
-			f.PrimaryKey = true
-			// int 的 primary key 加上自增
-			f.Extra = "AUTO_INCREMENT"
-		}
+	// 查找主键
+	// for _, f := range table.Fields {
+	// 	rules := parseDbDef(f.Tag)
+	//
+	// 	if _, ok := rules.ruleMap["primary_key"]; ok {
+	// 		primaryKeyCnt++
+	// 		f.PrimaryKey = true
+	// 		// int 的 primary key 加上自增
+	// 		f.Extra = "AUTO_INCREMENT"
+	// 	}
+	//
+	// }
 
-	}
 	// 如果没有主键，拉 field_name = id 的来做主键
 	if primaryKeyCnt == 0 {
 		for _, f := range table.Fields {
@@ -58,7 +61,7 @@ func (s *Session) CreateTable() error {
 		}
 	}
 	// 主键最多一个
-	if primaryKeyCnt > 1 {
+	if primaryKeyCnt > 1 || primaryKeyCnt == 0 {
 		return fmt.Errorf("primary key count %d exceeded 1", primaryKeyCnt)
 	}
 
@@ -98,7 +101,8 @@ func (s *Session) CreateTable() error {
 	desc := strings.Join(columns, ",\n")
 
 	extra := "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin"
-	_, err := s.Raw(fmt.Sprintf("CREATE TABLE %s(\n%s\n)%s;", quoteName(table.Name), desc, extra)).Exec()
+	genSql := fmt.Sprintf("CREATE TABLE %s(\n%s\n)%s;", quoteName(table.Name), desc, extra)
+	_, err := s.Raw(genSql).Exec()
 	return err
 }
 
@@ -108,9 +112,16 @@ func (s *Session) DropTable() error {
 }
 
 func (s *Session) HasTable() bool {
+
 	sql, values := s.dialect.TableExistSQL(s.RefTable().Name)
+
 	row := s.Raw(sql, values...).QueryRow()
+
 	var tmp string
-	_ = row.Scan(&tmp)
+	err := row.Scan(&tmp)
+	if err != nil {
+		log.Errorf("err:%v", err)
+		panic(any(err))
+	}
 	return tmp == s.RefTable().Name
 }

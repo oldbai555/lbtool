@@ -9,6 +9,7 @@ import (
 )
 
 type User struct {
+	Id   uint64
 	Name string `lborm:"primary_key"`
 	Age  int
 }
@@ -20,11 +21,20 @@ func TestSession_CreateTable(t *testing.T) {
 		return
 	}
 	s := engine.NewSession().Model(&User{})
-	_ = s.DropTable()
-	_ = s.CreateTable()
+	err = s.DropTable()
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return
+	}
+	err = s.CreateTable()
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return
+	}
 	if !s.HasTable() {
 		t.Fatal("Failed to create table User")
 	}
+	return
 }
 
 func TestSession_DropTable(t *testing.T) {

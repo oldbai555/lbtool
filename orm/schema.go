@@ -3,6 +3,7 @@ package orm
 import (
 	"go/ast"
 	"reflect"
+	"strings"
 )
 
 // Field represents a column of database
@@ -34,7 +35,7 @@ func Parse(dest interface{}, d Dialect) *Schema {
 	modelType := reflect.Indirect(reflect.ValueOf(dest)).Type()
 	schema := &Schema{
 		Model:    dest,
-		Name:     modelType.Name(),
+		Name:     strings.ToLower(modelType.Name()),
 		fieldMap: make(map[string]*Field),
 	}
 
@@ -42,9 +43,10 @@ func Parse(dest interface{}, d Dialect) *Schema {
 		p := modelType.Field(i)
 		if !p.Anonymous && ast.IsExported(p.Name) {
 			field := &Field{
-				Name:       p.Name,
+				Name:       strings.ToLower(p.Name),
 				Type:       d.DataTypeOf(reflect.Indirect(reflect.New(p.Type))),
 				DefaultVal: d.GetFieldDefaultValue(reflect.Indirect(reflect.New(p.Type))),
+				Comment:    strings.ToLower(p.Name),
 			}
 			if v, ok := p.Tag.Lookup("lborm"); ok {
 				field.Tag = v
