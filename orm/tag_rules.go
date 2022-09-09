@@ -2,13 +2,14 @@ package orm
 
 import "strings"
 
-type dbDefRules struct {
+type tagRules struct {
 	ruleMap  map[string]string
 	ruleList [][]string
 }
 
-func parseDbDef(dbDef string) *dbDefRules {
-	d := &dbDefRules{
+// parseModelTag
+func parseModelTag(dbDef string) *tagRules {
+	d := &tagRules{
 		ruleMap: map[string]string{},
 	}
 	items := strings.Split(dbDef, ";")

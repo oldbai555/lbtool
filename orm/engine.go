@@ -42,6 +42,7 @@ func NewEngine(driver, source string) (e *Engine, err error) {
 func (engine *Engine) Close() {
 	if err := engine.db.Close(); err != nil {
 		log.Errorf("Failed to close database,err is %v", err)
+		return
 	}
 	log.Infof("Close database success")
 }

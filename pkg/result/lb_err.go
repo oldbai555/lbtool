@@ -27,3 +27,10 @@ func NewLbErr(code uint32, message string) error {
 		message: message,
 	}
 }
+
+func NewInvalidArg(format string, args ...interface{}) error {
+	return &LbErr{
+		code:    ErrInvalidArg,
+		message: fmt.Sprintf(format, args),
+	}
+}

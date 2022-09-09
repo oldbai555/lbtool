@@ -6,10 +6,11 @@ import (
 )
 
 type User struct {
-	Id   uint64 `lborm:"primary_key"`
-	Name string
-	Age  int
-	Year int
+	Id    uint64 `lborm:"primary_key"`
+	Name  string
+	Age   int
+	Year  int
+	Month int
 }
 
 type Cart struct {

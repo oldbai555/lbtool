@@ -17,8 +17,8 @@ type Session struct {
 
 	// dialect 数据类型转换
 	dialect Dialect
-	// refTable 映射表
-	refTable *Schema
+	// table 映射表
+	table *Schema
 }
 
 func NewSession(db *sqlx.DB, dialect Dialect) *Session {
@@ -47,7 +47,9 @@ func (s *Session) Raw(sql string, values ...interface{}) *Session {
 
 // Exec raw sql with sqlVars
 func (s *Session) Exec() (result sql.Result, err error) {
-	defer s.Clear()
+	defer func() {
+		s.Clear()
+	}()
 	log.Infof(strings.ReplaceAll(s.sql.String(), "?", "%v"), s.sqlVars...)
 	if result, err = s.DB().Exec(s.sql.String(), s.sqlVars...); err != nil {
 		log.Errorf("err:%v", err)
