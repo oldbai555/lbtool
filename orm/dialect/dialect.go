@@ -1,4 +1,4 @@
-package orm
+package dialect
 
 import (
 	"fmt"
@@ -21,8 +21,8 @@ func RegisterDialect(name string, dialect Dialect) {
 	dialectsMap[name] = dialect
 }
 
-// getDialect 获取 dialect 实例
-func getDialect(name string) (dialect Dialect, err error) {
+// GetDialect 获取 dialect 实例
+func GetDialect(name string) (dialect Dialect, err error) {
 	var ok bool
 	dialect, ok = dialectsMap[name]
 	if !ok {

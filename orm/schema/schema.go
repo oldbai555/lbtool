@@ -1,6 +1,7 @@
-package orm
+package schema
 
 import (
+	"github.com/oldbai555/lb/orm/dialect"
 	"go/ast"
 	"reflect"
 	"strings"
@@ -15,7 +16,7 @@ type Field struct {
 	PrimaryKey bool
 	Comment    string
 	Extra      string
-	createStmt string
+	CreateStmt string
 }
 
 // Schema represents a table of database
@@ -25,7 +26,7 @@ type Schema struct {
 	Fields     []*Field
 	FieldNames []string
 	fieldMap   map[string]*Field
-	createStmt string
+	CreateStmt string
 }
 
 func (schema *Schema) GetField(name string) *Field {
@@ -33,7 +34,7 @@ func (schema *Schema) GetField(name string) *Field {
 }
 
 // Parse 解析结构体转换为数据库表
-func Parse(dest interface{}, d Dialect) *Schema {
+func Parse(dest interface{}, d dialect.Dialect) *Schema {
 	modelType := reflect.Indirect(reflect.ValueOf(dest)).Type()
 	schema := &Schema{
 		Model:    dest,

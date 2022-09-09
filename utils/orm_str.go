@@ -1,11 +1,15 @@
-package orm
+package utils
 
 import (
 	"fmt"
 	"strings"
 )
 
-func quoteName(name string) string {
+const (
+	LinePrefix = "  "
+)
+
+func QuoteName(name string) string {
 	if name != "" {
 		if name[0] != '`' {
 			q := true
@@ -25,7 +29,7 @@ func quoteName(name string) string {
 	return name
 }
 
-func inSliceStr(s string, list []string) bool {
+func InSliceStr(s string, list []string) bool {
 	for _, v := range list {
 		if s == v {
 			return true
@@ -34,7 +38,7 @@ func inSliceStr(s string, list []string) bool {
 	return false
 }
 
-func isIntType(typ string) bool {
+func IsIntType(typ string) bool {
 	switch typ {
 	case "uint32", "int32", "uint64", "int64":
 		return true
@@ -42,7 +46,7 @@ func isIntType(typ string) bool {
 	return strings.Contains(strings.ToUpper(typ), "INT")
 }
 
-func escapeMysqlLikeWildcard(val string) string {
+func EscapeMysqlLikeWildcard(val string) string {
 	l := len(val)
 	dest := make([]byte, 0, 2*len(val))
 	var escape byte
@@ -78,7 +82,7 @@ func escapeMysqlLikeWildcard(val string) string {
 	return string(dest)
 }
 
-func escapeMysqlLikeWildcardIgnore2End(val string) string {
+func EscapeMysqlLikeWildcardIgnore2End(val string) string {
 	l := len(val)
 	dest := make([]byte, 0, 2*len(val))
 	var escape byte
@@ -118,7 +122,7 @@ func escapeMysqlLikeWildcardIgnore2End(val string) string {
 	return string(dest)
 }
 
-func escapeMysqlString(sql string) string {
+func EscapeMysqlString(sql string) string {
 	dest := make([]byte, 0, 2*len(sql))
 	var escape byte
 	for i := 0; i < len(sql); i++ {
@@ -149,6 +153,6 @@ func escapeMysqlString(sql string) string {
 	return string(dest)
 }
 
-func addlrQuotes(val string) string {
-	return fmt.Sprintf(" '%s'", escapeMysqlLikeWildcardIgnore2End(val))
+func AddlrQuotes(val string) string {
+	return fmt.Sprintf(" '%s' ", EscapeMysqlLikeWildcardIgnore2End(val))
 }

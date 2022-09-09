@@ -2,6 +2,7 @@ package orm
 
 import (
 	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lb/orm/dialect"
 	"testing"
 )
 
@@ -19,7 +20,7 @@ type Cart struct {
 }
 
 func TestSession_CreateTable(t *testing.T) {
-	engine, err := NewEngine(DMYSQL, "root:xxxxxx@tcp(xxxxxx:3306)/orm")
+	engine, err := NewEngine(dialect.DMYSQL, "root:xxxxxx@tcp(xxxxxx:3306)/orm")
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return
@@ -44,14 +45,14 @@ func TestSession_CreateTable(t *testing.T) {
 		return
 	}
 
-	for _, column := range table.columns {
+	for _, column := range table.Columns {
 		log.Infof("column %v", column)
 	}
 	return
 }
 
 func Test_createOrUpdateTable(t *testing.T) {
-	engine, err := NewEngine(DMYSQL, "root:xxxxxx@tcp(xxxxxx:3306)/orm")
+	engine, err := NewEngine(dialect.DMYSQL, "root:xxxxxx@tcp(xxxxxx:3306)/orm")
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return

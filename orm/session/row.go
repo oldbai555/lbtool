@@ -1,30 +1,34 @@
-package orm
+package session
 
 import (
 	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lb/orm/dialect"
+	"github.com/oldbai555/lb/orm/schema"
+	"reflect"
 	"strings"
 )
 
 type Session struct {
 	// db 连接数据库成功的连接
 	db *sqlx.DB
+
 	// sql 拼接 SQL 语句
 	sql strings.Builder
 	// sqlVars SQL 语句中占位符的对应值
 	sqlVars []interface{}
 
-	// dialect 数据类型转换
-	dialect Dialect
-	// table 映射表
-	table *Schema
+	// Dial 数据类型转换
+	Dial dialect.Dialect
+	// Table 映射表
+	Table *schema.Schema
 }
 
-func NewSession(db *sqlx.DB, dialect Dialect) *Session {
+func NewSession(db *sqlx.DB, dial dialect.Dialect) *Session {
 	return &Session{
-		db:      db,
-		dialect: dialect,
+		db:   db,
+		Dial: dial,
 	}
 }
 
@@ -74,4 +78,13 @@ func (s *Session) QueryRows() (rows *sql.Rows, err error) {
 		log.Errorf("err:%v", err)
 	}
 	return
+}
+
+func (s *Session) Model(value interface{}) *Session {
+	// nil or different model, update refTable
+	if s.Table == nil ||
+		reflect.TypeOf(value) != reflect.TypeOf(s.Table.Model) {
+		s.Table = schema.Parse(value, s.Dial)
+	}
+	return s
 }

@@ -3,10 +3,11 @@ package main
 import (
 	"github.com/oldbai555/lb/log"
 	"github.com/oldbai555/lb/orm"
+	"github.com/oldbai555/lb/orm/dialect"
 )
 
 func main() {
-	engine, err := orm.NewEngine(orm.DMYSQL, "root:xxxxxx@tcp(xxxxxx:3306)/orm")
+	engine, err := orm.NewEngine(dialect.DMYSQL, "root:xxxxxx@tcp(xxxxxx:3306)/orm")
 	defer func() {
 		engine.Close()
 	}()

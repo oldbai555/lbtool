@@ -4,11 +4,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lb/orm/dialect"
+	"github.com/oldbai555/lb/orm/session"
 )
 
 type Engine struct {
-	db      *sqlx.DB
-	dialect Dialect
+	db   *sqlx.DB
+	dial dialect.Dialect
 }
 
 func NewEngine(driver, source string) (e *Engine, err error) {
@@ -25,15 +27,15 @@ func NewEngine(driver, source string) (e *Engine, err error) {
 	}
 
 	// make sure the specific dialect exists
-	dial, err := getDialect(driver)
+	dial, err := dialect.GetDialect(driver)
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return nil, err
 	}
 
 	e = &Engine{
-		db:      db,
-		dialect: dial,
+		db:   db,
+		dial: dial,
 	}
 	log.Infof("Connect database success")
 	return
@@ -47,6 +49,6 @@ func (engine *Engine) Close() {
 	log.Infof("Close database success")
 }
 
-func (engine *Engine) NewSession() *Session {
-	return NewSession(engine.db, engine.dialect)
+func (engine *Engine) NewSession() *session.Session {
+	return session.NewSession(engine.db, engine.dial)
 }
