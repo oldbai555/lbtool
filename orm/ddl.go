@@ -82,7 +82,7 @@ func genCreateTableSql(s *session.Session) error {
 	// 如果没有主键，拉 field_name = id 的来做主键
 	if primaryKeyCnt == 0 {
 		for _, f := range table.Fields {
-			if f.Name == "id" && utils.IsIntType(f.Type) {
+			if f.DbName == "id" && utils.IsIntType(f.Type) {
 				primaryKeyCnt++
 				f.PrimaryKey = true
 				// int 的 primary key 加上自增
@@ -100,7 +100,7 @@ func genCreateTableSql(s *session.Session) error {
 	var columns []string
 	for _, field := range table.Fields {
 		var items []string
-		items = append(items, utils.QuoteName(field.Name), field.Type)
+		items = append(items, utils.QuoteName(field.DbName), field.Type)
 
 		l := strings.ToLower(field.Type)
 		if field.PrimaryKey {
@@ -125,7 +125,7 @@ func genCreateTableSql(s *session.Session) error {
 
 	for _, field := range table.Fields {
 		if field.PrimaryKey {
-			columns = append(columns, utils.LinePrefix+fmt.Sprintf("PRIMARY KEY (%s)", utils.QuoteName(field.Name)))
+			columns = append(columns, utils.LinePrefix+fmt.Sprintf("PRIMARY KEY (%s)", utils.QuoteName(field.DbName)))
 		}
 	}
 
@@ -195,21 +195,21 @@ func modifyTableColumn(s *session.Session, table *session.DbTable) error {
 	for _, f := range refTable.Fields {
 		found := false
 		for _, x := range table.Columns {
-			if strings.EqualFold(f.Name, x.Field) {
+			if strings.EqualFold(f.DbName, x.Field) {
 				found = true
 				break
 			}
 		}
 		if !found {
-			fieldMap2Create[f.Name] = true
-			addColumns = append(addColumns, f.Name)
+			fieldMap2Create[f.DbName] = true
+			addColumns = append(addColumns, f.DbName)
 		}
 	}
 
 	// 新增字段
 	if len(fieldMap2Create) > 0 {
 		for _, f := range refTable.Fields {
-			if !fieldMap2Create[f.Name] {
+			if !fieldMap2Create[f.DbName] {
 				continue
 			}
 			stmt := fmt.Sprintf("ALTER TABLE %s ADD %s", utils.QuoteName(refTable.Name), f.CreateStmt)

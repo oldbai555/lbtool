@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lb/orm/clause"
 	"github.com/oldbai555/lb/orm/dialect"
 	"github.com/oldbai555/lb/orm/schema"
 	"reflect"
@@ -23,6 +24,8 @@ type Session struct {
 	Dial dialect.Dialect
 	// Table 映射表
 	Table *schema.Schema
+
+	clause clause.Clause
 }
 
 func NewSession(db *sqlx.DB, dial dialect.Dialect) *Session {
@@ -35,6 +38,7 @@ func NewSession(db *sqlx.DB, dial dialect.Dialect) *Session {
 func (s *Session) Clear() {
 	s.sql.Reset()
 	s.sqlVars = nil
+	s.clause = clause.Clause{}
 }
 
 func (s *Session) DB() *sqlx.DB {
