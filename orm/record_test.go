@@ -24,7 +24,7 @@ var (
 
 func testRecordInit(t *testing.T) *session.Session {
 	t.Helper()
-	engine, err := NewEngine(dialect.DMYSQL, "root:123456@tcp(175.178.156.14:3309)/orm")
+	engine, err := NewEngine(dialect.DMYSQL, "root:xxx@tcp(xxx:3306)/orm")
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return nil

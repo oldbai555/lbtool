@@ -46,12 +46,12 @@ func (s *Session) Find(values interface{}) error {
 
 	for rows.Next() {
 		dest := reflect.New(destType).Elem()
-		var values []interface{}
+		var valueList []interface{}
 		for _, name := range table.FieldNames {
-			values = append(values, dest.FieldByName(name).Addr().Interface())
+			valueList = append(valueList, dest.FieldByName(name).Addr().Interface())
 		}
-		if err := rows.Scan(values...); err != nil {
-			return err
+		if sErr := rows.Scan(valueList...); sErr != nil {
+			return sErr
 		}
 		destSlice.Set(reflect.Append(destSlice, dest))
 	}
