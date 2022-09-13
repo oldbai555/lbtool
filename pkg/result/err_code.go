@@ -5,6 +5,7 @@ const (
 	FAILURE             = 400
 	ErrInvalidArg       = 1001
 	ErrOrmTableNotExist = 10001
+	ErrOrmNotFound      = 10002
 )
 
 var (
