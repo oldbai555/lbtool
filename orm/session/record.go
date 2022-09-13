@@ -34,6 +34,7 @@ func (s *Session) Insert(values ...interface{}) (int64, error) {
 // 4）调用 rows.Scan() 将该行记录每一列的值依次赋值给 values 中的每一个字段。
 // 5）将 dest 添加到切片 destSlice 中。循环直到所有的记录都添加到切片 destSlice 中。
 func (s *Session) Find(values interface{}) error {
+	s.CallMethod(BeforeQuery, nil)
 	destSlice := reflect.Indirect(reflect.ValueOf(values))
 	destType := destSlice.Type().Elem()
 	table := s.Model(reflect.New(destType).Elem().Interface()).Table

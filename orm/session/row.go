@@ -14,6 +14,8 @@ import (
 type Session struct {
 	// db 连接数据库成功的连接
 	db *sqlx.DB
+	// tx 支持事务
+	tx *sql.Tx
 
 	// sql 拼接 SQL 语句
 	sql strings.Builder
@@ -28,6 +30,24 @@ type Session struct {
 	clause clause.Clause
 }
 
+// CommonDB is a minimal function set of db
+type CommonDB interface {
+	Query(query string, args ...interface{}) (*sql.Rows, error)
+	QueryRow(query string, args ...interface{}) *sql.Row
+	Exec(query string, args ...interface{}) (sql.Result, error)
+}
+
+var _ CommonDB = (*sql.DB)(nil)
+var _ CommonDB = (*sql.Tx)(nil)
+
+// DB returns tx if a tx begins. otherwise return *sql.DB
+func (s *Session) DB() CommonDB {
+	if s.tx != nil {
+		return s.tx
+	}
+	return s.db
+}
+
 func NewSession(db *sqlx.DB, dial dialect.Dialect) *Session {
 	return &Session{
 		db:   db,
@@ -39,10 +59,6 @@ func (s *Session) Clear() {
 	s.sql.Reset()
 	s.sqlVars = nil
 	s.clause = clause.Clause{}
-}
-
-func (s *Session) DB() *sqlx.DB {
-	return s.db
 }
 
 // Raw 填充 SQL 中的占位符
