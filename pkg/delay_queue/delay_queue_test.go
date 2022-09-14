@@ -16,24 +16,22 @@ func TestListen(t *testing.T) {
 		RedisDb:  1,
 		Timeout:  10 * time.Second,
 
-		BucketName: "lb",
+		BucketName: "lb-bucket",
 		BucketSize: 10,
 
-		QueueName:         "lb-ready",
+		QueueName:         "lb-ready-queue",
 		QueueBlockTimeout: 10,
 	})
 
 	var topicList []Topic
 	for i := 0; i < 10; i++ {
-		md5 := utils.StrMd5(fmt.Sprintf("lb-%d", i))
-		fmt.Println(Topic(md5))
-		topicList = append(topicList, Topic(md5))
+		topicList = append(topicList, Topic(fmt.Sprintf("lb-%d", i)))
 	}
 	for i := 0; i < 100; i++ {
 		utils.GenRandomStr()
 		job := Job{
 			Topic:     topicList[i%10],
-			ID:        utils.StrMd5(fmt.Sprintf("hao-%d", utils.TimeStampNow())),
+			ID:        utils.StrMd5(fmt.Sprintf("hao-%d-%d", i, utils.TimeStampNow())),
 			ExecuteAt: uint32(i+10) + uint32(time.Now().In(utils.PRCLocation).Unix()),
 			TTR:       5,
 			Body:      fmt.Sprintf("hi %d", i),
@@ -51,7 +49,7 @@ func TestListen(t *testing.T) {
 				log.Errorf("err:%v", err)
 				continue
 			}
-			log.Infof("receivedJob is &+v", receivedJob)
+			log.Infof("receivedJob is %v", receivedJob)
 		}
 	}
 }

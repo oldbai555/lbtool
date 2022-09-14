@@ -7,9 +7,13 @@ import (
 	"time"
 )
 
+func getReadyQueueName(topic string) string {
+	return fmt.Sprintf("%s-%s", delayQueueReq.QueueName, topic)
+}
+
 // pushToReadyQueue 添加JobId到就绪队列中
 func pushToReadyQueue(topic Topic, jobId string) error {
-	readyQueueName := fmt.Sprintf(delayQueueReq.QueueName, topic)
+	readyQueueName := getReadyQueueName(topic.String())
 	return Rdb.RPush(context.TODO(), readyQueueName, jobId).Err()
 }
 
@@ -17,7 +21,7 @@ func pushToReadyQueue(topic Topic, jobId string) error {
 func blockPopFromReadyQueue(topics []string, timeout int) (string, error) {
 	var args []string
 	for _, topic := range topics {
-		readyQueueName := fmt.Sprintf(delayQueueReq.QueueName, topic)
+		readyQueueName := getReadyQueueName(topic)
 		args = append(args, readyQueueName)
 	}
 

@@ -45,7 +45,9 @@ func SetupDelayQueue(req *DelayQueueReq) {
 	delayQueueReq.QueueName = fmt.Sprintf("%s-", delayQueueReq.QueueName)
 
 	NewRedisClient(fmt.Sprintf("%s:%d", delayQueueReq.Host, delayQueueReq.Port), delayQueueReq.Password, delayQueueReq.RedisDb, delayQueueReq.Timeout)
+
 	initTimers(delayQueueReq.BucketSize, delayQueueReq.BucketName)
+
 	bucketNameChan = generateBucketName(delayQueueReq.BucketSize, delayQueueReq.BucketName)
 }
 
@@ -152,7 +154,7 @@ func generateBucketName(bucketSize uint32, bucketName string) <-chan string {
 	go func() {
 		i := 1
 		for {
-			c <- fmt.Sprintf(bucketName, i)
+			c <- fmt.Sprintf("%s-%d", bucketName, i)
 			if i >= int(bucketSize) {
 				i = 1
 			} else {
