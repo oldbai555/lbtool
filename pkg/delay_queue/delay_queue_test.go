@@ -14,7 +14,7 @@ func TestListen(t *testing.T) {
 		Port:     6379,
 		Password: "",
 		RedisDb:  1,
-		Timeout:  10 * time.Second,
+		Timeout:  10,
 
 		BucketName: "lb-bucket",
 		BucketSize: 10,
@@ -25,7 +25,7 @@ func TestListen(t *testing.T) {
 
 	var topicList []Topic
 	for i := 0; i < 10; i++ {
-		topicList = append(topicList, Topic(fmt.Sprintf("lb-%d", i)))
+		topicList = append(topicList, Topic(fmt.Sprintf("lb-topic-%d", i)))
 	}
 	for i := 0; i < 100; i++ {
 		utils.GenRandomStr()

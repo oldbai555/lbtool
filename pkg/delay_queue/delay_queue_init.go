@@ -16,11 +16,11 @@ var (
 )
 
 type DelayQueueReq struct {
-	Host     string        `json:"host"`
-	Port     int           `json:"port"`
-	Password string        `json:"password"`
-	RedisDb  int           `json:"redis_db"`
-	Timeout  time.Duration `json:"timeout"`
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
+	Password string `json:"password"`
+	RedisDb  int    `json:"redis_db"`
+	Timeout  int    `json:"timeout"`
 
 	// BucketName 存储桶名,初始化后会带上后缀 -
 	BucketName string `json:"bucket_name"`
@@ -44,7 +44,7 @@ func SetupDelayQueue(req *DelayQueueReq) {
 	delayQueueReq.BucketName = fmt.Sprintf("%s-", delayQueueReq.BucketName)
 	delayQueueReq.QueueName = fmt.Sprintf("%s-", delayQueueReq.QueueName)
 
-	NewRedisClient(fmt.Sprintf("%s:%d", delayQueueReq.Host, delayQueueReq.Port), delayQueueReq.Password, delayQueueReq.RedisDb, delayQueueReq.Timeout)
+	NewRedisClient(fmt.Sprintf("%s:%d", delayQueueReq.Host, delayQueueReq.Port), delayQueueReq.Password, delayQueueReq.RedisDb, time.Duration(delayQueueReq.Timeout)*time.Second)
 
 	initTimers(delayQueueReq.BucketSize, delayQueueReq.BucketName)
 
@@ -57,7 +57,7 @@ func initTimers(bucketSize uint32, bucketName string) {
 
 	for i := 0; i < int(bucketSize); i++ {
 		timers[i] = time.NewTicker(2 * time.Second)
-		newBucketName := fmt.Sprintf(bucketName, i+1)
+		newBucketName := fmt.Sprintf("%s-%d", bucketName, i+1)
 		go waitTicker(timers[i], newBucketName)
 	}
 }
@@ -79,7 +79,7 @@ func tickHandler(t time.Time, bucketName string) {
 		// 从桶里拿出元素
 		bucketItem, err := getFromBucket(bucketName)
 		if err != nil {
-			log.Infof("扫描bucket错误#bucket-%s,err is %s", bucketName, err.Error())
+			log.Errorf("扫描bucket错误#bucket-%s,err is %s", bucketName, err.Error())
 			return
 		}
 
@@ -90,14 +90,14 @@ func tickHandler(t time.Time, bucketName string) {
 
 		// 延迟时间未到
 		if bucketItem.timestamp > t.Unix() {
-			log.Infof("%s not now,expected timestamp %d, now %d", bucketItem.jobID, bucketItem.timestamp, t.Unix())
+			log.Warnf("%s not now,expected timestamp %d, now %d", bucketItem.jobID, bucketItem.timestamp, t.Unix())
 			return
 		}
 
 		// 延迟时间小于等于当前时间, 取出Job元信息并放入ready queue
 		job, err := getJob(bucketItem.jobID)
 		if err != nil && err != redis.Nil {
-			log.Infof("获取Job元信息失败#jobID is %s, bucket is %s, err is %s", bucketItem.jobID, bucketName, err.Error())
+			log.Errorf("获取Job元信息失败#jobID is %s, bucket is %s, err is %s", bucketItem.jobID, bucketName, err.Error())
 			continue
 		}
 
@@ -135,7 +135,7 @@ func tickHandler(t time.Time, bucketName string) {
 		// 延时时间已经小于当前时间了，那么准备开始执行它
 		err = pushToReadyQueue(job.Topic, bucketItem.jobID)
 		if err != nil {
-			log.Infof("jobID放入ready queue失败#bucket is %s,job is %+v,err is %s", bucketName, job, err.Error())
+			log.Errorf("jobID放入ready queue失败#bucket is %s,job is %+v,err is %s", bucketName, job, err.Error())
 			continue
 		}
 
