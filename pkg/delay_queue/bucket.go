@@ -14,17 +14,17 @@ type BucketItem struct {
 }
 
 // 添加JobId到bucket中
-func pushToBucket(key string, timestamp uint32, jobId string) error {
+func pushToBucket(randomBucketName string, timestamp uint32, jobId string) error {
 	z := redis.Z{
 		Score:  float64(timestamp),
 		Member: jobId,
 	}
-	return Rdb.ZAdd(context.TODO(), key, &z).Err()
+	return Rdb.ZAdd(context.TODO(), randomBucketName, &z).Err()
 }
 
 // 从bucket中获取延迟时间最小的JobId
-func getFromBucket(key string) (*BucketItem, error) {
-	value, err := Rdb.ZRangeWithScores(context.Background(), key, 0, 0).Result()
+func getFromBucket(bucketName string) (*BucketItem, error) {
+	value, err := Rdb.ZRangeWithScores(context.Background(), bucketName, 0, 0).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -39,6 +39,6 @@ func getFromBucket(key string) (*BucketItem, error) {
 }
 
 // 从bucket中删除JobId
-func removeFromBucket(bucket string, jobId string) error {
-	return Rdb.ZRem(context.TODO(), bucket, jobId).Err()
+func removeFromBucket(bucketName string, jobId string) error {
+	return Rdb.ZRem(context.TODO(), bucketName, jobId).Err()
 }

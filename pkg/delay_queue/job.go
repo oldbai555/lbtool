@@ -25,7 +25,7 @@ type Job struct {
 	// Body 内容主体
 	Body string `json:"body"`
 
-	// TTR 轮询间隔，非0表示定时任务
+	// TTR 轮询间隔，大于0表示定时任务
 	TTR int64 `json:"ttr"`
 
 	// ExecuteAt 预定执行时间,为0表示立即执行
@@ -33,8 +33,8 @@ type Job struct {
 }
 
 // getJob 获取Job
-func getJob(key string) (job Job, err error) {
-	value, err := Rdb.Get(context.TODO(), key).Result()
+func getJob(jobID string) (job Job, err error) {
+	value, err := Rdb.Get(context.TODO(), jobID).Result()
 	if err != nil {
 		return
 	}
@@ -48,24 +48,17 @@ func getJob(key string) (job Job, err error) {
 
 // putJob 添加Job
 func putJob(key string, job Job) error {
-	diff := getDiffTime(job.ExecuteAt) + utils.Hours
-	err := Rdb.Set(context.TODO(), key, utils.JsonEncode(job), time.Hour*time.Duration(diff)).Err()
-	return err
-}
-
-// setJob 更新Job
-func setJob(key string, job Job) error {
-	diff := getDiffTime(job.ExecuteAt) + utils.Hours
-	err := Rdb.SetNX(context.TODO(), key, utils.JsonEncode(job), time.Hour*time.Duration(diff)).Err()
+	diff := getDiffTime(job.ExecuteAt) + utils.Minutes
+	err := Rdb.Set(context.TODO(), key, utils.JsonEncode(job), time.Second*time.Duration(diff)).Err()
 	return err
 }
 
 // removeJob 删除Job
-func removeJob(key string) error {
-	return Rdb.Del(context.Background(), key).Err()
+func removeJob(jobID string) error {
+	return Rdb.Del(context.Background(), jobID).Err()
 }
 
-// getDiffTime 获取距离现在的时间差
+// getDiffTime 获取距离现在的时间差,单位秒
 func getDiffTime(executeAt uint32) uint32 {
 	stampNow := utils.TimeNow()
 	if executeAt < stampNow {

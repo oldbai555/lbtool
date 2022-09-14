@@ -78,7 +78,8 @@ func listen(topics ...Topic) (job Job, err error) {
 	if job.TTR > 0 {
 		// 这个是定时任务的逻辑 - 得到下一次执行的时间，重新放回桶里
 		timestamp := time.Now().In(utils.PRCLocation).Unix() + job.TTR
-		err = pushToBucket(<-bucketNameChan, uint32(timestamp), job.ID)
+		randomBucketName := <-bucketNameChan
+		err = pushToBucket(randomBucketName, uint32(timestamp), job.ID)
 		if err != nil {
 			log.Errorf("err:%v", err)
 		}
@@ -95,6 +96,7 @@ func consume(topic Topic, handler func(Job) error) {
 			// todo 停止消费需要设计一下
 			log.Infof("==========stop consume==========")
 		default:
+			// 具体消费，如果耗时大，那么可以利用管道的缓冲区进行缓冲任务执行
 			job, err := listen(topic)
 			if err == redis.Nil {
 				continue
