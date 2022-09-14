@@ -7,6 +7,7 @@ const (
 	ErrOrmTableNotExist = 10001
 	ErrOrmNotFound      = 10002
 	ErrDelayQueueOptErr = 10003
+	ErrStorageOptErr    = 10004
 )
 
 var (
