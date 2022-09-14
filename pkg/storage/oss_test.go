@@ -16,7 +16,7 @@ func TestOSSStorage_SignURL(t *testing.T) {
 		Type:      "qcloud",
 		SecretID:  "",
 		SecretKey: "",
-		BucketURL: "https://baifile-1309918034.cos.ap-guangzhou.myqcloud.com",
+		BucketURL: "",
 	})
 	readFile, err := ioutil.ReadFile("C:\\Users\\EDY\\Desktop\\QQ截图20220805110655.png")
 	if err != nil {
