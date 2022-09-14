@@ -41,7 +41,7 @@ func (o LocalStorage) CheckSignedURL(signedURL string, method string, expireAt i
 	}
 
 	if time.Now().Unix() > expireAt {
-		err = exception.NewErr(exception.ErrStorageOptErr, fmt.Sprintf("url expireAt "))
+		err = exception.NewErr(exception.ErrStorageOptErr, fmt.Sprintf("url expire"))
 		return
 	}
 
@@ -58,28 +58,26 @@ func (o LocalStorage) CheckSignedURL(signedURL string, method string, expireAt i
 }
 
 func (o LocalStorage) SignURL(objectKey string, method utils.HTTPMethod, expiredInSec int64) (signedURL string, err error) {
-	// if !IsValidObjectKey(objectKey) {
-	// 	err = errors.WithStack(ecode.InvalidPathError)
-	// 	return
-	// }
-	//
-	// fileURL, err := url.Parse(conf.Settings.App.URL)
-	// if err != nil {
-	// 	err = errors.Wrap(err, "invalid MainApp URL")
-	// 	return
-	// }
-	//
-	// fileURL.Path = path.Join(o.Config.ServerRootPath, objectKey)
-	//
-	// fileURL.RawQuery = fmt.Sprintf("expire_at=%d",
-	// 	time.Now().Unix()+expiredInSec,
-	// )
-	//
-	// signData := fmt.Sprintf("path=%s;method=%s;query=%s;sign_key=%s", fileURL.Path, method, fileURL.RawQuery, conf.Settings.App.Key)
-	// log.Sugar.Debug("signData", signData)
-	// signature := gsha1.Encrypt(signData)
-	// fileURL.RawQuery += fmt.Sprintf("&signature=%s", signature)
-	// signedURL = fileURL.String()
+	if !IsValidObjectKey(objectKey) {
+		err = exception.NewErr(exception.ErrStorageOptErr, "invalid_path_error")
+		return
+	}
+
+	fileURL, err := url.Parse("your file url")
+	if err != nil {
+		err = errors.Wrap(err, "invalid MainApp URL")
+		return
+	}
+
+	fileURL.Path = path.Join(o.Config.ServerRootPath, objectKey)
+
+	fileURL.RawQuery = fmt.Sprintf("expire_at=%d", time.Now().Unix()+expiredInSec)
+
+	signData := fmt.Sprintf("path=%s;method=%s;query=%s;sign_key=%s", fileURL.Path, method, fileURL.RawQuery, "your sign_key")
+	log.Debugf("signData,%s", signData)
+	signature := gsha1.Encrypt(signData)
+	fileURL.RawQuery += fmt.Sprintf("&signature=%s", signature)
+	signedURL = fileURL.String()
 
 	return
 }
