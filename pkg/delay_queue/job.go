@@ -19,14 +19,17 @@ type Job struct {
 	Topic Topic `json:"topic"`
 	// ID job唯一标识ID
 	ID string `json:"id"`
-	// ExecuteAt 预定执行时间
-	ExecuteAt uint32 `json:"execute_at"`
-	// TTR 轮询间隔
-	TTR int64 `json:"ttr"`
+
 	// FailedCount 失败次数
 	FailedCount int64 `json:"failed_count"`
 	// Body 内容主体
 	Body string `json:"body"`
+
+	// TTR 轮询间隔，非0表示定时任务
+	TTR int64 `json:"ttr"`
+
+	// ExecuteAt 预定执行时间
+	ExecuteAt uint32 `json:"execute_at"`
 }
 
 // getJob 获取Job

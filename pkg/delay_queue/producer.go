@@ -23,7 +23,7 @@ func Get(jobID string) (job Job, err error) {
 
 // Add 添加一个Job到队列中
 func Add(job Job) error {
-	if job.ID == "" || job.Topic == "" || job.ExecuteAt < 0 || job.TTR <= 0 {
+	if job.ID == "" || job.Topic == "" || job.ExecuteAt < 0 {
 		return exception.NewInvalidArg("invalid job")
 	}
 
@@ -47,7 +47,7 @@ func Add(job Job) error {
 
 // Update 更新一个Job
 func Update(job Job) (err error) {
-	if job.ID == "" || job.Topic == "" || job.ExecuteAt < 0 || job.TTR <= 0 {
+	if job.ID == "" || job.Topic == "" || job.ExecuteAt < 0 {
 		return exception.NewInvalidArg("invalid job")
 	}
 
