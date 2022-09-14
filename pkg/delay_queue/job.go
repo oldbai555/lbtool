@@ -25,10 +25,10 @@ type Job struct {
 	// Body 内容主体
 	Body string `json:"body"`
 
-	// TTR 轮询间隔，大于0表示定时任务
+	// TTR 轮询间隔，大于0表示定时任务,单位秒
 	TTR int64 `json:"ttr"`
 
-	// ExecuteAt 预定执行时间,为0表示立即执行
+	// ExecuteAt 预定执行时间,为0表示立即执行,时间戳
 	ExecuteAt uint32 `json:"execute_at"`
 }
 
