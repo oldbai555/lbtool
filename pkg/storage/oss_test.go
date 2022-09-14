@@ -14,8 +14,8 @@ import (
 func TestOSSStorage_SignURL(t *testing.T) {
 	Setup(Config{
 		Type:      "qcloud",
-		SecretID:  "AKIDe4E8l7C1ZqpXz92e05tQhhYEfrmQowoP",
-		SecretKey: "MSISMyKPDk23nFRM0NSHq89tNaWCahX6",
+		SecretID:  "",
+		SecretKey: "",
 		BucketURL: "https://baifile-1309918034.cos.ap-guangzhou.myqcloud.com",
 	})
 	readFile, err := ioutil.ReadFile("C:\\Users\\EDY\\Desktop\\QQ截图20220805110655.png")
