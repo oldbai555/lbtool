@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/oldbai555/lb/log"
 	"github.com/oldbai555/lb/pkg/exception"
+	"github.com/oldbai555/lb/utils"
 )
 
 // Get 查询Job
@@ -25,6 +26,10 @@ func Get(jobID string) (job Job, err error) {
 func Add(job Job) error {
 	if job.ID == "" || job.Topic == "" || job.ExecuteAt < 0 {
 		return exception.NewInvalidArg("invalid job")
+	}
+
+	if job.ExecuteAt == 0 {
+		job.ExecuteAt = utils.TimeNow()
 	}
 
 	err := putJob(job.ID, job)

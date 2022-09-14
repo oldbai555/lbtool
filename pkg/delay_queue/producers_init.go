@@ -56,7 +56,7 @@ func initTimers(bucketSize uint32, bucketName string) {
 	timers = make([]*time.Ticker, bucketSize)
 
 	for i := 0; i < int(bucketSize); i++ {
-		timers[i] = time.NewTicker(2 * time.Second)
+		timers[i] = time.NewTicker(1 * time.Second)
 		newBucketName := fmt.Sprintf("%s-%d", bucketName, i+1)
 		go waitTicker(timers[i], newBucketName)
 	}

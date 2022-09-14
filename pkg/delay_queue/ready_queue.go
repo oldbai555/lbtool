@@ -3,6 +3,7 @@ package delay_queue
 import (
 	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/oldbai555/lb/log"
 	"time"
 )
@@ -27,6 +28,9 @@ func blockPopFromReadyQueue(topics []string, timeout int) (string, error) {
 
 	value, err := Rdb.BLPop(context.Background(), time.Duration(timeout)*time.Second, args...).Result()
 	if err != nil {
+		if err == redis.Nil {
+			return "", nil
+		}
 		log.Errorf("err:%v", err)
 		return "", err
 	}

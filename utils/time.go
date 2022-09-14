@@ -57,7 +57,7 @@ func Day2Second(date uint32) uint32 {
 	return uint32(time.Date(int(year), time.Month(month), int(day), 0, 0, 0, 0, time.Now().Location()).Unix())
 }
 
-func TimeStampNow() uint32 {
+func TimeNow() uint32 {
 	return uint32(time.Now().Unix())
 }
 

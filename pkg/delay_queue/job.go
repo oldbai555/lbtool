@@ -28,7 +28,7 @@ type Job struct {
 	// TTR 轮询间隔，非0表示定时任务
 	TTR int64 `json:"ttr"`
 
-	// ExecuteAt 预定执行时间
+	// ExecuteAt 预定执行时间,为0表示立即执行
 	ExecuteAt uint32 `json:"execute_at"`
 }
 
@@ -67,7 +67,7 @@ func removeJob(key string) error {
 
 // getDiffTime 获取距离现在的时间差
 func getDiffTime(executeAt uint32) uint32 {
-	stampNow := utils.TimeStampNow()
+	stampNow := utils.TimeNow()
 	if executeAt < stampNow {
 		return 0
 	}
