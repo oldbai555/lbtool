@@ -7,7 +7,7 @@ import (
 	"github.com/oldbai555/lb/log"
 	"github.com/oldbai555/lb/orm/dialect"
 	"github.com/oldbai555/lb/orm/session"
-	"github.com/oldbai555/lb/pkg/result"
+	"github.com/oldbai555/lb/pkg/exception"
 	"strings"
 )
 
@@ -97,7 +97,7 @@ func (engine *Engine) Migrate(value interface{}) error {
 		_, err = doDescTable(s)
 		if err != nil {
 			log.Errorf("err:%v", err)
-			if result.GetErrCode(err) == result.ErrOrmTableNotExist {
+			if exception.GetErrCode(err) == exception.ErrOrmTableNotExist {
 				return nil, createTable(s)
 			}
 			return nil, err

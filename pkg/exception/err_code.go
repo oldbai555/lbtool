@@ -1,4 +1,4 @@
-package result
+package exception
 
 const (
 	SUCCESS             = 0
@@ -6,8 +6,9 @@ const (
 	ErrInvalidArg       = 1001
 	ErrOrmTableNotExist = 10001
 	ErrOrmNotFound      = 10002
+	ErrDelayQueueOptErr = 10003
 )
 
 var (
-	Success = NewLbErr(SUCCESS, "ok")
+	Success = NewErr(SUCCESS, "ok")
 )

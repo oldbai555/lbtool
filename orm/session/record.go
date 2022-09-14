@@ -2,7 +2,7 @@ package session
 
 import (
 	"github.com/oldbai555/lb/orm/clause"
-	"github.com/oldbai555/lb/pkg/result"
+	"github.com/oldbai555/lb/pkg/exception"
 	"reflect"
 )
 
@@ -131,7 +131,7 @@ func (s *Session) First(value interface{}) error {
 		return err
 	}
 	if destSlice.Len() == 0 {
-		return result.NewLbErr(result.ErrOrmNotFound, "Not found error")
+		return exception.NewErr(exception.ErrOrmNotFound, "Not found error")
 	}
 	dest.Set(destSlice.Index(0))
 	return nil

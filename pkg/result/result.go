@@ -1,5 +1,7 @@
 package result
 
+import "github.com/oldbai555/lb/pkg/exception"
+
 type LbResult struct {
 	code uint32      `json:"code"`
 	msg  string      `json:"msg"`
@@ -19,7 +21,7 @@ func (l *LbResult) Data() interface{} {
 }
 
 func NewLbResult(err error, data interface{}) *LbResult {
-	lbErr := err.(*LbErr)
+	lbErr := err.(*exception.LbErr)
 	return &LbResult{
 		code: lbErr.Code(),
 		msg:  lbErr.Message(),
@@ -28,9 +30,9 @@ func NewLbResult(err error, data interface{}) *LbResult {
 }
 
 func Ok(data interface{}) *LbResult {
-	return NewLbResult(Success, data)
+	return NewLbResult(exception.Success, data)
 }
 
 func Fail(msg string) *LbResult {
-	return NewLbResult(NewLbErr(FAILURE, msg), "")
+	return NewLbResult(exception.NewErr(exception.FAILURE, msg), "")
 }

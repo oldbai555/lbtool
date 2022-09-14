@@ -24,6 +24,16 @@ const (
 	Days    = 24 * Hours
 )
 
+var WeekdayMap = map[string]int{
+	"周一": 1,
+	"周二": 2,
+	"周三": 3,
+	"周四": 4,
+	"周五": 5,
+	"周六": 6,
+	"周日": 0,
+}
+
 func init() {
 	SetupTimezone()
 }

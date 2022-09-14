@@ -1,4 +1,4 @@
-package result
+package exception
 
 import "fmt"
 
@@ -21,7 +21,7 @@ func (e *LbErr) Error() string {
 	return fmt.Sprintf("code: %d, message: %s", e.code, e.message)
 }
 
-func NewLbErr(code uint32, message string) error {
+func NewErr(code uint32, message string) error {
 	return &LbErr{
 		code:    code,
 		message: message,

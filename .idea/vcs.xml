@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/delve" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extrpkg/redis" vcs="Git" />
   </component>
 </project>
