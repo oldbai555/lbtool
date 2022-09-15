@@ -3,6 +3,8 @@ package main
 import "fmt"
 import "github.com/go-resty/resty/v2"
 
+// https://github.com/go-resty/resty 官方文档
+
 func main() {
 	// Create a Resty Client
 	client := resty.New()
