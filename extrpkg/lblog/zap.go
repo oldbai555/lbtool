@@ -14,10 +14,11 @@ import (
 )
 
 var (
-	l            *Logger
-	outWrite     zapcore.WriteSyncer       // IO输出
-	debugConsole = zapcore.Lock(os.Stdout) // 控制台标准输出
-	once         sync.Once
+	l             *Logger
+	outWrite      zapcore.WriteSyncer       // IO输出
+	aSyncOutWrite zapcore.WriteSyncer       // 异步IO输出
+	debugConsole  = zapcore.Lock(os.Stdout) // 控制台标准输出
+	once          sync.Once
 )
 
 type Logger struct {
@@ -69,7 +70,6 @@ func (l *Logger) AddCtx(ctx context.Context, field ...zap.Field) (context.Contex
 }
 
 func (l *Logger) initHLog() {
-	l.setSyncers()
 	var err error
 	l.Logger, err = l.zapConfig.Build(l.cores())
 	if err != nil {
@@ -121,6 +121,24 @@ func (l *Logger) setSyncers() {
 	return
 }
 
+func (l *Logger) setAsyncers() {
+	fa := &FileWriteAsyncer{}
+	fa.innerLogger = &lumberjack.Logger{
+		Filename:   l.opts.LogFileDir + "/" + l.opts.AppName + ".log",
+		MaxSize:    l.opts.MaxSize,
+		MaxBackups: l.opts.MaxBackups,
+		MaxAge:     l.opts.MaxAge,
+		Compress:   true,
+		LocalTime:  true,
+	}
+	fa.ch = make(chan []byte, 10000)
+	fa.syncChan = make(chan struct{})
+	// 批量异步写入到文件中
+	go batchWriteLog(fa)
+	aSyncOutWrite = fa
+	return
+}
+
 func (l *Logger) cores() zap.Option {
 	encoder := zapcore.NewJSONEncoder(l.zapConfig.EncoderConfig)
 	priority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
@@ -128,9 +146,20 @@ func (l *Logger) cores() zap.Option {
 	})
 	var cores []zapcore.Core
 	if l.opts.WriteFile {
-		cores = append(cores, []zapcore.Core{
-			zapcore.NewCore(encoder, outWrite, priority),
-		}...)
+		if l.opts.IsAsync {
+			l.setAsyncers()
+			core := zapcore.NewCore(
+				encoder,
+				aSyncOutWrite,
+				priority,
+			)
+			cores = append(cores, core)
+		} else {
+			l.setSyncers()
+			cores = append(cores, []zapcore.Core{
+				zapcore.NewCore(encoder, outWrite, priority),
+			}...)
+		}
 	}
 	if l.opts.WriteConsole {
 		cores = append(cores, []zapcore.Core{

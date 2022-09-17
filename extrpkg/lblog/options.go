@@ -13,6 +13,7 @@ type Options struct {
 	CtxKey       string //通过 ctx 传递 lblog 对象
 	WriteFile    bool
 	WriteConsole bool
+	IsAsync      bool
 }
 
 type HLogOptions func(*Options)
@@ -92,5 +93,11 @@ func SetWriteFile(writeFile bool) HLogOptions {
 func SetWriteConsole(writeConsole bool) HLogOptions {
 	return func(options *Options) {
 		options.WriteConsole = writeConsole
+	}
+}
+
+func SetIsAsync(isAsync bool) HLogOptions {
+	return func(options *Options) {
+		options.IsAsync = isAsync
 	}
 }
