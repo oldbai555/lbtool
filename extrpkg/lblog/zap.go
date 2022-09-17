@@ -1,4 +1,4 @@
-package hlog
+package lblog
 
 import (
 	"context"
@@ -40,7 +40,7 @@ func NewLogger(opts ...HLogOptions) {
 // GetLogger returns logger
 func GetLogger() *Logger {
 	if l == nil {
-		fmt.Println("Please initialize the hlog service first")
+		fmt.Println("Please initialize the lblog service first")
 		return nil
 	}
 	return l

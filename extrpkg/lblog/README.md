@@ -1,7 +1,3 @@
-# 封装 zap 日志注入 trace 信息 Trace Id（内含 gin 例子）
-
-### [hlog](https://github.com/hwholiday/learning_tools/tree/master/hlog) (源码地址)
-
 - 实现自动切割文件 (基于 lumberjack 实现)
 - 实现可传递 trace 信息 （基于 Context 实现）
 

@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/oldbai555/lb/extrpkg/hlog"
+	"github.com/oldbai555/lb/extrpkg/lblog"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -14,7 +14,7 @@ func AddTraceId() gin.HandlerFunc {
 		if traceId == "" {
 			traceId = uuid.New().String()
 		}
-		ctx, log := hlog.GetLogger().AddCtx(g.Request.Context(), zap.Any("traceId", traceId))
+		ctx, log := lblog.GetLogger().AddCtx(g.Request.Context(), zap.Any("traceId", traceId))
 		g.Request = g.Request.WithContext(ctx)
 		log.Info("AddTraceId success")
 		g.Next()
@@ -23,16 +23,16 @@ func AddTraceId() gin.HandlerFunc {
 
 // curl http://127.0.0.1:8888/test
 func main() {
-	hlog.NewLogger(hlog.SetDevelopment(false))
+	lblog.NewLogger(lblog.SetDevelopment(false))
 	g := gin.New()
 	g.Use(AddTraceId())
 	g.GET("/test", func(context *gin.Context) {
-		log := hlog.GetLogger().GetCtx(context.Request.Context())
+		log := lblog.GetLogger().GetCtx(context.Request.Context())
 		log.Info("test")
 		log.Debug("test")
 		context.JSON(200, "success")
 	})
-	hlog.GetLogger().Info("hconf example success")
+	lblog.GetLogger().Info("hconf example success")
 	http.ListenAndServe(":8888", g)
 }
 
