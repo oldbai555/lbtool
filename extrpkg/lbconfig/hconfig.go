@@ -1,4 +1,4 @@
-package hconfig
+package lbconfig
 
 import (
 	"context"

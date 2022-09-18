@@ -1,3 +1,3 @@
-package hconfig
+package lbconfig
 
 type HVal interface{}

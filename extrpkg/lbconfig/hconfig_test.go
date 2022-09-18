@@ -1,4 +1,4 @@
-package hconfig
+package lbconfig
 
 import (
 	"github.com/oldbai555/lb/extrpkg/lbconfig/apollo"
