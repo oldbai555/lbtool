@@ -42,7 +42,7 @@ func (w *watcher) Change() ([]*hconf.Data, error) {
 			return nil, nil
 		}
 		var data = make([]*hconf.Data, 0)
-		data = append(data, w.apolloConfig.loadNameSpace(v))
+		data = append(data, w.apolloConfig.loadNameSpace(v)...)
 		return data, nil
 	}
 }

@@ -6,7 +6,10 @@ import (
 )
 
 type ApolloTest struct {
-	Test uint32 `json:"test,omitempty" yaml:"test,omitempty"`
+	Test Str `json:"test,omitempty" yaml:"test,omitempty"`
+}
+type Str struct {
+	Hello string `json:"hello,omitempty" yaml:"hello,omitempty"`
 }
 
 // 默认 apollo 有三个端口 8070 8080 8090 ,代码连接使用8080
@@ -36,7 +39,7 @@ func TestNewHConfig_Apollo(t *testing.T) {
 	}
 
 	//读取配置
-	val, err := conf.Get("application.yaml")
+	val, err := conf.Get("test")
 	if err != nil {
 		t.Error(err)
 		return
@@ -48,11 +51,17 @@ func TestNewHConfig_Apollo(t *testing.T) {
 	//	t.Error(err)
 	//	return
 	//}
-	t.Logf("val %+v\n", val.String())
+	t.Logf("val %+v\n", val)
 
 	//监听配置变化
 	if err = conf.Watch(func(path string, v HVal) {
-		t.Logf("path %s val %+v\n", path, v.String())
+		t.Logf("path %s val %+v\n", path, v)
+		va, aerr := conf.Get("test")
+		if aerr != nil {
+			t.Error(aerr)
+			return
+		}
+		t.Logf("va %+v\n", va)
 	}); err != nil {
 		t.Error(err)
 		return

@@ -18,7 +18,7 @@ func WithDataSource(d hconf.DataSource) Option {
 	}
 }
 
-func UseLocal() Option {
+func WithUseLocal() Option {
 	return func(opt *options) {
 		opt.useLocal = true
 	}

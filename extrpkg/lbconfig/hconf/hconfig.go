@@ -2,7 +2,7 @@ package hconf
 
 type Data struct {
 	Key string
-	Val []byte
+	Val interface{}
 }
 
 type DataSource interface {

@@ -8,6 +8,7 @@ const (
 	ErrOrmNotFound      = 10002
 	ErrDelayQueueOptErr = 10003
 	ErrStorageOptErr    = 10004
+	ErrNotFound         = 10005
 )
 
 var (
