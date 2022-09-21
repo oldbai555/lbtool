@@ -20,6 +20,7 @@ func genToken() (string, error) {
 		return "", err
 	}
 	log.Infof("response is %v", string(response.Body()))
+	log.Infof("URL  is %v", response.Request.URL)
 	return "", nil
 }
 
