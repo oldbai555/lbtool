@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/oldbai555/lb/log"
 	"github.com/oldbai555/lb/pkg/resty_utils"
+	"github.com/shopspring/decimal"
 	"net/http"
+	"strconv"
 )
 
 func genToken() (string, error) {
@@ -37,12 +39,21 @@ func httpget() {
 
 func main() {
 	// httpget()
-	token, err := genToken()
-	if err != nil {
-		log.Errorf("err:%v", err)
-		return
-	}
-	log.Infof("token : %s", token)
+	// token, err := genToken()
+	// if err != nil {
+	// 	log.Errorf("err:%v", err)
+	// 	return
+	// }
+	// log.Infof("token : %s", token)
 	// updatedAtMin := time.Unix(int64(1663664723), 0)
 	// fmt.Println(time.Unix(1663733835, 0).Format("2006-01-02T15:04:05-00:00"))
+
+	num, _ := strconv.ParseFloat("1.1113", 64)
+	fmt.Println(num)
+
+	decimalValue := decimal.NewFromFloat(num)
+	decimalValue = decimalValue.Mul(decimal.NewFromInt(10000))
+
+	res := decimalValue.IntPart()
+	fmt.Println(res)
 }
