@@ -1,7 +1,7 @@
 package functions
 
 import (
-	"github.com/oldbai555/lb/extrpkg/pie/pie"
+	"github.com/oldbai555/lbtool/extrpkg/pie/pie"
 )
 
 // StringsUsing transforms each element to a string.

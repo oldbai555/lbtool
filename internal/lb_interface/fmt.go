@@ -1,7 +1,7 @@
 package lb_interface
 
 import (
-	"github.com/oldbai555/lb/utils"
+	"github.com/oldbai555/lbtool/utils"
 )
 
 type Formatter interface {

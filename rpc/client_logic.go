@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/oldbai555/lb/rpc/codec"
+	"github.com/oldbai555/lbtool/rpc/codec"
 	"log"
 	"net"
 	"time"

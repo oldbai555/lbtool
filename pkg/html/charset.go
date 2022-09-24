@@ -2,7 +2,7 @@ package html
 
 import (
 	"bytes"
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 	"io/ioutil"

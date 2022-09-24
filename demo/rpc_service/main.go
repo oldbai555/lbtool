@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/oldbai555/lb/demo/rpc_client"
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/rpc"
+	"github.com/oldbai555/lbtool/demo/rpc_client"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/rpc"
 )
 
 func main() {

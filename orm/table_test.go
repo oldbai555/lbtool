@@ -1,8 +1,8 @@
 package orm
 
 import (
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/orm/dialect"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/orm/dialect"
 	"testing"
 )
 

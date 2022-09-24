@@ -1,8 +1,8 @@
 package orm
 
 import (
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/orm/session"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/orm/session"
 	"testing"
 )
 

@@ -2,7 +2,7 @@ package apollo
 
 import (
 	"github.com/apolloconfig/agollo/v4/storage"
-	"github.com/oldbai555/lb/extrpkg/lbconf/bconf"
+	"github.com/oldbai555/lbtool/extrpkg/lbconf/bconf"
 )
 
 var _ bconf.DataWatcher = (*watcher)(nil)

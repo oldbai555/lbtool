@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/apolloconfig/agollo/v4"
 	"github.com/apolloconfig/agollo/v4/env/config"
-	"github.com/oldbai555/lb/extrpkg/lbconf/bconf"
+	"github.com/oldbai555/lbtool/extrpkg/lbconf/bconf"
 	"strings"
 )
 

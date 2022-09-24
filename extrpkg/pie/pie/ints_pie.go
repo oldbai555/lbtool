@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/oldbai555/lb/extrpkg/pie/pie/util"
+	"github.com/oldbai555/lbtool/extrpkg/pie/pie/util"
 	"math"
 	"math/rand"
 	"sort"

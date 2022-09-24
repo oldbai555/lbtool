@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/utils"
-	"github.com/oldbai555/lb/web"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/utils"
+	"github.com/oldbai555/lbtool/web"
 	"net/http"
 	"time"
 )

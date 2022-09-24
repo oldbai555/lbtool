@@ -2,8 +2,8 @@ package log
 
 import (
 	"fmt"
-	lb_interface2 "github.com/oldbai555/lb/internal/lb_interface"
-	"github.com/oldbai555/lb/utils"
+	lb_interface2 "github.com/oldbai555/lbtool/internal/lb_interface"
+	"github.com/oldbai555/lbtool/utils"
 	"os"
 	"path/filepath"
 	"runtime"

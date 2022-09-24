@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"github.com/panjf2000/ants/v2"
 	"time"
 )

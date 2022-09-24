@@ -1,8 +1,8 @@
 package session
 
 import (
-	"github.com/oldbai555/lb/orm/clause"
-	"github.com/oldbai555/lb/pkg/exception"
+	"github.com/oldbai555/lbtool/orm/clause"
+	"github.com/oldbai555/lbtool/pkg/exception"
 	"reflect"
 )
 

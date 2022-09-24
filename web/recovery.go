@@ -2,7 +2,7 @@ package web
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"net/http"
 	"runtime"
 	"strings"

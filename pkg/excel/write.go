@@ -1,7 +1,7 @@
 package excel
 
 import (
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"github.com/xuri/excelize/v2"
 	"io/ioutil"
 )

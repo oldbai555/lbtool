@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"net/url"
 )
 

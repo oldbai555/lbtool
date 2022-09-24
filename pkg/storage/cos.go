@@ -2,8 +2,8 @@ package storage
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/pkg/exception"
-	"github.com/oldbai555/lb/utils"
+	"github.com/oldbai555/lbtool/pkg/exception"
+	"github.com/oldbai555/lbtool/utils"
 	"github.com/tencentyun/cos-go-sdk-v5"
 	"golang.org/x/net/context"
 	"io"

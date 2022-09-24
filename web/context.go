@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/utils"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/utils"
 	"net/http"
 )
 

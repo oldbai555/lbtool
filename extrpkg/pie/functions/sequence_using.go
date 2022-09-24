@@ -1,6 +1,6 @@
 package functions
 
-import "github.com/oldbai555/lb/extrpkg/pie/pie/util"
+import "github.com/oldbai555/lbtool/extrpkg/pie/pie/util"
 
 // SequenceUsing generates slice in range using creator function
 //

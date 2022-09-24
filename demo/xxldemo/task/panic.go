@@ -2,7 +2,7 @@ package task
 
 import (
 	"context"
-	"github.com/oldbai555/lb/extrpkg/xxl-job-executor"
+	"github.com/oldbai555/lbtool/extrpkg/xxl-job-executor"
 )
 
 func Panic(cxt context.Context, param *xxl.RunReq) (msg string) {

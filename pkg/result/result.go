@@ -1,6 +1,6 @@
 package result
 
-import "github.com/oldbai555/lb/pkg/exception"
+import "github.com/oldbai555/lbtool/pkg/exception"
 
 type LbResult struct {
 	code uint32      `json:"code"`

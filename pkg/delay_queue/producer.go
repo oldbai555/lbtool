@@ -2,9 +2,9 @@ package delay_queue
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/pkg/exception"
-	"github.com/oldbai555/lb/utils"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/pkg/exception"
+	"github.com/oldbai555/lbtool/utils"
 )
 
 // Get 查询Job

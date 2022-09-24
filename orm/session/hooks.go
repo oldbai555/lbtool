@@ -1,7 +1,7 @@
 package session
 
 import (
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"reflect"
 )
 

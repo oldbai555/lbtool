@@ -3,7 +3,7 @@ package delay_queue
 import (
 	"context"
 	"encoding/json"
-	"github.com/oldbai555/lb/utils"
+	"github.com/oldbai555/lbtool/utils"
 	"time"
 )
 

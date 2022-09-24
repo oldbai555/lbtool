@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/extrpkg/pie/pie"
-	"github.com/oldbai555/lb/utils"
+	"github.com/oldbai555/lbtool/extrpkg/pie/pie"
+	"github.com/oldbai555/lbtool/utils"
 )
 
 func main() {

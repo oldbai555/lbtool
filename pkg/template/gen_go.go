@@ -2,7 +2,7 @@ package template
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"os"
 	"text/template"
 )

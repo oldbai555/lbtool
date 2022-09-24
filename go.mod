@@ -1,4 +1,4 @@
-module github.com/oldbai555/lb
+module github.com/oldbai555/lbtool
 
 go 1.18
 

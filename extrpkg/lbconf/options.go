@@ -2,7 +2,7 @@ package lbconf
 
 import (
 	"errors"
-	"github.com/oldbai555/lb/extrpkg/lbconf/bconf"
+	"github.com/oldbai555/lbtool/extrpkg/lbconf/bconf"
 )
 
 type Option func(opt *options)

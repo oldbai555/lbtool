@@ -3,7 +3,7 @@ package storage
 import (
 	"bytes"
 	"fmt"
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"io/ioutil"
 	"math/rand"
 	"net/http"

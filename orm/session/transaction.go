@@ -1,6 +1,6 @@
 package session
 
-import "github.com/oldbai555/lb/log"
+import "github.com/oldbai555/lbtool/log"
 
 func (s *Session) Begin() (err error) {
 	log.Infof("transaction begin")

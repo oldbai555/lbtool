@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/rpc/codec"
-	"github.com/oldbai555/lb/utils"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/rpc/codec"
+	"github.com/oldbai555/lbtool/utils"
 	"io"
 	"sync"
 )

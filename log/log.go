@@ -3,8 +3,8 @@ package log
 import (
 	"errors"
 	"fmt"
-	"github.com/oldbai555/lb/internal/lb_interface"
-	"github.com/oldbai555/lb/utils"
+	"github.com/oldbai555/lbtool/internal/lb_interface"
+	"github.com/oldbai555/lbtool/utils"
 	"github.com/petermattis/goid"
 	"sync"
 )

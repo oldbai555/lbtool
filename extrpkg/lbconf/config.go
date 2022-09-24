@@ -3,7 +3,7 @@ package lbconf
 import (
 	"context"
 	"errors"
-	"github.com/oldbai555/lb/extrpkg/lbconf/bconf"
+	"github.com/oldbai555/lbtool/extrpkg/lbconf/bconf"
 	"github.com/spf13/viper"
 )
 

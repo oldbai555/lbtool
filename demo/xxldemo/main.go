@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/demo/xxldemo/task"
-	"github.com/oldbai555/lb/extrpkg/xxl-job-executor"
+	"github.com/oldbai555/lbtool/demo/xxldemo/task"
+	"github.com/oldbai555/lbtool/extrpkg/xxl-job-executor"
 	"log"
 )
 

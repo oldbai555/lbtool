@@ -2,7 +2,7 @@ package rpc
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"net"
 	"net/http"
 )

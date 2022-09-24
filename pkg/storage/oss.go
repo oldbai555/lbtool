@@ -2,7 +2,7 @@ package storage
 
 import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	"github.com/oldbai555/lb/utils"
+	"github.com/oldbai555/lbtool/utils"
 	"github.com/pkg/errors"
 	"io"
 	"net/url"

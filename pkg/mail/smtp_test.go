@@ -1,7 +1,7 @@
 package mail
 
 import (
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"testing"
 )
 

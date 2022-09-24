@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/pkg/resty_utils"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/pkg/resty_utils"
 	"github.com/shopspring/decimal"
 	"net/http"
 	"strconv"

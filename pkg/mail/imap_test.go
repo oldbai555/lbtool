@@ -2,7 +2,7 @@ package mail
 
 import (
 	"encoding/json"
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"sync"
 	"testing"
 	"time"

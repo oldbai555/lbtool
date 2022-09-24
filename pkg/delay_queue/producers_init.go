@@ -3,8 +3,8 @@ package delay_queue
 import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/utils"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/utils"
 	"time"
 )
 

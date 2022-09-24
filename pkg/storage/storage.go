@@ -1,8 +1,8 @@
 package storage
 
 import (
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/utils"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/utils"
 	"io"
 	"os"
 )

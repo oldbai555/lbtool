@@ -3,8 +3,8 @@ package rpc_client
 import (
 	"context"
 	"fmt"
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/rpc"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/rpc"
 	"sync"
 	"testing"
 	"time"

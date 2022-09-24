@@ -4,10 +4,10 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/oldbai555/lb/log"
-	"github.com/oldbai555/lb/orm/dialect"
-	"github.com/oldbai555/lb/orm/session"
-	"github.com/oldbai555/lb/pkg/exception"
+	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/orm/dialect"
+	"github.com/oldbai555/lbtool/orm/session"
+	"github.com/oldbai555/lbtool/pkg/exception"
 	"strings"
 )
 

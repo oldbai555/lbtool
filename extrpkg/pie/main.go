@@ -4,7 +4,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/oldbai555/lb/extrpkg/pie/functions"
+	"github.com/oldbai555/lbtool/extrpkg/pie/functions"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -114,7 +114,7 @@ func getImports(packageName, s string) (imports []string) {
 	for _, s := range f.Imports {
 		importName := s.Path.Value
 
-		if importName == `"github.com/oldbai555/lb/extrpkg/pie/pie"` &&
+		if importName == `"github.com/oldbai555/lbtool/extrpkg/pie/pie"` &&
 			isSelfPackage(packageName) {
 			continue
 		}

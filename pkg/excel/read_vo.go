@@ -1,6 +1,6 @@
 package excel
 
-import "github.com/oldbai555/lb/extrpkg/pie/pie"
+import "github.com/oldbai555/lbtool/extrpkg/pie/pie"
 
 const DefaultSheet = "Sheet1"
 

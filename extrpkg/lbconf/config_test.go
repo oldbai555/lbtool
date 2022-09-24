@@ -1,8 +1,8 @@
 package lbconf
 
 import (
-	"github.com/oldbai555/lb/extrpkg/lbconf/apollo"
-	"github.com/oldbai555/lb/extrpkg/lbconf/bconf"
+	"github.com/oldbai555/lbtool/extrpkg/lbconf/apollo"
+	"github.com/oldbai555/lbtool/extrpkg/lbconf/bconf"
 	"testing"
 )
 

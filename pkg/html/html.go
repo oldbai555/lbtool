@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/antchfx/htmlquery"
-	"github.com/oldbai555/lb/log"
+	"github.com/oldbai555/lbtool/log"
 	"io/ioutil"
 	"net"
 	"net/http"
