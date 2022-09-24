@@ -2,6 +2,7 @@ package lbconfig
 
 import (
 	"github.com/oldbai555/lb/extrpkg/lbconfig/apollo"
+	"github.com/oldbai555/lb/extrpkg/lbconfig/domain"
 	"testing"
 )
 
@@ -54,7 +55,7 @@ func TestNewHConfig_Apollo(t *testing.T) {
 	t.Logf("val %+v\n", val)
 
 	//监听配置变化
-	if err = conf.Watch(func(path string, v HVal) {
+	if err = conf.Watch(func(path string, v domain.Val) {
 		t.Logf("path %s val %+v\n", path, v)
 		va, aerr := conf.Get("test")
 		if aerr != nil {

@@ -61,7 +61,7 @@ func (s *Session) Find(values interface{}) error {
 }
 
 // Update
-// support map[string]interface{}
+// support map[string]domain{}
 // also support kv list: "Name", "Tom", "Age", 18, ....
 func (s *Session) Update(kv ...interface{}) (int64, error) {
 	m, ok := kv[0].(map[string]interface{})
