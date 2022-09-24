@@ -1,18 +1,18 @@
-package lbconfig
+package lbconf
 
 import (
 	"errors"
-	"github.com/oldbai555/lb/extrpkg/lbconfig/domain"
+	"github.com/oldbai555/lb/extrpkg/lbconf/bconf"
 )
 
 type Option func(opt *options)
 
 type options struct {
-	dataSource domain.DataSource
+	dataSource bconf.DataSource
 	useLocal   bool
 }
 
-func WithDataSource(d domain.DataSource) Option {
+func WithDataSource(d bconf.DataSource) Option {
 	return func(opt *options) {
 		opt.dataSource = d
 	}

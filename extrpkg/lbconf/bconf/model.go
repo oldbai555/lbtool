@@ -1,4 +1,4 @@
-package domain
+package bconf
 
 // DataSource 数据源
 type DataSource interface {

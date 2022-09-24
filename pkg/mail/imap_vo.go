@@ -57,7 +57,7 @@ type Envelope struct {
 type Address struct {
 	// @desc: The personal name.
 	PersonalName string `json:"personal_name"`
-	// @desc: The SMTP at-domain-list (source route).
+	// @desc: The SMTP at-bconf-list (source route).
 	AtDomainList string `json:"at_domain_list"`
 	// @desc: The mailbox name.
 	MailboxName string `json:"mailbox_name"`

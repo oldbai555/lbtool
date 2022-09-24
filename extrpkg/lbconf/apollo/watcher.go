@@ -2,10 +2,10 @@ package apollo
 
 import (
 	"github.com/apolloconfig/agollo/v4/storage"
-	"github.com/oldbai555/lb/extrpkg/lbconfig/domain"
+	"github.com/oldbai555/lb/extrpkg/lbconf/bconf"
 )
 
-var _ domain.DataWatcher = (*watcher)(nil)
+var _ bconf.DataWatcher = (*watcher)(nil)
 
 type watcher struct {
 	apolloConfig    *apolloConfig
@@ -33,7 +33,7 @@ func (c *customChangeListener) OnChange(event *storage.ChangeEvent) {
 
 func (c *customChangeListener) OnNewestChange(event *storage.FullChangeEvent) {}
 
-func (w *watcher) Change() ([]*domain.Data, error) {
+func (w *watcher) Change() ([]*bconf.Data, error) {
 	select {
 	case <-w.closeChan:
 		return nil, nil
@@ -41,7 +41,7 @@ func (w *watcher) Change() ([]*domain.Data, error) {
 		if !ok {
 			return nil, nil
 		}
-		var data = make([]*domain.Data, 0)
+		var data = make([]*bconf.Data, 0)
 		data = append(data, w.apolloConfig.loadNameSpace(v)...)
 		return data, nil
 	}

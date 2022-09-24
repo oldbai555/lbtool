@@ -131,7 +131,7 @@ func (c *Context) Fail(code int, err string) {
 }
 
 // HTML html网页 先不支持html
-//func (c *Context) HTML(code int, name string, data domain{}) {
+//func (c *Context) HTML(code int, name string, data bconf{}) {
 //	c.SetHeader("Content-Type", "text/html")
 //	c.Status(code)
 //	if err := c.engine.htmlTemplates.ExecuteTemplate(c.Writer, name, data); err != nil {

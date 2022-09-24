@@ -1,19 +1,19 @@
-package lbconfig
+package lbconf
 
 import (
 	"context"
 	"errors"
-	"github.com/oldbai555/lb/extrpkg/lbconfig/domain"
+	"github.com/oldbai555/lb/extrpkg/lbconf/bconf"
 	"github.com/spf13/viper"
 )
 
 type config struct {
 	opts    *options
-	watcher domain.DataWatcher
+	watcher bconf.DataWatcher
 	viper   *viper.Viper
 }
 
-func NewHConfig(opts ...Option) (domain.LbConfig, error) {
+func NewHConfig(opts ...Option) (bconf.LbConfig, error) {
 	newOpts, err := newOptions(opts...)
 	if err != nil {
 		return nil, err
@@ -35,11 +35,11 @@ func (c *config) Load() error {
 	return nil
 }
 
-func (c *config) Get(key string) (domain.Val, error) {
+func (c *config) Get(key string) (bconf.Val, error) {
 	return c.viper.Get(key), nil
 }
 
-func (c *config) Watch(event domain.WatchEvent) error {
+func (c *config) Watch(event bconf.WatchEvent) error {
 	var err error
 	if c.watcher, err = c.opts.dataSource.Watch(); err != nil {
 		return err
@@ -48,7 +48,7 @@ func (c *config) Watch(event domain.WatchEvent) error {
 	return nil
 }
 
-func (c *config) watch(event domain.WatchEvent) {
+func (c *config) watch(event bconf.WatchEvent) {
 	for {
 		kvs, err := c.watcher.Change()
 		if errors.Is(err, context.Canceled) {
