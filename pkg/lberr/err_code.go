@@ -1,4 +1,4 @@
-package exception
+package lberr
 
 const (
 	SUCCESS             = 0

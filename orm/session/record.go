@@ -2,7 +2,7 @@ package session
 
 import (
 	"github.com/oldbai555/lbtool/orm/clause"
-	"github.com/oldbai555/lbtool/pkg/exception"
+	"github.com/oldbai555/lbtool/pkg/lberr"
 	"reflect"
 )
 
@@ -131,7 +131,7 @@ func (s *Session) First(value interface{}) error {
 		return err
 	}
 	if destSlice.Len() == 0 {
-		return exception.NewErr(exception.ErrOrmNotFound, "Not found error")
+		return lberr.NewErr(lberr.ErrOrmNotFound, "Not found error")
 	}
 	dest.Set(destSlice.Index(0))
 	return nil

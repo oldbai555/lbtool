@@ -3,7 +3,7 @@ package delay_queue
 import (
 	"fmt"
 	"github.com/oldbai555/lbtool/log"
-	"github.com/oldbai555/lbtool/pkg/exception"
+	"github.com/oldbai555/lbtool/pkg/lberr"
 	"github.com/oldbai555/lbtool/utils"
 )
 
@@ -25,7 +25,7 @@ func Get(jobID string) (job Job, err error) {
 // Add 添加一个Job到队列中
 func Add(job Job) error {
 	if job.ID == "" || job.Topic == "" || job.ExecuteAt < 0 {
-		return exception.NewInvalidArg("invalid job")
+		return lberr.NewInvalidArg("invalid job")
 	}
 
 	if job.ExecuteAt == 0 {
@@ -53,17 +53,17 @@ func Add(job Job) error {
 // Update 更新一个Job
 func Update(job Job) (err error) {
 	if job.ID == "" || job.Topic == "" || job.ExecuteAt < 0 {
-		return exception.NewInvalidArg("invalid job")
+		return lberr.NewInvalidArg("invalid job")
 	}
 
 	err = Remove(job.ID)
 	if err != nil {
-		return exception.NewErr(exception.ErrDelayQueueOptErr, fmt.Sprintf("Remove job failed,err is %v", err))
+		return lberr.NewErr(lberr.ErrDelayQueueOptErr, fmt.Sprintf("Remove job failed,err is %v", err))
 	}
 
 	err = Add(job)
 	if err != nil {
-		return exception.NewErr(exception.ErrDelayQueueOptErr, fmt.Sprintf("Remove job failed,err is %v", err))
+		return lberr.NewErr(lberr.ErrDelayQueueOptErr, fmt.Sprintf("Remove job failed,err is %v", err))
 	}
 
 	return

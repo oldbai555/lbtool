@@ -5,7 +5,7 @@ import (
 	"github.com/gogf/gf/crypto/gsha1"
 	"github.com/gogf/gf/os/gfile"
 	"github.com/oldbai555/lbtool/log"
-	"github.com/oldbai555/lbtool/pkg/exception"
+	"github.com/oldbai555/lbtool/pkg/lberr"
 	"github.com/oldbai555/lbtool/utils"
 	"github.com/pkg/errors"
 	"io"
@@ -41,7 +41,7 @@ func (o LocalStorage) CheckSignedURL(signedURL string, method string, expireAt i
 	}
 
 	if time.Now().Unix() > expireAt {
-		err = exception.NewErr(exception.ErrStorageOptErr, fmt.Sprintf("url expire"))
+		err = lberr.NewErr(lberr.ErrStorageOptErr, fmt.Sprintf("url expire"))
 		return
 	}
 
@@ -50,7 +50,7 @@ func (o LocalStorage) CheckSignedURL(signedURL string, method string, expireAt i
 	signData := fmt.Sprintf("path=%s;method=%s;query=%s;sign_key=%s", fileURL.Path, method, fileURL.RawQuery, "sing_key")
 	log.Infof("signData %v", signData)
 	if signature != gsha1.Encrypt(signData) {
-		err = exception.NewErr(exception.ErrStorageOptErr, "invalid_sign_error")
+		err = lberr.NewErr(lberr.ErrStorageOptErr, "invalid_sign_error")
 		return
 	}
 
@@ -59,7 +59,7 @@ func (o LocalStorage) CheckSignedURL(signedURL string, method string, expireAt i
 
 func (o LocalStorage) SignURL(objectKey string, method utils.HTTPMethod, expiredInSec int64) (signedURL string, err error) {
 	if !IsValidObjectKey(objectKey) {
-		err = exception.NewErr(exception.ErrStorageOptErr, "invalid_path_error")
+		err = lberr.NewErr(lberr.ErrStorageOptErr, "invalid_path_error")
 		return
 	}
 
@@ -95,7 +95,7 @@ func (o LocalStorage) Get(objectKey string) (content io.ReadCloser, err error) {
 	}
 
 	if !gfile.Exists(filePath) {
-		err = exception.NewErr(exception.ErrStorageOptErr, "bad_request")
+		err = lberr.NewErr(lberr.ErrStorageOptErr, "bad_request")
 		return
 	}
 
@@ -127,7 +127,7 @@ func (o LocalStorage) Put(objectKey string, reader io.Reader) (err error) {
 	}
 
 	if len(data) == 0 {
-		err = exception.NewErr(exception.ErrStorageOptErr, "bad_request")
+		err = lberr.NewErr(lberr.ErrStorageOptErr, "bad_request")
 		return
 	}
 
@@ -203,7 +203,7 @@ func (o LocalStorage) Delete(objectKeys ...string) (deletedObjects []string, err
 
 func (o LocalStorage) AbsPath(objectKey string) (absPath string, err error) {
 	if !IsValidObjectKey(objectKey) {
-		err = exception.NewErr(exception.ErrStorageOptErr, "invalid_path_error")
+		err = lberr.NewErr(lberr.ErrStorageOptErr, "invalid_path_error")
 		return
 	}
 

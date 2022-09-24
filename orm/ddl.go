@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/oldbai555/lbtool/log"
 	"github.com/oldbai555/lbtool/orm/session"
-	"github.com/oldbai555/lbtool/pkg/exception"
+	"github.com/oldbai555/lbtool/pkg/lberr"
 	"github.com/oldbai555/lbtool/utils"
 	"strings"
 )
@@ -19,7 +19,7 @@ func doDescTable(s *session.Session) (*session.DbTable, error) {
 	if err != nil {
 		if strings.Contains(err.Error(), "doesn't exist") &&
 			strings.Contains(err.Error(), "1146: Table ") {
-			return nil, exception.NewErr(exception.ErrOrmTableNotExist, err.Error())
+			return nil, lberr.NewErr(lberr.ErrOrmTableNotExist, err.Error())
 		}
 		log.Errorf("err:%v", err)
 		return nil, err
@@ -61,7 +61,7 @@ func genCreateTableSql(s *session.Session) error {
 	table := s.Table
 
 	if len(table.Fields) == 0 {
-		return exception.NewInvalidArg("invalid field list")
+		return lberr.NewInvalidArg("invalid field list")
 	}
 
 	primaryKeyCnt := 0
@@ -158,10 +158,10 @@ func createTable(s *session.Session) error {
 func createOrUpdateTable(s *session.Session) error {
 	table, err := doDescTable(s)
 
-	if err != nil && exception.GetErrCode(err) != exception.ErrOrmTableNotExist {
+	if err != nil && lberr.GetErrCode(err) != lberr.ErrOrmTableNotExist {
 		log.Errorf("err:%v", err)
 		return err
-	} else if err != nil && exception.GetErrCode(err) == exception.ErrOrmTableNotExist {
+	} else if err != nil && lberr.GetErrCode(err) == lberr.ErrOrmTableNotExist {
 		// 找不到 那就创表
 		err = createTable(s)
 		if err != nil {
