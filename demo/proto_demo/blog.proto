@@ -1,0 +1,28 @@
+// 指定proto版本
+syntax = "proto3";
+
+// 指定golang包名
+option go_package = "/pb";
+
+// 指定默认包名
+package blog;
+
+// 定义Hello服务
+service blog {
+  // 定义SayHello方法
+  rpc GetBlog(GetBlogReq) returns (GetBlogRsp) {}
+}
+
+message Blog{
+  uint64 id = 1;
+}
+
+// HelloRequest 请求结构
+message GetBlogReq {
+  uint64 id = 1;
+}
+
+// HelloResponse 响应结构
+message GetBlogRsp {
+  Blog blog = 1;
+}
