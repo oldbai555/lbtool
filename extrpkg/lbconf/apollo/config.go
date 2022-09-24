@@ -16,15 +16,15 @@ type apolloConfig struct {
 }
 
 func NewApolloConfig(opts ...Option) (bconf.DataSource, error) {
-	options := NewOptions(opts...)
+	newOpts := NewOptions(opts...)
 	client, err := agollo.StartWithConfig(func() (*config.AppConfig, error) {
 		return &config.AppConfig{
-			AppID:          options.appid,
-			Cluster:        options.cluster,
-			NamespaceName:  options.namespace,
-			IP:             options.addr,
-			IsBackupConfig: options.isBackupConfig,
-			Secret:         options.secret,
+			AppID:          newOpts.appid,
+			Cluster:        newOpts.cluster,
+			NamespaceName:  newOpts.namespace,
+			IP:             newOpts.addr,
+			IsBackupConfig: newOpts.isBackupConfig,
+			Secret:         newOpts.secret,
 		}, nil
 	})
 	if err != nil {
@@ -32,7 +32,7 @@ func NewApolloConfig(opts ...Option) (bconf.DataSource, error) {
 	}
 	conf := &apolloConfig{
 		client:  client,
-		options: options,
+		options: newOpts,
 	}
 	return conf, nil
 }

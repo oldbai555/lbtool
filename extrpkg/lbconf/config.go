@@ -13,7 +13,7 @@ type config struct {
 	viper   *viper.Viper
 }
 
-func NewHConfig(opts ...Option) (bconf.LbConfig, error) {
+func NewConfig(opts ...Option) (bconf.Config, error) {
 	newOpts, err := newOptions(opts...)
 	if err != nil {
 		return nil, err

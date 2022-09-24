@@ -27,7 +27,7 @@ func TestNewHConfig_Apollo(t *testing.T) {
 		return
 	}
 
-	conf, err := NewHConfig(WithDataSource(c))
+	conf, err := NewConfig(WithDataSource(c))
 	if err != nil {
 		t.Error(err)
 		return

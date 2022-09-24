@@ -18,8 +18,8 @@ type Data struct {
 	Val interface{}
 }
 
-// LbConfig 配置接入方应当提供的接口
-type LbConfig interface {
+// Config 配置接入方应当提供的接口
+type Config interface {
 	Load() error
 	Get(key string) (Val, error)
 	Watch(event WatchEvent) error
