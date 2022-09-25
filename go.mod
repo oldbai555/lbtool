@@ -21,6 +21,8 @@ require (
 	github.com/gogf/gf v1.16.9
 	github.com/google/uuid v1.3.0
 	github.com/imdario/mergo v0.3.13
+	github.com/jinzhu/inflection v1.0.0
+	github.com/jinzhu/now v1.1.5
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/json-iterator/go v1.1.12
@@ -39,6 +41,7 @@ require (
 	go.uber.org/zap v1.23.0
 	golang.org/x/net v0.0.0-20220812174116-3211cb980234
 	golang.org/x/text v0.3.7
+	google.golang.org/grpc v1.41.0
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc
 )
@@ -58,6 +61,7 @@ require (
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
@@ -91,7 +95,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220817201139-bc19a97f63c8 // indirect
 	golang.org/x/sys v0.0.0-20220728004956-3c1f35247d10 // indirect
 	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect
-	google.golang.org/grpc v1.41.0 // indirect
+	google.golang.org/genproto v0.0.0-20210828152312-66f60bf46e71 // indirect
 	gopkg.in/ini.v1 v1.63.2 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

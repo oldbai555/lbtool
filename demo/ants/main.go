@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/log"
 	"github.com/panjf2000/ants/v2"
 	"time"
 )
 
+// 线程池
 func main() {
 	// 第一种用法
 	pool, err := ants.NewPool(10)
@@ -43,7 +45,7 @@ func main() {
 		log.Errorf("err:%v", err)
 		return
 	}
-
+	gorm.Model
 	for i := 0; i < 100; i++ {
 		var a = i
 		err = poolWF.Invoke(fmt.Sprintf("hello + %d", a))

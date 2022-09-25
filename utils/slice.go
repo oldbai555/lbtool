@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"github.com/oldbai555/lbtool/extrpkg/pie/pie"
+	"github.com/oldbai555/lbtool/extpkg/pie/pie"
 	"reflect"
 )
 

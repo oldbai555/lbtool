@@ -3,7 +3,7 @@ package task
 import (
 	"context"
 	"fmt"
-	"github.com/oldbai555/lbtool/extrpkg/xxl-job-executor"
+	"github.com/oldbai555/lbtool/extpkg/xxl-job-executor"
 	"time"
 )
 

@@ -1,7 +1,7 @@
 package excel
 
 import (
-	"github.com/oldbai555/lbtool/extrpkg/pie/pie"
+	"github.com/oldbai555/lbtool/extpkg/pie/pie"
 	"github.com/oldbai555/lbtool/log"
 	"testing"
 )
