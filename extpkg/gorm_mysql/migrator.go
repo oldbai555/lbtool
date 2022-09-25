@@ -6,7 +6,6 @@ import (
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
 	"github.com/oldbai555/lbtool/extpkg/gorm/migrator"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"strings"
 )
 
@@ -30,7 +29,7 @@ type Migrator struct {
 	Dialector
 }
 
-func (m Migrator) FullDataTypeOf(field *schema.Field) clause.Expr {
+func (m Migrator) FullDataTypeOf(field *gorm.Field) clause.Expr {
 	expr := m.Migrator.FullDataTypeOf(field)
 
 	if value, ok := field.TagSettings["COMMENT"]; ok {
@@ -58,7 +57,7 @@ func (m Migrator) RenameColumn(value interface{}, oldName, newName string) error
 			return m.Migrator.RenameColumn(value, oldName, newName)
 		}
 
-		var field *schema.Field
+		var field *gorm.Field
 		if f := stmt.Schema.LookUpField(oldName); f != nil {
 			oldName = f.DBName
 			field = f
@@ -259,8 +258,8 @@ func (m Migrator) GetTables() (tableList []string, err error) {
 	return
 }
 
-func (m Migrator) GetIndexes(value interface{}) ([]gorm.Index, error) {
-	indexes := make([]gorm.Index, 0)
+func (m Migrator) GetIndexes(value interface{}) ([]gorm.SchemaIndex, error) {
+	indexes := make([]gorm.SchemaIndex, 0)
 	err := m.RunWithValue(value, func(stmt *gorm.Statement) error {
 
 		result := make([]*Index, 0)

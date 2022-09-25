@@ -1,27 +1,26 @@
-package schema_test
+package gorm_test
 
 import (
 	"context"
 	"database/sql"
+	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"reflect"
 	"sync"
 	"testing"
 	"time"
 
-	"github.com/oldbai555/lbtool/extpkg/gorm"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils/tests"
 )
 
 func TestFieldValuerAndSetter(t *testing.T) {
 	var (
-		userSchema, _ = schema.Parse(&tests.User{}, &sync.Map{}, schema.NamingStrategy{})
+		userSchema, _ = gorm.Parse(&tests.User{}, &sync.Map{}, gorm.NamingStrategy{})
 		user          = tests.User{
-			Model: gorm.Model{
+			Model: Model{
 				ID:        10,
 				CreatedAt: int32(time.Now().Unix()),
 				UpdatedAt: int32(time.Now().Unix()),
-				DeletedAt: gorm.DeletedAt{Int32: int32(time.Now().Unix()), Valid: true},
+				DeletedAt: DeletedAt{Int32: int32(time.Now().Unix()), Valid: true},
 			},
 			Name:     "valuer_and_setter",
 			Age:      18,
@@ -91,15 +90,15 @@ func TestFieldValuerAndSetter(t *testing.T) {
 
 func TestPointerFieldValuerAndSetter(t *testing.T) {
 	var (
-		userSchema, _      = schema.Parse(&User{}, &sync.Map{}, schema.NamingStrategy{})
+		userSchema, _      = gorm.Parse(&User{}, &sync.Map{}, gorm.NamingStrategy{})
 		name               = "pointer_field_valuer_and_setter"
 		age           uint = 18
 		active             = true
 		user               = User{
-			Model: &gorm.Model{
+			Model: &Model{
 				ID:        10,
 				CreatedAt: int32(time.Now().Unix()),
-				DeletedAt: gorm.DeletedAt{Int32: int32(time.Now().Unix()), Valid: true},
+				DeletedAt: DeletedAt{Int32: int32(time.Now().Unix()), Valid: true},
 			},
 			Name:     &name,
 			Age:      &age,
@@ -161,7 +160,7 @@ func TestPointerFieldValuerAndSetter(t *testing.T) {
 
 func TestAdvancedDataTypeValuerAndSetter(t *testing.T) {
 	var (
-		userSchema, _ = schema.Parse(&AdvancedDataTypeUser{}, &sync.Map{}, schema.NamingStrategy{})
+		userSchema, _ = gorm.Parse(&AdvancedDataTypeUser{}, &sync.Map{}, gorm.NamingStrategy{})
 		name          = "advanced_data_type_valuer_and_setter"
 		deletedAt     = mytime(time.Now())
 		isAdmin       = mybool(false)
@@ -240,25 +239,25 @@ type UserWithPermissionControl struct {
 }
 
 func TestParseFieldWithPermission(t *testing.T) {
-	user, err := schema.Parse(&UserWithPermissionControl{}, &sync.Map{}, schema.NamingStrategy{})
+	user, err := gorm.Parse(&UserWithPermissionControl{}, &sync.Map{}, gorm.NamingStrategy{})
 	if err != nil {
 		t.Fatalf("Failed to parse user with permission, got error %v", err)
 	}
 
-	fields := []*schema.Field{
-		{Name: "ID", DBName: "id", BindNames: []string{"ID"}, DataType: schema.Uint, PrimaryKey: true, Size: 64, Creatable: true, Updatable: true, Readable: true, HasDefaultValue: true, AutoIncrement: true},
+	fields := []*gorm.Field{
+		{Name: "ID", DBName: "id", BindNames: []string{"ID"}, DataType: gorm.Uint, PrimaryKey: true, Size: 64, Creatable: true, Updatable: true, Readable: true, HasDefaultValue: true, AutoIncrement: true},
 		{Name: "Name", DBName: "", BindNames: []string{"Name"}, DataType: "", Tag: `gorm:"-"`, Creatable: false, Updatable: false, Readable: false},
-		{Name: "Name2", DBName: "name2", BindNames: []string{"Name2"}, DataType: schema.String, Tag: `gorm:"->"`, Creatable: false, Updatable: false, Readable: true},
-		{Name: "Name3", DBName: "name3", BindNames: []string{"Name3"}, DataType: schema.String, Tag: `gorm:"<-"`, Creatable: true, Updatable: true, Readable: true},
-		{Name: "Name4", DBName: "name4", BindNames: []string{"Name4"}, DataType: schema.String, Tag: `gorm:"<-:create"`, Creatable: true, Updatable: false, Readable: true},
-		{Name: "Name5", DBName: "name5", BindNames: []string{"Name5"}, DataType: schema.String, Tag: `gorm:"<-:update"`, Creatable: false, Updatable: true, Readable: true},
-		{Name: "Name6", DBName: "name6", BindNames: []string{"Name6"}, DataType: schema.String, Tag: `gorm:"<-:create,update"`, Creatable: true, Updatable: true, Readable: true},
-		{Name: "Name7", DBName: "name7", BindNames: []string{"Name7"}, DataType: schema.String, Tag: `gorm:"->:false;<-:create,update"`, Creatable: true, Updatable: true, Readable: false},
-		{Name: "Name8", DBName: "name8", BindNames: []string{"Name8"}, DataType: schema.String, Tag: `gorm:"->;-:migration"`, Creatable: false, Updatable: false, Readable: true, IgnoreMigration: true},
+		{Name: "Name2", DBName: "name2", BindNames: []string{"Name2"}, DataType: gorm.String, Tag: `gorm:"->"`, Creatable: false, Updatable: false, Readable: true},
+		{Name: "Name3", DBName: "name3", BindNames: []string{"Name3"}, DataType: gorm.String, Tag: `gorm:"<-"`, Creatable: true, Updatable: true, Readable: true},
+		{Name: "Name4", DBName: "name4", BindNames: []string{"Name4"}, DataType: gorm.String, Tag: `gorm:"<-:create"`, Creatable: true, Updatable: false, Readable: true},
+		{Name: "Name5", DBName: "name5", BindNames: []string{"Name5"}, DataType: gorm.String, Tag: `gorm:"<-:update"`, Creatable: false, Updatable: true, Readable: true},
+		{Name: "Name6", DBName: "name6", BindNames: []string{"Name6"}, DataType: gorm.String, Tag: `gorm:"<-:create,update"`, Creatable: true, Updatable: true, Readable: true},
+		{Name: "Name7", DBName: "name7", BindNames: []string{"Name7"}, DataType: gorm.String, Tag: `gorm:"->:false;<-:create,update"`, Creatable: true, Updatable: true, Readable: false},
+		{Name: "Name8", DBName: "name8", BindNames: []string{"Name8"}, DataType: gorm.String, Tag: `gorm:"->;-:migration"`, Creatable: false, Updatable: false, Readable: true, IgnoreMigration: true},
 	}
 
 	for _, f := range fields {
-		checkSchemaField(t, user, f, func(f *schema.Field) {})
+		checkSchemaField(t, user, f, func(f *gorm.Field) {})
 	}
 }
 
@@ -303,32 +302,32 @@ type (
 )
 
 func TestTypeAliasField(t *testing.T) {
-	alias, err := schema.Parse(&TypeAlias{}, &sync.Map{}, schema.NamingStrategy{})
+	alias, err := gorm.Parse(&TypeAlias{}, &sync.Map{}, gorm.NamingStrategy{})
 	if err != nil {
 		t.Fatalf("Failed to parse TypeAlias with permission, got error %v", err)
 	}
 
-	fields := []*schema.Field{
-		{Name: "ID", DBName: "id", BindNames: []string{"ID"}, DataType: schema.Int, Creatable: true, Updatable: true, Readable: true, Size: 64, PrimaryKey: true, HasDefaultValue: true, AutoIncrement: true},
-		{Name: "INT", DBName: "fint", BindNames: []string{"INT"}, DataType: schema.Int, Creatable: true, Updatable: true, Readable: true, Size: 64, Tag: `gorm:"column:fint"`},
-		{Name: "INT8", DBName: "fint8", BindNames: []string{"INT8"}, DataType: schema.Int, Creatable: true, Updatable: true, Readable: true, Size: 8, Tag: `gorm:"column:fint8"`},
-		{Name: "INT16", DBName: "fint16", BindNames: []string{"INT16"}, DataType: schema.Int, Creatable: true, Updatable: true, Readable: true, Size: 16, Tag: `gorm:"column:fint16"`},
-		{Name: "INT32", DBName: "fint32", BindNames: []string{"INT32"}, DataType: schema.Int, Creatable: true, Updatable: true, Readable: true, Size: 32, Tag: `gorm:"column:fint32"`},
-		{Name: "INT64", DBName: "fint64", BindNames: []string{"INT64"}, DataType: schema.Int, Creatable: true, Updatable: true, Readable: true, Size: 64, Tag: `gorm:"column:fint64"`},
-		{Name: "UINT", DBName: "fuint", BindNames: []string{"UINT"}, DataType: schema.Uint, Creatable: true, Updatable: true, Readable: true, Size: 64, Tag: `gorm:"column:fuint"`},
-		{Name: "UINT8", DBName: "fuint8", BindNames: []string{"UINT8"}, DataType: schema.Uint, Creatable: true, Updatable: true, Readable: true, Size: 8, Tag: `gorm:"column:fuint8"`},
-		{Name: "UINT16", DBName: "fuint16", BindNames: []string{"UINT16"}, DataType: schema.Uint, Creatable: true, Updatable: true, Readable: true, Size: 16, Tag: `gorm:"column:fuint16"`},
-		{Name: "UINT32", DBName: "fuint32", BindNames: []string{"UINT32"}, DataType: schema.Uint, Creatable: true, Updatable: true, Readable: true, Size: 32, Tag: `gorm:"column:fuint32"`},
-		{Name: "UINT64", DBName: "fuint64", BindNames: []string{"UINT64"}, DataType: schema.Uint, Creatable: true, Updatable: true, Readable: true, Size: 64, Tag: `gorm:"column:fuint64"`},
-		{Name: "FLOAT32", DBName: "ffloat32", BindNames: []string{"FLOAT32"}, DataType: schema.Float, Creatable: true, Updatable: true, Readable: true, Size: 32, Tag: `gorm:"column:ffloat32"`},
-		{Name: "FLOAT64", DBName: "ffloat64", BindNames: []string{"FLOAT64"}, DataType: schema.Float, Creatable: true, Updatable: true, Readable: true, Size: 64, Tag: `gorm:"column:ffloat64"`},
-		{Name: "BOOL", DBName: "fbool", BindNames: []string{"BOOL"}, DataType: schema.Bool, Creatable: true, Updatable: true, Readable: true, Tag: `gorm:"column:fbool"`},
-		{Name: "STRING", DBName: "fstring", BindNames: []string{"STRING"}, DataType: schema.String, Creatable: true, Updatable: true, Readable: true, Tag: `gorm:"column:fstring"`},
-		{Name: "TIME", DBName: "ftime", BindNames: []string{"TIME"}, DataType: schema.Time, Creatable: true, Updatable: true, Readable: true, Tag: `gorm:"column:ftime"`},
-		{Name: "BYTES", DBName: "fbytes", BindNames: []string{"BYTES"}, DataType: schema.Bytes, Creatable: true, Updatable: true, Readable: true, Tag: `gorm:"column:fbytes"`},
+	fields := []*gorm.Field{
+		{Name: "ID", DBName: "id", BindNames: []string{"ID"}, DataType: gorm.Int, Creatable: true, Updatable: true, Readable: true, Size: 64, PrimaryKey: true, HasDefaultValue: true, AutoIncrement: true},
+		{Name: "INT", DBName: "fint", BindNames: []string{"INT"}, DataType: gorm.Int, Creatable: true, Updatable: true, Readable: true, Size: 64, Tag: `gorm:"column:fint"`},
+		{Name: "INT8", DBName: "fint8", BindNames: []string{"INT8"}, DataType: gorm.Int, Creatable: true, Updatable: true, Readable: true, Size: 8, Tag: `gorm:"column:fint8"`},
+		{Name: "INT16", DBName: "fint16", BindNames: []string{"INT16"}, DataType: gorm.Int, Creatable: true, Updatable: true, Readable: true, Size: 16, Tag: `gorm:"column:fint16"`},
+		{Name: "INT32", DBName: "fint32", BindNames: []string{"INT32"}, DataType: gorm.Int, Creatable: true, Updatable: true, Readable: true, Size: 32, Tag: `gorm:"column:fint32"`},
+		{Name: "INT64", DBName: "fint64", BindNames: []string{"INT64"}, DataType: gorm.Int, Creatable: true, Updatable: true, Readable: true, Size: 64, Tag: `gorm:"column:fint64"`},
+		{Name: "UINT", DBName: "fuint", BindNames: []string{"UINT"}, DataType: gorm.Uint, Creatable: true, Updatable: true, Readable: true, Size: 64, Tag: `gorm:"column:fuint"`},
+		{Name: "UINT8", DBName: "fuint8", BindNames: []string{"UINT8"}, DataType: gorm.Uint, Creatable: true, Updatable: true, Readable: true, Size: 8, Tag: `gorm:"column:fuint8"`},
+		{Name: "UINT16", DBName: "fuint16", BindNames: []string{"UINT16"}, DataType: gorm.Uint, Creatable: true, Updatable: true, Readable: true, Size: 16, Tag: `gorm:"column:fuint16"`},
+		{Name: "UINT32", DBName: "fuint32", BindNames: []string{"UINT32"}, DataType: gorm.Uint, Creatable: true, Updatable: true, Readable: true, Size: 32, Tag: `gorm:"column:fuint32"`},
+		{Name: "UINT64", DBName: "fuint64", BindNames: []string{"UINT64"}, DataType: gorm.Uint, Creatable: true, Updatable: true, Readable: true, Size: 64, Tag: `gorm:"column:fuint64"`},
+		{Name: "FLOAT32", DBName: "ffloat32", BindNames: []string{"FLOAT32"}, DataType: gorm.Float, Creatable: true, Updatable: true, Readable: true, Size: 32, Tag: `gorm:"column:ffloat32"`},
+		{Name: "FLOAT64", DBName: "ffloat64", BindNames: []string{"FLOAT64"}, DataType: gorm.Float, Creatable: true, Updatable: true, Readable: true, Size: 64, Tag: `gorm:"column:ffloat64"`},
+		{Name: "BOOL", DBName: "fbool", BindNames: []string{"BOOL"}, DataType: gorm.Bool, Creatable: true, Updatable: true, Readable: true, Tag: `gorm:"column:fbool"`},
+		{Name: "STRING", DBName: "fstring", BindNames: []string{"STRING"}, DataType: gorm.String, Creatable: true, Updatable: true, Readable: true, Tag: `gorm:"column:fstring"`},
+		{Name: "TIME", DBName: "ftime", BindNames: []string{"TIME"}, DataType: gorm.Time, Creatable: true, Updatable: true, Readable: true, Tag: `gorm:"column:ftime"`},
+		{Name: "BYTES", DBName: "fbytes", BindNames: []string{"BYTES"}, DataType: gorm.Bytes, Creatable: true, Updatable: true, Readable: true, Tag: `gorm:"column:fbytes"`},
 	}
 
 	for _, f := range fields {
-		checkSchemaField(t, alias, f, func(f *schema.Field) {})
+		checkSchemaField(t, alias, f, func(f *gorm.Field) {})
 	}
 }

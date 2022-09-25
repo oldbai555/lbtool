@@ -6,7 +6,6 @@ import (
 
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils"
 )
 
@@ -130,24 +129,24 @@ func AfterUpdate(db *gorm.DB) {
 func ConvertToAssignments(stmt *gorm.Statement) (set clause.Set) {
 	var (
 		selectColumns, restricted = stmt.SelectAndOmitColumns(false, true)
-		assignValue               func(field *schema.Field, value interface{})
+		assignValue               func(field *gorm.Field, value interface{})
 	)
 
 	switch stmt.ReflectValue.Kind() {
 	case reflect.Slice, reflect.Array:
-		assignValue = func(field *schema.Field, value interface{}) {
+		assignValue = func(field *gorm.Field, value interface{}) {
 			for i := 0; i < stmt.ReflectValue.Len(); i++ {
 				field.Set(stmt.Context, stmt.ReflectValue.Index(i), value)
 			}
 		}
 	case reflect.Struct:
-		assignValue = func(field *schema.Field, value interface{}) {
+		assignValue = func(field *gorm.Field, value interface{}) {
 			if stmt.ReflectValue.CanAddr() {
 				field.Set(stmt.Context, stmt.ReflectValue, value)
 			}
 		}
 	default:
-		assignValue = func(field *schema.Field, value interface{}) {
+		assignValue = func(field *gorm.Field, value interface{}) {
 		}
 	}
 
@@ -171,8 +170,8 @@ func ConvertToAssignments(stmt *gorm.Statement) (set clause.Set) {
 				}
 
 				if !isZero {
-					_, primaryValues := schema.GetIdentityFieldValuesMap(stmt.Context, stmt.ReflectValue, stmt.Schema.PrimaryFields)
-					column, values := schema.ToQueryValues("", stmt.Schema.PrimaryFieldDBNames, primaryValues)
+					_, primaryValues := gorm.GetIdentityFieldValuesMap(stmt.Context, stmt.ReflectValue, stmt.Schema.PrimaryFields)
+					column, values := gorm.ToQueryValues("", stmt.Schema.PrimaryFieldDBNames, primaryValues)
 					stmt.AddClause(clause.Where{Exprs: []clause.Expression{clause.IN{Column: column, Values: values}}})
 				}
 			}

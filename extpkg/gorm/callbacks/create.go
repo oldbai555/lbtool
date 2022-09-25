@@ -6,7 +6,6 @@ import (
 
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils"
 )
 
@@ -215,7 +214,7 @@ func ConvertToCreateValues(stmt *gorm.Statement) (values clause.Values) {
 			stmt.Vars = make([]interface{}, 0, rValLen*len(values.Columns))
 			values.Values = make([][]interface{}, rValLen)
 
-			defaultValueFieldsHavingValue := map[*schema.Field][]interface{}{}
+			defaultValueFieldsHavingValue := map[*gorm.Field][]interface{}{}
 			for i := 0; i < rValLen; i++ {
 				rv := reflect.Indirect(stmt.ReflectValue.Index(i))
 				if !rv.IsValid() {
@@ -310,7 +309,7 @@ func ConvertToCreateValues(stmt *gorm.Statement) (values clause.Values) {
 									// 	assignment.Value = curTime.UnixNano()
 									// case schema.UnixMillisecond:
 									// 	assignment.Value = curTime.UnixNano() / 1e6
-									case schema.UnixSecond:
+									case gorm.UnixSecond:
 										assignment.Value = curTime
 									}
 

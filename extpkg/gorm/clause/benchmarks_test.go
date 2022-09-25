@@ -6,12 +6,11 @@ import (
 
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils/tests"
 )
 
 func BenchmarkSelect(b *testing.B) {
-	user, _ := schema.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
+	user, _ := gorm.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
 
 	for i := 0; i < b.N; i++ {
 		stmt := gorm.Statement{DB: db, Table: user.Table, Schema: user, Clauses: map[string]clause.Clause{}}
@@ -27,7 +26,7 @@ func BenchmarkSelect(b *testing.B) {
 }
 
 func BenchmarkComplexSelect(b *testing.B) {
-	user, _ := schema.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
+	user, _ := gorm.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
 
 	for i := 0; i < b.N; i++ {
 		stmt := gorm.Statement{DB: db, Table: user.Table, Schema: user, Clauses: map[string]clause.Clause{}}

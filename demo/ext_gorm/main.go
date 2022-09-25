@@ -7,7 +7,6 @@ import (
 import (
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	ormlog "github.com/oldbai555/lbtool/extpkg/gorm/logger"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm_mysql"
 	"github.com/oldbai555/lbtool/extpkg/lblog"
 	"github.com/oldbai555/lbtool/log"
@@ -49,7 +48,10 @@ func main() {
 }
 
 type User struct {
-	gorm.Model
+	ID        uint `gorm:"primarykey"`
+	CreatedAt int32
+	UpdatedAt int32
+	DeletedAt int32 `gorm:"index;default:0"`
 
 	Username string `json:"username" gorm:"varchar(25); not null; comment('账号')"`
 	Password string `json:"password" gorm:"varchar(25); not null; comment('密码')"`
@@ -58,9 +60,9 @@ type User struct {
 // InitOrmEngine https://gorm.io/zh_CN/docs/connecting_to_the_database.html
 func InitOrmEngine() (*gorm.DB, error) {
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", "0", "0", "0", 0, "0")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", "root", "123456", "175.178.156.14", 3309, "biz")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
+		NamingStrategy: gorm.NamingStrategy{
 			TablePrefix:   "blog_", // 指点表名前缀
 			SingularTable: true,    // 是否单表，命名是否复数
 			NoLowerCase:   false,   // 是否关闭驼峰命名

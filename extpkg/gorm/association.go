@@ -6,14 +6,13 @@ import (
 	"strings"
 
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils"
 )
 
 // Association Mode contains some helper methods to handle relationship things easily.
 type Association struct {
 	DB           *DB
-	Relationship *schema.Relationship
+	Relationship *Relationship
 	Error        error
 }
 
@@ -50,7 +49,7 @@ func (association *Association) Find(out interface{}, conds ...interface{}) erro
 func (association *Association) Append(values ...interface{}) error {
 	if association.Error == nil {
 		switch association.Relationship.Type {
-		case schema.HasOne, schema.BelongsTo:
+		case HasOne, BelongsTo:
 			if len(values) > 0 {
 				association.Error = association.Replace(values...)
 			}
@@ -73,7 +72,7 @@ func (association *Association) Replace(values ...interface{}) error {
 		reflectValue := association.DB.Statement.ReflectValue
 		rel := association.Relationship
 		switch rel.Type {
-		case schema.BelongsTo:
+		case BelongsTo:
 			if len(values) == 0 {
 				updateMap := map[string]interface{}{}
 				switch reflectValue.Kind() {
@@ -91,18 +90,18 @@ func (association *Association) Replace(values ...interface{}) error {
 
 				association.Error = association.DB.UpdateColumns(updateMap).Error
 			}
-		case schema.HasOne, schema.HasMany:
+		case HasOne, HasMany:
 			var (
-				primaryFields []*schema.Field
+				primaryFields []*Field
 				foreignKeys   []string
 				updateMap     = map[string]interface{}{}
-				relValues     = schema.GetRelationsValues(association.DB.Statement.Context, reflectValue, []*schema.Relationship{rel})
+				relValues     = GetRelationsValues(association.DB.Statement.Context, reflectValue, []*Relationship{rel})
 				modelValue    = reflect.New(rel.FieldSchema.ModelType).Interface()
 				tx            = association.DB.Model(modelValue)
 			)
 
-			if _, rvs := schema.GetIdentityFieldValuesMap(association.DB.Statement.Context, relValues, rel.FieldSchema.PrimaryFields); len(rvs) > 0 {
-				if column, values := schema.ToQueryValues(rel.FieldSchema.Table, rel.FieldSchema.PrimaryFieldDBNames, rvs); len(values) > 0 {
+			if _, rvs := GetIdentityFieldValuesMap(association.DB.Statement.Context, relValues, rel.FieldSchema.PrimaryFields); len(rvs) > 0 {
+				if column, values := ToQueryValues(rel.FieldSchema.Table, rel.FieldSchema.PrimaryFieldDBNames, rvs); len(values) > 0 {
 					tx.Not(clause.IN{Column: column, Values: values})
 				}
 			}
@@ -117,13 +116,13 @@ func (association *Association) Replace(values ...interface{}) error {
 				}
 			}
 
-			if _, pvs := schema.GetIdentityFieldValuesMap(association.DB.Statement.Context, reflectValue, primaryFields); len(pvs) > 0 {
-				column, values := schema.ToQueryValues(rel.FieldSchema.Table, foreignKeys, pvs)
+			if _, pvs := GetIdentityFieldValuesMap(association.DB.Statement.Context, reflectValue, primaryFields); len(pvs) > 0 {
+				column, values := ToQueryValues(rel.FieldSchema.Table, foreignKeys, pvs)
 				association.Error = tx.Where(clause.IN{Column: column, Values: values}).UpdateColumns(updateMap).Error
 			}
-		case schema.Many2Many:
+		case Many2Many:
 			var (
-				primaryFields, relPrimaryFields     []*schema.Field
+				primaryFields, relPrimaryFields     []*Field
 				joinPrimaryKeys, joinRelPrimaryKeys []string
 				modelValue                          = reflect.New(rel.JoinTable.ModelType).Interface()
 				tx                                  = association.DB.Model(modelValue)
@@ -143,15 +142,15 @@ func (association *Association) Replace(values ...interface{}) error {
 				}
 			}
 
-			_, pvs := schema.GetIdentityFieldValuesMap(association.DB.Statement.Context, reflectValue, primaryFields)
-			if column, values := schema.ToQueryValues(rel.JoinTable.Table, joinPrimaryKeys, pvs); len(values) > 0 {
+			_, pvs := GetIdentityFieldValuesMap(association.DB.Statement.Context, reflectValue, primaryFields)
+			if column, values := ToQueryValues(rel.JoinTable.Table, joinPrimaryKeys, pvs); len(values) > 0 {
 				tx.Where(clause.IN{Column: column, Values: values})
 			} else {
 				return ErrPrimaryKeyRequired
 			}
 
-			_, rvs := schema.GetIdentityFieldValuesMapFromValues(association.DB.Statement.Context, values, relPrimaryFields)
-			if relColumn, relValues := schema.ToQueryValues(rel.JoinTable.Table, joinRelPrimaryKeys, rvs); len(relValues) > 0 {
+			_, rvs := GetIdentityFieldValuesMapFromValues(association.DB.Statement.Context, values, relPrimaryFields)
+			if relColumn, relValues := ToQueryValues(rel.JoinTable.Table, joinRelPrimaryKeys, rvs); len(relValues) > 0 {
 				tx.Where(clause.Not(clause.IN{Column: relColumn, Values: relValues}))
 			}
 
@@ -166,7 +165,7 @@ func (association *Association) Delete(values ...interface{}) error {
 		var (
 			reflectValue  = association.DB.Statement.ReflectValue
 			rel           = association.Relationship
-			primaryFields []*schema.Field
+			primaryFields []*Field
 			foreignKeys   []string
 			updateAttrs   = map[string]interface{}{}
 			conds         []clause.Expression
@@ -183,39 +182,39 @@ func (association *Association) Delete(values ...interface{}) error {
 		}
 
 		switch rel.Type {
-		case schema.BelongsTo:
+		case BelongsTo:
 			tx := association.DB.Model(reflect.New(rel.Schema.ModelType).Interface())
 
-			_, pvs := schema.GetIdentityFieldValuesMap(association.DB.Statement.Context, reflectValue, rel.Schema.PrimaryFields)
-			if pcolumn, pvalues := schema.ToQueryValues(rel.Schema.Table, rel.Schema.PrimaryFieldDBNames, pvs); len(pvalues) > 0 {
+			_, pvs := GetIdentityFieldValuesMap(association.DB.Statement.Context, reflectValue, rel.Schema.PrimaryFields)
+			if pcolumn, pvalues := ToQueryValues(rel.Schema.Table, rel.Schema.PrimaryFieldDBNames, pvs); len(pvalues) > 0 {
 				conds = append(conds, clause.IN{Column: pcolumn, Values: pvalues})
 			} else {
 				return ErrPrimaryKeyRequired
 			}
 
-			_, rvs := schema.GetIdentityFieldValuesMapFromValues(association.DB.Statement.Context, values, primaryFields)
-			relColumn, relValues := schema.ToQueryValues(rel.Schema.Table, foreignKeys, rvs)
+			_, rvs := GetIdentityFieldValuesMapFromValues(association.DB.Statement.Context, values, primaryFields)
+			relColumn, relValues := ToQueryValues(rel.Schema.Table, foreignKeys, rvs)
 			conds = append(conds, clause.IN{Column: relColumn, Values: relValues})
 
 			association.Error = tx.Clauses(conds...).UpdateColumns(updateAttrs).Error
-		case schema.HasOne, schema.HasMany:
+		case HasOne, HasMany:
 			tx := association.DB.Model(reflect.New(rel.FieldSchema.ModelType).Interface())
 
-			_, pvs := schema.GetIdentityFieldValuesMap(association.DB.Statement.Context, reflectValue, primaryFields)
-			if pcolumn, pvalues := schema.ToQueryValues(rel.FieldSchema.Table, foreignKeys, pvs); len(pvalues) > 0 {
+			_, pvs := GetIdentityFieldValuesMap(association.DB.Statement.Context, reflectValue, primaryFields)
+			if pcolumn, pvalues := ToQueryValues(rel.FieldSchema.Table, foreignKeys, pvs); len(pvalues) > 0 {
 				conds = append(conds, clause.IN{Column: pcolumn, Values: pvalues})
 			} else {
 				return ErrPrimaryKeyRequired
 			}
 
-			_, rvs := schema.GetIdentityFieldValuesMapFromValues(association.DB.Statement.Context, values, rel.FieldSchema.PrimaryFields)
-			relColumn, relValues := schema.ToQueryValues(rel.FieldSchema.Table, rel.FieldSchema.PrimaryFieldDBNames, rvs)
+			_, rvs := GetIdentityFieldValuesMapFromValues(association.DB.Statement.Context, values, rel.FieldSchema.PrimaryFields)
+			relColumn, relValues := ToQueryValues(rel.FieldSchema.Table, rel.FieldSchema.PrimaryFieldDBNames, rvs)
 			conds = append(conds, clause.IN{Column: relColumn, Values: relValues})
 
 			association.Error = tx.Clauses(conds...).UpdateColumns(updateAttrs).Error
-		case schema.Many2Many:
+		case Many2Many:
 			var (
-				primaryFields, relPrimaryFields     []*schema.Field
+				primaryFields, relPrimaryFields     []*Field
 				joinPrimaryKeys, joinRelPrimaryKeys []string
 				joinValue                           = reflect.New(rel.JoinTable.ModelType).Interface()
 			)
@@ -234,15 +233,15 @@ func (association *Association) Delete(values ...interface{}) error {
 				}
 			}
 
-			_, pvs := schema.GetIdentityFieldValuesMap(association.DB.Statement.Context, reflectValue, primaryFields)
-			if pcolumn, pvalues := schema.ToQueryValues(rel.JoinTable.Table, joinPrimaryKeys, pvs); len(pvalues) > 0 {
+			_, pvs := GetIdentityFieldValuesMap(association.DB.Statement.Context, reflectValue, primaryFields)
+			if pcolumn, pvalues := ToQueryValues(rel.JoinTable.Table, joinPrimaryKeys, pvs); len(pvalues) > 0 {
 				conds = append(conds, clause.IN{Column: pcolumn, Values: pvalues})
 			} else {
 				return ErrPrimaryKeyRequired
 			}
 
-			_, rvs := schema.GetIdentityFieldValuesMapFromValues(association.DB.Statement.Context, values, relPrimaryFields)
-			relColumn, relValues := schema.ToQueryValues(rel.JoinTable.Table, joinRelPrimaryKeys, rvs)
+			_, rvs := GetIdentityFieldValuesMapFromValues(association.DB.Statement.Context, values, relPrimaryFields)
+			relColumn, relValues := ToQueryValues(rel.JoinTable.Table, joinRelPrimaryKeys, rvs)
 			conds = append(conds, clause.IN{Column: relColumn, Values: relValues})
 
 			association.Error = association.DB.Where(clause.Where{Exprs: conds}).Model(nil).Delete(joinValue).Error
@@ -250,7 +249,7 @@ func (association *Association) Delete(values ...interface{}) error {
 
 		if association.Error == nil {
 			// clean up deleted values's foreign key
-			relValuesMap, _ := schema.GetIdentityFieldValuesMapFromValues(association.DB.Statement.Context, values, rel.FieldSchema.PrimaryFields)
+			relValuesMap, _ := GetIdentityFieldValuesMapFromValues(association.DB.Statement.Context, values, rel.FieldSchema.PrimaryFields)
 
 			cleanUpDeletedRelations := func(data reflect.Value) {
 				if _, zero := rel.Field.ValueOf(association.DB.Statement.Context, data); !zero {
@@ -334,7 +333,7 @@ func (association *Association) saveAssociation(clear bool, values ...interface{
 
 	appendToRelations := func(source, rv reflect.Value, clear bool) {
 		switch association.Relationship.Type {
-		case schema.HasOne, schema.BelongsTo:
+		case HasOne, BelongsTo:
 			switch rv.Kind() {
 			case reflect.Slice, reflect.Array:
 				if rv.Len() > 0 {
@@ -351,7 +350,7 @@ func (association *Association) saveAssociation(clear bool, values ...interface{
 					assignBacks = append(assignBacks, assignBack{Source: source, Dest: rv})
 				}
 			}
-		case schema.HasMany, schema.Many2Many:
+		case HasMany, Many2Many:
 			elemType := association.Relationship.Field.IndirectFieldType.Elem()
 			fieldValue := reflect.Indirect(association.Relationship.Field.ReflectValueOf(association.DB.Statement.Context, source))
 			if clear {

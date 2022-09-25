@@ -1,7 +1,6 @@
 package gorm
 
 import (
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"reflect"
 
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
@@ -9,12 +8,12 @@ import (
 
 type DeletedAt int32
 
-func (DeletedAt) QueryClauses(f *schema.Field) []clause.Interface {
+func DeletedAtQueryClauses(f *Field) []clause.Interface {
 	return []clause.Interface{SoftDeleteQueryClause{Field: f}}
 }
 
 type SoftDeleteQueryClause struct {
-	Field *schema.Field
+	Field *Field
 }
 
 func (sd SoftDeleteQueryClause) Name() string {
@@ -49,12 +48,12 @@ func (sd SoftDeleteQueryClause) ModifyStatement(stmt *Statement) {
 	}
 }
 
-func (DeletedAt) UpdateClauses(f *schema.Field) []clause.Interface {
+func DeletedAtUpdateClauses(f *Field) []clause.Interface {
 	return []clause.Interface{SoftDeleteUpdateClause{Field: f}}
 }
 
 type SoftDeleteUpdateClause struct {
-	Field *schema.Field
+	Field *Field
 }
 
 func (sd SoftDeleteUpdateClause) Name() string {
@@ -73,12 +72,12 @@ func (sd SoftDeleteUpdateClause) ModifyStatement(stmt *Statement) {
 	}
 }
 
-func (DeletedAt) DeleteClauses(f *schema.Field) []clause.Interface {
+func DeletedAtDeleteClauses(f *Field) []clause.Interface {
 	return []clause.Interface{SoftDeleteDeleteClause{Field: f}}
 }
 
 type SoftDeleteDeleteClause struct {
-	Field *schema.Field
+	Field *Field
 }
 
 func (sd SoftDeleteDeleteClause) Name() string {
@@ -98,16 +97,16 @@ func (sd SoftDeleteDeleteClause) ModifyStatement(stmt *Statement) {
 		stmt.SetColumn(sd.Field.DBName, curTime, true)
 
 		if stmt.Schema != nil {
-			_, queryValues := schema.GetIdentityFieldValuesMap(stmt.Context, stmt.ReflectValue, stmt.Schema.PrimaryFields)
-			column, values := schema.ToQueryValues(stmt.Table, stmt.Schema.PrimaryFieldDBNames, queryValues)
+			_, queryValues := GetIdentityFieldValuesMap(stmt.Context, stmt.ReflectValue, stmt.Schema.PrimaryFields)
+			column, values := ToQueryValues(stmt.Table, stmt.Schema.PrimaryFieldDBNames, queryValues)
 
 			if len(values) > 0 {
 				stmt.AddClause(clause.Where{Exprs: []clause.Expression{clause.IN{Column: column, Values: values}}})
 			}
 
 			if stmt.ReflectValue.CanAddr() && stmt.Dest != stmt.Model && stmt.Model != nil {
-				_, queryValues = schema.GetIdentityFieldValuesMap(stmt.Context, reflect.ValueOf(stmt.Model), stmt.Schema.PrimaryFields)
-				column, values = schema.ToQueryValues(stmt.Table, stmt.Schema.PrimaryFieldDBNames, queryValues)
+				_, queryValues = GetIdentityFieldValuesMap(stmt.Context, reflect.ValueOf(stmt.Model), stmt.Schema.PrimaryFields)
+				column, values = ToQueryValues(stmt.Table, stmt.Schema.PrimaryFieldDBNames, queryValues)
 
 				if len(values) > 0 {
 					stmt.AddClause(clause.Where{Exprs: []clause.Expression{clause.IN{Column: column, Values: values}}})

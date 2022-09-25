@@ -1,11 +1,10 @@
-package schema_test
+package gorm_test
 
 import (
+	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"reflect"
 	"sync"
 	"testing"
-
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 )
 
 type UserIndex struct {
@@ -52,27 +51,27 @@ type CompIdxLevel2B struct {
 }
 
 func TestParseIndex(t *testing.T) {
-	user, err := schema.Parse(&UserIndex{}, &sync.Map{}, schema.NamingStrategy{})
+	user, err := gorm.Parse(&UserIndex{}, &sync.Map{}, gorm.NamingStrategy{})
 	if err != nil {
 		t.Fatalf("failed to parse user index, got error %v", err)
 	}
 
-	results := map[string]schema.Index{
+	results := map[string]gorm.Index{
 		"idx_user_indices_name": {
 			Name:   "idx_user_indices_name",
-			Fields: []schema.IndexOption{{Field: &schema.Field{Name: "Name"}}},
+			Fields: []gorm.IndexOption{{Field: &gorm.Field{Name: "Name"}}},
 		},
 		"idx_name": {
 			Name:   "idx_name",
 			Class:  "UNIQUE",
-			Fields: []schema.IndexOption{{Field: &schema.Field{Name: "Name2"}}},
+			Fields: []gorm.IndexOption{{Field: &gorm.Field{Name: "Name2"}}},
 		},
 		"idx_user_indices_name3": {
 			Name:  "idx_user_indices_name3",
 			Type:  "btree",
 			Where: "name3 != 'jinzhu'",
-			Fields: []schema.IndexOption{{
-				Field:   &schema.Field{Name: "Name3"},
+			Fields: []gorm.IndexOption{{
+				Field:   &gorm.Field{Name: "Name3"},
 				Sort:    "desc",
 				Collate: "utf8",
 				Length:  10,
@@ -81,67 +80,67 @@ func TestParseIndex(t *testing.T) {
 		"idx_user_indices_name4": {
 			Name:   "idx_user_indices_name4",
 			Class:  "UNIQUE",
-			Fields: []schema.IndexOption{{Field: &schema.Field{Name: "Name4"}}},
+			Fields: []gorm.IndexOption{{Field: &gorm.Field{Name: "Name4"}}},
 		},
 		"idx_user_indices_name5": {
 			Name:    "idx_user_indices_name5",
 			Class:   "FULLTEXT",
 			Comment: "hello , world",
 			Where:   "age > 10",
-			Fields:  []schema.IndexOption{{Field: &schema.Field{Name: "Name5"}}},
+			Fields:  []gorm.IndexOption{{Field: &gorm.Field{Name: "Name5"}}},
 		},
 		"profile": {
 			Name:    "profile",
 			Comment: "hello , world",
 			Where:   "age > 10",
 			Option:  "WITH PARSER parser_name",
-			Fields: []schema.IndexOption{{Field: &schema.Field{Name: "Name6"}}, {
-				Field:      &schema.Field{Name: "Age"},
+			Fields: []gorm.IndexOption{{Field: &gorm.Field{Name: "Name6"}}, {
+				Field:      &gorm.Field{Name: "Age"},
 				Expression: "ABS(age)",
 			}},
 		},
 		"idx_id": {
 			Name:   "idx_id",
-			Fields: []schema.IndexOption{{Field: &schema.Field{Name: "MemberNumber"}}, {Field: &schema.Field{Name: "OID"}}},
+			Fields: []gorm.IndexOption{{Field: &gorm.Field{Name: "MemberNumber"}}, {Field: &gorm.Field{Name: "OID"}}},
 		},
 		"idx_oid": {
 			Name:   "idx_oid",
 			Class:  "UNIQUE",
-			Fields: []schema.IndexOption{{Field: &schema.Field{Name: "OID"}}},
+			Fields: []gorm.IndexOption{{Field: &gorm.Field{Name: "OID"}}},
 		},
 		"type": {
 			Name:   "type",
 			Type:   "",
-			Fields: []schema.IndexOption{{Field: &schema.Field{Name: "Name7"}}},
+			Fields: []gorm.IndexOption{{Field: &gorm.Field{Name: "Name7"}}},
 		},
 		"idx_user_indices_comp_id0": {
 			Name: "idx_user_indices_comp_id0",
 			Type: "",
-			Fields: []schema.IndexOption{{
-				Field: &schema.Field{Name: "Data0A"},
+			Fields: []gorm.IndexOption{{
+				Field: &gorm.Field{Name: "Data0A"},
 			}, {
-				Field: &schema.Field{Name: "Data0B"},
+				Field: &gorm.Field{Name: "Data0B"},
 			}},
 		},
 		"idx_user_indices_comp_id1": {
 			Name: "idx_user_indices_comp_id1",
-			Fields: []schema.IndexOption{{
-				Field: &schema.Field{Name: "Data1A"},
+			Fields: []gorm.IndexOption{{
+				Field: &gorm.Field{Name: "Data1A"},
 			}, {
-				Field: &schema.Field{Name: "Data1B"},
+				Field: &gorm.Field{Name: "Data1B"},
 			}, {
-				Field: &schema.Field{Name: "Data1C"},
+				Field: &gorm.Field{Name: "Data1C"},
 			}},
 		},
 		"idx_user_indices_comp_id2": {
 			Name:  "idx_user_indices_comp_id2",
 			Class: "UNIQUE",
-			Fields: []schema.IndexOption{{
-				Field: &schema.Field{Name: "Data2C"},
+			Fields: []gorm.IndexOption{{
+				Field: &gorm.Field{Name: "Data2C"},
 			}, {
-				Field: &schema.Field{Name: "Data2A"},
+				Field: &gorm.Field{Name: "Data2A"},
 			}, {
-				Field: &schema.Field{Name: "Data2B"},
+				Field: &gorm.Field{Name: "Data2B"},
 			}},
 		},
 	}

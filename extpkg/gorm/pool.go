@@ -1,4 +1,4 @@
-package schema
+package gorm
 
 import (
 	"reflect"

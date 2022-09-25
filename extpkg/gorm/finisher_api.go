@@ -9,7 +9,6 @@ import (
 
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
 	"github.com/oldbai555/lbtool/extpkg/gorm/logger"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils"
 )
 
@@ -262,7 +261,7 @@ func (db *DB) assignInterfacesToValue(values ...interface{}) {
 				db.assignInterfacesToValue(exprs)
 			}
 		default:
-			if s, err := schema.Parse(value, db.cacheStore, db.NamingStrategy); err == nil {
+			if s, err := Parse(value, db.cacheStore, db.NamingStrategy); err == nil {
 				reflectValue := reflect.Indirect(reflect.ValueOf(value))
 				switch reflectValue.Kind() {
 				case reflect.Struct:
@@ -537,7 +536,7 @@ func (db *DB) Pluck(column string, dest interface{}) (tx *DB) {
 
 func (db *DB) ScanRows(rows *sql.Rows, dest interface{}) error {
 	tx := db.getInstance()
-	if err := tx.Statement.Parse(dest); !errors.Is(err, schema.ErrUnsupportedDataType) {
+	if err := tx.Statement.Parse(dest); !errors.Is(err, ErrUnsupportedDataType) {
 		tx.AddError(err)
 	}
 	tx.Statement.Dest = dest

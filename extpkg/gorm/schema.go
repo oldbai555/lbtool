@@ -1,4 +1,4 @@
-package schema
+package gorm
 
 import (
 	"context"
@@ -287,23 +287,28 @@ func ParseWithSpecialTableName(dest interface{}, cacheStore *sync.Map, namer Nam
 				}
 			}
 
-			fieldValue := reflect.New(field.IndirectFieldType)
-			fieldInterface := fieldValue.Interface()
-			if fc, ok := fieldInterface.(CreateClausesInterface); ok {
-				field.Schema.CreateClauses = append(field.Schema.CreateClauses, fc.CreateClauses(field)...)
+			if field.Name == "DeletedAt" {
+				field.Schema.QueryClauses = append(field.Schema.QueryClauses, DeletedAtQueryClauses(field)...)
+				field.Schema.UpdateClauses = append(field.Schema.UpdateClauses, DeletedAtUpdateClauses(field)...)
+				field.Schema.DeleteClauses = append(field.Schema.DeleteClauses, DeletedAtDeleteClauses(field)...)
 			}
+			// fieldValue := reflect.New(field.IndirectFieldType)
+			// fieldInterface := fieldValue.Interface()
+			// if fc, ok := fieldInterface.(CreateClausesInterface); ok {
+			// 	field.Schema.CreateClauses = append(field.Schema.CreateClauses, fc.CreateClauses(field)...)
+			// }
 
-			if fc, ok := fieldInterface.(QueryClausesInterface); ok {
-				field.Schema.QueryClauses = append(field.Schema.QueryClauses, fc.QueryClauses(field)...)
-			}
-
-			if fc, ok := fieldInterface.(UpdateClausesInterface); ok {
-				field.Schema.UpdateClauses = append(field.Schema.UpdateClauses, fc.UpdateClauses(field)...)
-			}
-
-			if fc, ok := fieldInterface.(DeleteClausesInterface); ok {
-				field.Schema.DeleteClauses = append(field.Schema.DeleteClauses, fc.DeleteClauses(field)...)
-			}
+			// if fc, ok := fieldInterface.(QueryClausesInterface); ok {
+			// 	field.Schema.QueryClauses = append(field.Schema.QueryClauses, fc.QueryClauses(field)...)
+			// }
+			//
+			// if fc, ok := fieldInterface.(UpdateClausesInterface); ok {
+			// 	field.Schema.UpdateClauses = append(field.Schema.UpdateClauses, fc.UpdateClauses(field)...)
+			// }
+			//
+			// if fc, ok := fieldInterface.(DeleteClausesInterface); ok {
+			// 	field.Schema.DeleteClauses = append(field.Schema.DeleteClauses, fc.DeleteClauses(field)...)
+			// }
 		}
 	}
 

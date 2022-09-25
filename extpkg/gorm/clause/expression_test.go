@@ -9,7 +9,6 @@ import (
 
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils/tests"
 )
 
@@ -26,7 +25,7 @@ func TestExpr(t *testing.T) {
 
 	for idx, result := range results {
 		t.Run(fmt.Sprintf("case #%v", idx), func(t *testing.T) {
-			user, _ := schema.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
+			user, _ := gorm.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
 			stmt := &gorm.Statement{DB: db, Table: user.Table, Schema: user, Clauses: map[string]clause.Clause{}}
 			clause.Expr{SQL: result.SQL, Vars: result.Vars}.Build(stmt)
 			if stmt.SQL.String() != result.Result {
@@ -136,7 +135,7 @@ func TestNamedExpr(t *testing.T) {
 
 	for idx, result := range results {
 		t.Run(fmt.Sprintf("case #%v", idx), func(t *testing.T) {
-			user, _ := schema.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
+			user, _ := gorm.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
 			stmt := &gorm.Statement{DB: db, Table: user.Table, Schema: user, Clauses: map[string]clause.Clause{}}
 			clause.NamedExpr{SQL: result.SQL, Vars: result.Vars}.Build(stmt)
 			if stmt.SQL.String() != result.Result {
@@ -216,7 +215,7 @@ func TestExpression(t *testing.T) {
 	for idx, result := range results {
 		for idy, expression := range result.Expressions {
 			t.Run(fmt.Sprintf("case #%v.%v", idx, idy), func(t *testing.T) {
-				user, _ := schema.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
+				user, _ := gorm.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
 				stmt := &gorm.Statement{DB: db, Table: user.Table, Schema: user, Clauses: map[string]clause.Clause{}}
 				expression.Build(stmt)
 				if stmt.SQL.String() != result.Result {

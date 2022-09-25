@@ -1,26 +1,24 @@
-package schema_test
+package gorm_test
 
 import (
+	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"reflect"
 	"sync"
 	"testing"
-
-	"github.com/oldbai555/lbtool/extpkg/gorm"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 )
 
 type UserWithCallback struct{}
 
-func (UserWithCallback) BeforeSave(*gorm.DB) error {
+func (UserWithCallback) BeforeSave(*DB) error {
 	return nil
 }
 
-func (UserWithCallback) AfterCreate(*gorm.DB) error {
+func (UserWithCallback) AfterCreate(*DB) error {
 	return nil
 }
 
 func TestCallback(t *testing.T) {
-	user, err := schema.Parse(&UserWithCallback{}, &sync.Map{}, schema.NamingStrategy{})
+	user, err := gorm.Parse(&UserWithCallback{}, &sync.Map{}, gorm.NamingStrategy{})
 	if err != nil {
 		t.Fatalf("failed to parse user with callback, got error %v", err)
 	}

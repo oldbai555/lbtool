@@ -9,7 +9,6 @@ import (
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
 	"github.com/oldbai555/lbtool/extpkg/gorm/logger"
 	"github.com/oldbai555/lbtool/extpkg/gorm/migrator"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"math"
 	"strings"
 	"time"
@@ -217,7 +216,7 @@ func (dialector Dialector) ClauseBuilders() map[string]clause.ClauseBuilder {
 	return clauseBuilders
 }
 
-func (dialector Dialector) DefaultValueOf(field *schema.Field) clause.Expression {
+func (dialector Dialector) DefaultValueOf(field *gorm.Field) clause.Expression {
 	return clause.Expr{SQL: "DEFAULT"}
 }
 
@@ -289,26 +288,26 @@ func (dialector Dialector) Explain(sql string, vars ...interface{}) string {
 	return logger.ExplainSQL(sql, nil, `'`, vars...)
 }
 
-func (dialector Dialector) DataTypeOf(field *schema.Field) string {
+func (dialector Dialector) DataTypeOf(field *gorm.Field) string {
 	switch field.DataType {
-	case schema.Bool:
+	case gorm.Bool:
 		return "boolean"
-	case schema.Int, schema.Uint:
+	case gorm.Int, gorm.Uint:
 		return dialector.getSchemaIntAndUnitType(field)
-	case schema.Float:
+	case gorm.Float:
 		return dialector.getSchemaFloatType(field)
-	case schema.String:
+	case gorm.String:
 		return dialector.getSchemaStringType(field)
-	case schema.Time:
+	case gorm.Time:
 		return dialector.getSchemaTimeType(field)
-	case schema.Bytes:
+	case gorm.Bytes:
 		return dialector.getSchemaBytesType(field)
 	default:
 		return dialector.getSchemaCustomType(field)
 	}
 }
 
-func (dialector Dialector) getSchemaFloatType(field *schema.Field) string {
+func (dialector Dialector) getSchemaFloatType(field *gorm.Field) string {
 	if field.Precision > 0 {
 		return fmt.Sprintf("decimal(%d, %d)", field.Precision, field.Scale)
 	}
@@ -320,7 +319,7 @@ func (dialector Dialector) getSchemaFloatType(field *schema.Field) string {
 	return "double"
 }
 
-func (dialector Dialector) getSchemaStringType(field *schema.Field) string {
+func (dialector Dialector) getSchemaStringType(field *gorm.Field) string {
 	size := field.Size
 	if size == 0 {
 		if dialector.DefaultStringSize > 0 {
@@ -345,7 +344,7 @@ func (dialector Dialector) getSchemaStringType(field *schema.Field) string {
 	return fmt.Sprintf("varchar(%d)", size)
 }
 
-func (dialector Dialector) getSchemaTimeType(field *schema.Field) string {
+func (dialector Dialector) getSchemaTimeType(field *gorm.Field) string {
 	precision := ""
 	if !dialector.DisableDatetimePrecision && field.Precision == 0 {
 		field.Precision = *dialector.DefaultDatetimePrecision
@@ -361,7 +360,7 @@ func (dialector Dialector) getSchemaTimeType(field *schema.Field) string {
 	return "datetime" + precision + " NULL"
 }
 
-func (dialector Dialector) getSchemaBytesType(field *schema.Field) string {
+func (dialector Dialector) getSchemaBytesType(field *gorm.Field) string {
 	if field.Size > 0 && field.Size < 65536 {
 		return fmt.Sprintf("varbinary(%d)", field.Size)
 	}
@@ -373,7 +372,7 @@ func (dialector Dialector) getSchemaBytesType(field *schema.Field) string {
 	return "longblob"
 }
 
-func (dialector Dialector) getSchemaIntAndUnitType(field *schema.Field) string {
+func (dialector Dialector) getSchemaIntAndUnitType(field *gorm.Field) string {
 	sqlType := "bigint"
 	switch {
 	case field.Size <= 8:
@@ -386,7 +385,7 @@ func (dialector Dialector) getSchemaIntAndUnitType(field *schema.Field) string {
 		sqlType = "int"
 	}
 
-	if field.DataType == schema.Uint {
+	if field.DataType == gorm.Uint {
 		sqlType += " unsigned"
 	}
 
@@ -397,7 +396,7 @@ func (dialector Dialector) getSchemaIntAndUnitType(field *schema.Field) string {
 	return sqlType
 }
 
-func (dialector Dialector) getSchemaCustomType(field *schema.Field) string {
+func (dialector Dialector) getSchemaCustomType(field *gorm.Field) string {
 	sqlType := string(field.DataType)
 
 	if field.AutoIncrement && !strings.Contains(strings.ToLower(sqlType), " auto_increment") {

@@ -8,7 +8,6 @@ import (
 
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils/tests"
 )
 
@@ -18,7 +17,7 @@ func checkBuildClauses(t *testing.T, clauses []clause.Interface, result string, 
 	var (
 		buildNames    []string
 		buildNamesMap = map[string]bool{}
-		user, _       = schema.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
+		user, _       = gorm.Parse(&tests.User{}, &sync.Map{}, db.NamingStrategy)
 		stmt          = gorm.Statement{DB: db, Table: user.Table, Schema: user, Clauses: map[string]clause.Clause{}}
 	)
 

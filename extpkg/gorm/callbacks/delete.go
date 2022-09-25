@@ -6,7 +6,6 @@ import (
 
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils"
 )
 
@@ -41,7 +40,7 @@ func DeleteBeforeAssociations(db *gorm.DB) {
 			}
 
 			switch rel.Type {
-			case schema.HasOne, schema.HasMany:
+			case gorm.HasOne, gorm.HasMany:
 				queryConds := rel.ToQueryConditions(db.Statement.Context, db.Statement.ReflectValue)
 				modelValue := reflect.New(rel.FieldSchema.ModelType).Interface()
 				tx := db.Session(&gorm.Session{NewDB: true}).Model(modelValue)
@@ -75,10 +74,10 @@ func DeleteBeforeAssociations(db *gorm.DB) {
 				if !withoutConditions && db.AddError(tx.Clauses(clause.Where{Exprs: queryConds}).Delete(modelValue).Error) != nil {
 					return
 				}
-			case schema.Many2Many:
+			case gorm.Many2Many:
 				var (
 					queryConds     = make([]clause.Expression, 0, len(rel.References))
-					foreignFields  = make([]*schema.Field, 0, len(rel.References))
+					foreignFields  = make([]*gorm.Field, 0, len(rel.References))
 					relForeignKeys = make([]string, 0, len(rel.References))
 					modelValue     = reflect.New(rel.JoinTable.ModelType).Interface()
 					table          = rel.JoinTable.Table
@@ -97,8 +96,8 @@ func DeleteBeforeAssociations(db *gorm.DB) {
 					}
 				}
 
-				_, foreignValues := schema.GetIdentityFieldValuesMap(db.Statement.Context, db.Statement.ReflectValue, foreignFields)
-				column, values := schema.ToQueryValues(table, relForeignKeys, foreignValues)
+				_, foreignValues := gorm.GetIdentityFieldValuesMap(db.Statement.Context, db.Statement.ReflectValue, foreignFields)
+				column, values := gorm.ToQueryValues(table, relForeignKeys, foreignValues)
 				queryConds = append(queryConds, clause.IN{Column: column, Values: values})
 
 				if db.AddError(tx.Clauses(clause.Where{Exprs: queryConds}).Delete(modelValue).Error) != nil {
@@ -129,16 +128,16 @@ func Delete(config *Config) func(db *gorm.DB) {
 			db.Statement.AddClauseIfNotExists(clause.Delete{})
 
 			if db.Statement.Schema != nil {
-				_, queryValues := schema.GetIdentityFieldValuesMap(db.Statement.Context, db.Statement.ReflectValue, db.Statement.Schema.PrimaryFields)
-				column, values := schema.ToQueryValues(db.Statement.Table, db.Statement.Schema.PrimaryFieldDBNames, queryValues)
+				_, queryValues := gorm.GetIdentityFieldValuesMap(db.Statement.Context, db.Statement.ReflectValue, db.Statement.Schema.PrimaryFields)
+				column, values := gorm.ToQueryValues(db.Statement.Table, db.Statement.Schema.PrimaryFieldDBNames, queryValues)
 
 				if len(values) > 0 {
 					db.Statement.AddClause(clause.Where{Exprs: []clause.Expression{clause.IN{Column: column, Values: values}}})
 				}
 
 				if db.Statement.ReflectValue.CanAddr() && db.Statement.Dest != db.Statement.Model && db.Statement.Model != nil {
-					_, queryValues = schema.GetIdentityFieldValuesMap(db.Statement.Context, reflect.ValueOf(db.Statement.Model), db.Statement.Schema.PrimaryFields)
-					column, values = schema.ToQueryValues(db.Statement.Table, db.Statement.Schema.PrimaryFieldDBNames, queryValues)
+					_, queryValues = gorm.GetIdentityFieldValuesMap(db.Statement.Context, reflect.ValueOf(db.Statement.Model), db.Statement.Schema.PrimaryFields)
+					column, values = gorm.ToQueryValues(db.Statement.Table, db.Statement.Schema.PrimaryFieldDBNames, queryValues)
 
 					if len(values) > 0 {
 						db.Statement.AddClause(clause.Where{Exprs: []clause.Expression{clause.IN{Column: column, Values: values}}})

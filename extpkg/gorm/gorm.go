@@ -10,7 +10,6 @@ import (
 
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
 	"github.com/oldbai555/lbtool/extpkg/gorm/logger"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 )
 
 // for Config.cacheStore store PreparedStmtDB key
@@ -22,7 +21,7 @@ type Config struct {
 	// You can disable it by setting `SkipDefaultTransaction` to true
 	SkipDefaultTransaction bool
 	// NamingStrategy tables, columns naming strategy
-	NamingStrategy schema.Namer
+	NamingStrategy Namer
 	// FullSaveAssociations full save associations
 	FullSaveAssociations bool
 	// Logger
@@ -142,7 +141,7 @@ func Open(dialector Dialector, opts ...Option) (db *DB, err error) {
 	}
 
 	if config.NamingStrategy == nil {
-		config.NamingStrategy = schema.NamingStrategy{}
+		config.NamingStrategy = NamingStrategy{}
 	}
 
 	if config.Logger == nil {
@@ -403,7 +402,7 @@ func (db *DB) SetupJoinTable(model interface{}, field string, joinTable interfac
 	var (
 		tx                      = db.getInstance()
 		stmt                    = tx.Statement
-		modelSchema, joinSchema *schema.Schema
+		modelSchema, joinSchema *Schema
 	)
 
 	err := stmt.Parse(model)

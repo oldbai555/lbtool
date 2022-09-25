@@ -11,7 +11,6 @@ import (
 
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 )
 
 var (
@@ -32,7 +31,7 @@ type Config struct {
 
 // GormDataTypeInterface gorm data type interface
 type GormDataTypeInterface interface {
-	GormDBDataType(*gorm.DB, *schema.Field) string
+	GormDBDataType(*gorm.DB, *gorm.Field) string
 }
 
 // RunWithValue run migration with statement value
@@ -53,7 +52,7 @@ func (m Migrator) RunWithValue(value interface{}, fc func(*gorm.Statement) error
 }
 
 // DataTypeOf return field's db data type
-func (m Migrator) DataTypeOf(field *schema.Field) string {
+func (m Migrator) DataTypeOf(field *gorm.Field) string {
 	fieldValue := reflect.New(field.IndirectFieldType)
 	if dataTyper, ok := fieldValue.Interface().(GormDataTypeInterface); ok {
 		if dataType := dataTyper.GormDBDataType(m.DB, field); dataType != "" {
@@ -65,7 +64,7 @@ func (m Migrator) DataTypeOf(field *schema.Field) string {
 }
 
 // FullDataTypeOf returns field's db full data type
-func (m Migrator) FullDataTypeOf(field *schema.Field) (expr clause.Expr) {
+func (m Migrator) FullDataTypeOf(field *gorm.Field) (expr clause.Expr) {
 	expr.SQL = m.DataTypeOf(field)
 
 	if field.NotNull {
@@ -401,7 +400,7 @@ func (m Migrator) RenameColumn(value interface{}, oldName, newName string) error
 }
 
 // MigrateColumn migrate column
-func (m Migrator) MigrateColumn(value interface{}, field *schema.Field, columnType gorm.ColumnType) error {
+func (m Migrator) MigrateColumn(value interface{}, field *gorm.Field, columnType gorm.ColumnType) error {
 	// found, smart migrate
 	fullDataType := strings.TrimSpace(strings.ToLower(m.DB.Migrator().FullDataTypeOf(field).SQL))
 	realDataType := strings.ToLower(columnType.DatabaseTypeName())
@@ -541,7 +540,7 @@ func (m Migrator) DropView(name string) error {
 	return gorm.ErrNotImplemented
 }
 
-func buildConstraint(constraint *schema.Constraint) (sql string, results []interface{}) {
+func buildConstraint(constraint *gorm.Constraint) (sql string, results []interface{}) {
 	sql = "CONSTRAINT ? FOREIGN KEY ? REFERENCES ??"
 	if constraint.OnDelete != "" {
 		sql += " ON DELETE " + constraint.OnDelete
@@ -564,7 +563,7 @@ func buildConstraint(constraint *schema.Constraint) (sql string, results []inter
 }
 
 // GuessConstraintAndTable guess statement's constraint and it's table based on name
-func (m Migrator) GuessConstraintAndTable(stmt *gorm.Statement, name string) (_ *schema.Constraint, _ *schema.Check, table string) {
+func (m Migrator) GuessConstraintAndTable(stmt *gorm.Statement, name string) (_ *gorm.Constraint, _ *gorm.Check, table string) {
 	if stmt.Schema == nil {
 		return nil, nil, stmt.Table
 	}
@@ -574,11 +573,11 @@ func (m Migrator) GuessConstraintAndTable(stmt *gorm.Statement, name string) (_ 
 		return nil, &chk, stmt.Table
 	}
 
-	getTable := func(rel *schema.Relationship) string {
+	getTable := func(rel *gorm.Relationship) string {
 		switch rel.Type {
-		case schema.HasOne, schema.HasMany:
+		case gorm.HasOne, gorm.HasMany:
 			return rel.FieldSchema.Table
-		case schema.Many2Many:
+		case gorm.Many2Many:
 			return rel.JoinTable.Table
 		}
 		return stmt.Table
@@ -667,7 +666,7 @@ func (m Migrator) HasConstraint(value interface{}, name string) bool {
 }
 
 // BuildIndexOptions build index options
-func (m Migrator) BuildIndexOptions(opts []schema.IndexOption, stmt *gorm.Statement) (results []interface{}) {
+func (m Migrator) BuildIndexOptions(opts []gorm.IndexOption, stmt *gorm.Statement) (results []interface{}) {
 	for _, opt := range opts {
 		str := stmt.Quote(opt.DBName)
 		if opt.Expression != "" {
@@ -690,7 +689,7 @@ func (m Migrator) BuildIndexOptions(opts []schema.IndexOption, stmt *gorm.Statem
 
 // BuildIndexOptionsInterface build index options interface
 type BuildIndexOptionsInterface interface {
-	BuildIndexOptions([]schema.IndexOption, *gorm.Statement) []interface{}
+	BuildIndexOptions([]gorm.IndexOption, *gorm.Statement) []interface{}
 }
 
 // CreateIndex create index `name`
@@ -774,13 +773,13 @@ func (m Migrator) CurrentDatabase() (name string) {
 func (m Migrator) ReorderModels(values []interface{}, autoAdd bool) (results []interface{}) {
 	type Dependency struct {
 		*gorm.Statement
-		Depends []*schema.Schema
+		Depends []*gorm.Schema
 	}
 
 	var (
 		modelNames, orderedModelNames []string
 		orderedModelNamesMap          = map[string]bool{}
-		parsedSchemas                 = map[*schema.Schema]bool{}
+		parsedSchemas                 = map[*gorm.Schema]bool{}
 		valuesMap                     = map[string]Dependency{}
 		insertIntoOrderedList         func(name string)
 		parseDependence               func(value interface{}, addToList bool)
@@ -790,7 +789,7 @@ func (m Migrator) ReorderModels(values []interface{}, autoAdd bool) (results []i
 		dep := Dependency{
 			Statement: &gorm.Statement{DB: m.DB, Dest: value},
 		}
-		beDependedOn := map[*schema.Schema]bool{}
+		beDependedOn := map[*gorm.Schema]bool{}
 		// support for special table name
 		if err := dep.ParseWithSpecialTableName(value, m.DB.Statement.Table); err != nil {
 			m.DB.Logger.Error(context.Background(), "failed to parse value %#v, got error %v", value, err)
@@ -805,13 +804,13 @@ func (m Migrator) ReorderModels(values []interface{}, autoAdd bool) (results []i
 				dep.Depends = append(dep.Depends, c.ReferenceSchema)
 			}
 
-			if rel.Type == schema.HasOne || rel.Type == schema.HasMany {
+			if rel.Type == gorm.HasOne || rel.Type == gorm.HasMany {
 				beDependedOn[rel.FieldSchema] = true
 			}
 
 			if rel.JoinTable != nil {
 				// append join value
-				defer func(rel *schema.Relationship, joinValue interface{}) {
+				defer func(rel *gorm.Relationship, joinValue interface{}) {
 					if !beDependedOn[rel.FieldSchema] {
 						dep.Depends = append(dep.Depends, rel.FieldSchema)
 					} else {
@@ -877,8 +876,8 @@ func (m Migrator) CurrentTable(stmt *gorm.Statement) interface{} {
 	return clause.Table{Name: stmt.Table}
 }
 
-// GetIndexes return Indexes []gorm.Index and execErr error
-func (m Migrator) GetIndexes(dst interface{}) ([]gorm.Index, error) {
+// GetIndexes return Indexes []gorm.SchemaIndex and execErr error
+func (m Migrator) GetIndexes(dst interface{}) ([]gorm.SchemaIndex, error) {
 	return nil, errors.New("not support")
 }
 

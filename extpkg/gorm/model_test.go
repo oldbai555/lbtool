@@ -1,10 +1,10 @@
-package schema_test
+package gorm_test
 
 import (
 	"database/sql"
+	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"time"
 
-	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils/tests"
 )
 

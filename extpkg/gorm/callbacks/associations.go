@@ -6,7 +6,6 @@ import (
 
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils"
 )
 
@@ -336,7 +335,7 @@ func SaveAfterAssociations(create bool) func(db *gorm.DB) {
 	}
 }
 
-func onConflictOption(stmt *gorm.Statement, s *schema.Schema, defaultUpdatingColumns []string) (onConflict clause.OnConflict) {
+func onConflictOption(stmt *gorm.Statement, s *gorm.Schema, defaultUpdatingColumns []string) (onConflict clause.OnConflict) {
 	if len(defaultUpdatingColumns) > 0 || stmt.DB.FullSaveAssociations {
 		onConflict.Columns = make([]clause.Column, 0, len(s.PrimaryFieldDBNames))
 		for _, dbName := range s.PrimaryFieldDBNames {
@@ -354,7 +353,7 @@ func onConflictOption(stmt *gorm.Statement, s *schema.Schema, defaultUpdatingCol
 	return
 }
 
-func saveAssociations(db *gorm.DB, rel *schema.Relationship, rValues reflect.Value, selectColumns map[string]bool, restricted bool, defaultUpdatingColumns []string) error {
+func saveAssociations(db *gorm.DB, rel *gorm.Relationship, rValues reflect.Value, selectColumns map[string]bool, restricted bool, defaultUpdatingColumns []string) error {
 	// stop save association loop
 	if checkAssociationsSaved(db, rValues) {
 		return nil

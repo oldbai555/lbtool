@@ -6,16 +6,15 @@ import (
 
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils"
 )
 
-func preload(tx *gorm.DB, rel *schema.Relationship, conds []interface{}, preloads map[string][]interface{}) error {
+func preload(tx *gorm.DB, rel *gorm.Relationship, conds []interface{}, preloads map[string][]interface{}) error {
 	var (
 		reflectValue     = tx.Statement.ReflectValue
 		relForeignKeys   []string
-		relForeignFields []*schema.Field
-		foreignFields    []*schema.Field
+		relForeignFields []*gorm.Field
+		foreignFields    []*gorm.Field
 		foreignValues    [][]interface{}
 		identityMap      = map[string][]reflect.Value{}
 		inlineConds      []interface{}
@@ -23,8 +22,8 @@ func preload(tx *gorm.DB, rel *schema.Relationship, conds []interface{}, preload
 
 	if rel.JoinTable != nil {
 		var (
-			joinForeignFields    = make([]*schema.Field, 0, len(rel.References))
-			joinRelForeignFields = make([]*schema.Field, 0, len(rel.References))
+			joinForeignFields    = make([]*gorm.Field, 0, len(rel.References))
+			joinRelForeignFields = make([]*gorm.Field, 0, len(rel.References))
 			joinForeignKeys      = make([]string, 0, len(rel.References))
 		)
 
@@ -42,13 +41,13 @@ func preload(tx *gorm.DB, rel *schema.Relationship, conds []interface{}, preload
 			}
 		}
 
-		joinIdentityMap, joinForeignValues := schema.GetIdentityFieldValuesMap(tx.Statement.Context, reflectValue, foreignFields)
+		joinIdentityMap, joinForeignValues := gorm.GetIdentityFieldValuesMap(tx.Statement.Context, reflectValue, foreignFields)
 		if len(joinForeignValues) == 0 {
 			return nil
 		}
 
 		joinResults := rel.JoinTable.MakeSlice().Elem()
-		column, values := schema.ToQueryValues(clause.CurrentTable, joinForeignKeys, joinForeignValues)
+		column, values := gorm.ToQueryValues(clause.CurrentTable, joinForeignKeys, joinForeignValues)
 		if err := tx.Where(clause.IN{Column: column, Values: values}).Find(joinResults.Addr().Interface()).Error; err != nil {
 			return err
 		}
@@ -72,7 +71,7 @@ func preload(tx *gorm.DB, rel *schema.Relationship, conds []interface{}, preload
 			}
 		}
 
-		_, foreignValues = schema.GetIdentityFieldValuesMap(tx.Statement.Context, joinResults, joinRelForeignFields)
+		_, foreignValues = gorm.GetIdentityFieldValuesMap(tx.Statement.Context, joinResults, joinRelForeignFields)
 	} else {
 		for _, ref := range rel.References {
 			if ref.OwnPrimaryKey {
@@ -88,7 +87,7 @@ func preload(tx *gorm.DB, rel *schema.Relationship, conds []interface{}, preload
 			}
 		}
 
-		identityMap, foreignValues = schema.GetIdentityFieldValuesMap(tx.Statement.Context, reflectValue, foreignFields)
+		identityMap, foreignValues = gorm.GetIdentityFieldValuesMap(tx.Statement.Context, reflectValue, foreignFields)
 		if len(foreignValues) == 0 {
 			return nil
 		}
@@ -100,7 +99,7 @@ func preload(tx *gorm.DB, rel *schema.Relationship, conds []interface{}, preload
 	}
 
 	reflectResults := rel.FieldSchema.MakeSlice().Elem()
-	column, values := schema.ToQueryValues(clause.CurrentTable, relForeignKeys, foreignValues)
+	column, values := gorm.ToQueryValues(clause.CurrentTable, relForeignKeys, foreignValues)
 
 	if len(values) != 0 {
 		for _, cond := range conds {
@@ -122,7 +121,7 @@ func preload(tx *gorm.DB, rel *schema.Relationship, conds []interface{}, preload
 	switch reflectValue.Kind() {
 	case reflect.Struct:
 		switch rel.Type {
-		case schema.HasMany, schema.Many2Many:
+		case gorm.HasMany, gorm.Many2Many:
 			tx.AddError(rel.Field.Set(tx.Statement.Context, reflectValue, reflect.MakeSlice(rel.Field.IndirectFieldType, 0, 10).Interface()))
 		default:
 			tx.AddError(rel.Field.Set(tx.Statement.Context, reflectValue, reflect.New(rel.Field.FieldType).Interface()))
@@ -130,7 +129,7 @@ func preload(tx *gorm.DB, rel *schema.Relationship, conds []interface{}, preload
 	case reflect.Slice, reflect.Array:
 		for i := 0; i < reflectValue.Len(); i++ {
 			switch rel.Type {
-			case schema.HasMany, schema.Many2Many:
+			case gorm.HasMany, gorm.Many2Many:
 				tx.AddError(rel.Field.Set(tx.Statement.Context, reflectValue.Index(i), reflect.MakeSlice(rel.Field.IndirectFieldType, 0, 10).Interface()))
 			default:
 				tx.AddError(rel.Field.Set(tx.Statement.Context, reflectValue.Index(i), reflect.New(rel.Field.FieldType).Interface()))

@@ -1,11 +1,10 @@
-package schema_test
+package gorm_test
 
 import (
+	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"reflect"
 	"sync"
 	"testing"
-
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 )
 
 type UserCheck struct {
@@ -15,12 +14,12 @@ type UserCheck struct {
 }
 
 func TestParseCheck(t *testing.T) {
-	user, err := schema.Parse(&UserCheck{}, &sync.Map{}, schema.NamingStrategy{})
+	user, err := gorm.Parse(&UserCheck{}, &sync.Map{}, gorm.NamingStrategy{})
 	if err != nil {
 		t.Fatalf("failed to parse user check, got error %v", err)
 	}
 
-	results := map[string]schema.Check{
+	results := map[string]gorm.Check{
 		"name_checker": {
 			Name:       "name_checker",
 			Constraint: "name <> 'jinzhu'",

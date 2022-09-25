@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
 	"github.com/oldbai555/lbtool/extpkg/gorm/logger"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils"
 	"reflect"
 	"regexp"
@@ -35,7 +34,7 @@ type Statement struct {
 	Preloads             map[string][]interface{}
 	Settings             sync.Map
 	ConnPool             ConnPool
-	Schema               *schema.Schema
+	Schema               *Schema
 	Context              context.Context
 	RaiseErrorOnNotFound bool
 	SkipHooks            bool
@@ -376,7 +375,7 @@ func (stmt *Statement) BuildCondition(query interface{}, args ...interface{}) []
 				reflectValue = reflectValue.Elem()
 			}
 
-			if s, err := schema.Parse(arg, stmt.DB.cacheStore, stmt.DB.NamingStrategy); err == nil {
+			if s, err := Parse(arg, stmt.DB.cacheStore, stmt.DB.NamingStrategy); err == nil {
 				selectedColumns := map[string]bool{}
 				if idx == 0 {
 					for _, v := range args[1:] {
@@ -474,7 +473,7 @@ func (stmt *Statement) Parse(value interface{}) (err error) {
 }
 
 func (stmt *Statement) ParseWithSpecialTableName(value interface{}, specialTableName string) (err error) {
-	if stmt.Schema, err = schema.ParseWithSpecialTableName(value, stmt.DB.cacheStore, stmt.DB.NamingStrategy, specialTableName); err == nil && stmt.Table == "" {
+	if stmt.Schema, err = ParseWithSpecialTableName(value, stmt.DB.cacheStore, stmt.DB.NamingStrategy, specialTableName); err == nil && stmt.Table == "" {
 		if tables := strings.Split(stmt.Schema.Table, "."); len(tables) == 2 {
 			stmt.TableExpr = &clause.Expr{SQL: stmt.Quote(stmt.Schema.Table)}
 			stmt.Table = tables[1]
@@ -605,7 +604,7 @@ func (stmt *Statement) Changed(fields ...string) bool {
 	}
 
 	selectColumns, restricted := stmt.SelectAndOmitColumns(false, true)
-	changed := func(field *schema.Field) bool {
+	changed := func(field *Field) bool {
 		fieldValue, _ := field.ValueOf(stmt.Context, modelValue)
 		if v, ok := selectColumns[field.DBName]; (ok && v) || (!ok && !restricted) {
 			if mv, mok := stmt.Dest.(map[string]interface{}); mok {

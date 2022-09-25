@@ -1,4 +1,4 @@
-package schema
+package gorm
 
 import (
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"

@@ -6,8 +6,6 @@ import (
 	"reflect"
 	"strings"
 	"time"
-
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 )
 
 // prepareValues prepare values slice
@@ -50,7 +48,7 @@ func scanIntoMap(mapValue map[string]interface{}, values []interface{}, columns 
 	}
 }
 
-func (db *DB) scanIntoStruct(rows Rows, reflectValue reflect.Value, values []interface{}, fields []*schema.Field, joinFields [][2]*schema.Field) {
+func (db *DB) scanIntoStruct(rows Rows, reflectValue reflect.Value, values []interface{}, fields []*Field, joinFields [][2]*Field) {
 	for idx, field := range fields {
 		if field != nil {
 			values[idx] = field.NewValuePool.Get()
@@ -66,7 +64,7 @@ func (db *DB) scanIntoStruct(rows Rows, reflectValue reflect.Value, values []int
 	db.RowsAffected++
 	db.AddError(rows.Scan(values...))
 
-	joinedSchemaMap := make(map[*schema.Field]interface{})
+	joinedSchemaMap := make(map[*Field]interface{})
 	for idx, field := range fields {
 		if field == nil {
 			continue
@@ -163,9 +161,9 @@ func Scan(rows Rows, db *DB, mode ScanMode) {
 		}
 	default:
 		var (
-			fields             = make([]*schema.Field, len(columns))
+			fields             = make([]*Field, len(columns))
 			selectedColumnsMap = make(map[string]int, len(columns))
-			joinFields         [][2]*schema.Field
+			joinFields         [][2]*Field
 			sch                = db.Statement.Schema
 			reflectValue       = db.Statement.ReflectValue
 		)
@@ -186,14 +184,14 @@ func Scan(rows Rows, db *DB, mode ScanMode) {
 
 		if sch != nil {
 			if reflectValueType != sch.ModelType && reflectValueType.Kind() == reflect.Struct {
-				sch, _ = schema.Parse(db.Statement.Dest, db.cacheStore, db.NamingStrategy)
+				sch, _ = Parse(db.Statement.Dest, db.cacheStore, db.NamingStrategy)
 			}
 
 			if len(columns) == 1 {
 				// Is Pluck
 				if _, ok := reflect.New(reflectValueType).Interface().(sql.Scanner); (reflectValueType != sch.ModelType && ok) || // is scanner
 					reflectValueType.Kind() != reflect.Struct || // is not struct
-					sch.ModelType.ConvertibleTo(schema.TimeReflectType) { // is time
+					sch.ModelType.ConvertibleTo(TimeReflectType) { // is time
 					sch = nil
 				}
 			}
@@ -227,9 +225,9 @@ func Scan(rows Rows, db *DB, mode ScanMode) {
 								fields[idx] = field
 
 								if len(joinFields) == 0 {
-									joinFields = make([][2]*schema.Field, len(columns))
+									joinFields = make([][2]*Field, len(columns))
 								}
-								joinFields[idx] = [2]*schema.Field{rel.Field, field}
+								joinFields[idx] = [2]*Field{rel.Field, field}
 								continue
 							}
 						}

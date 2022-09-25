@@ -4,7 +4,6 @@ import (
 	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
 	"github.com/oldbai555/lbtool/extpkg/gorm/logger"
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 )
 
 type DummyDialector struct{}
@@ -17,7 +16,7 @@ func (DummyDialector) Initialize(*gorm.DB) error {
 	return nil
 }
 
-func (DummyDialector) DefaultValueOf(field *schema.Field) clause.Expression {
+func (DummyDialector) DefaultValueOf(field *gorm.Field) clause.Expression {
 	return clause.Expr{SQL: "DEFAULT"}
 }
 
@@ -81,6 +80,6 @@ func (DummyDialector) Explain(sql string, vars ...interface{}) string {
 	return logger.ExplainSQL(sql, nil, `"`, vars...)
 }
 
-func (DummyDialector) DataTypeOf(*schema.Field) string {
+func (DummyDialector) DataTypeOf(*gorm.Field) string {
 	return ""
 }

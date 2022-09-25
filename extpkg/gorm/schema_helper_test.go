@@ -1,17 +1,17 @@
-package schema_test
+package gorm_test
 
 import (
 	"context"
 	"fmt"
+	"github.com/oldbai555/lbtool/extpkg/gorm"
 	"reflect"
 	"strings"
 	"testing"
 
-	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"github.com/oldbai555/lbtool/extpkg/gorm/utils/tests"
 )
 
-func checkSchema(t *testing.T, s *schema.Schema, v schema.Schema, primaryFields []string) {
+func checkSchema(t *testing.T, s *gorm.Schema, v gorm.Schema, primaryFields []string) {
 	t.Run("CheckSchema/"+s.Name, func(t *testing.T) {
 		tests.AssertObjEqual(t, s, v, "Name", "Table")
 
@@ -36,7 +36,7 @@ func checkSchema(t *testing.T, s *schema.Schema, v schema.Schema, primaryFields 
 	})
 }
 
-func checkSchemaField(t *testing.T, s *schema.Schema, f *schema.Field, fc func(*schema.Field)) {
+func checkSchemaField(t *testing.T, s *gorm.Schema, f *gorm.Field, fc func(*gorm.Field)) {
 	t.Run("CheckField/"+f.Name, func(t *testing.T) {
 		if fc != nil {
 			fc(f)
@@ -44,7 +44,7 @@ func checkSchemaField(t *testing.T, s *schema.Schema, f *schema.Field, fc func(*
 
 		if f.TagSettings == nil {
 			if f.Tag != "" {
-				f.TagSettings = schema.ParseTagSetting(f.Tag.Get("gorm"), ";")
+				f.TagSettings = gorm.ParseTagSetting(f.Tag.Get("gorm"), ";")
 			} else {
 				f.TagSettings = map[string]string{}
 			}
@@ -92,7 +92,7 @@ func checkSchemaField(t *testing.T, s *schema.Schema, f *schema.Field, fc func(*
 
 type Relation struct {
 	Name        string
-	Type        schema.RelationshipType
+	Type        gorm.RelationshipType
 	Schema      string
 	FieldSchema string
 	Polymorphic Polymorphic
@@ -109,7 +109,7 @@ type Polymorphic struct {
 type JoinTable struct {
 	Name   string
 	Table  string
-	Fields []schema.Field
+	Fields []gorm.Field
 }
 
 type Reference struct {
@@ -121,7 +121,7 @@ type Reference struct {
 	OwnPrimaryKey bool
 }
 
-func checkSchemaRelation(t *testing.T, s *schema.Schema, relation Relation) {
+func checkSchemaRelation(t *testing.T, s *gorm.Schema, relation Relation) {
 	t.Run("CheckRelation/"+relation.Name, func(t *testing.T) {
 		if r, ok := s.Relationships.Relations[relation.Name]; ok {
 			if r.Name != relation.Name {
@@ -201,7 +201,7 @@ func checkSchemaRelation(t *testing.T, s *schema.Schema, relation Relation) {
 	})
 }
 
-func checkField(t *testing.T, s *schema.Schema, value reflect.Value, values map[string]interface{}) {
+func checkField(t *testing.T, s *gorm.Schema, value reflect.Value, values map[string]interface{}) {
 	for k, v := range values {
 		t.Run("CheckField/"+k, func(t *testing.T) {
 			fv, _ := s.FieldsByDBName[k].ValueOf(context.Background(), value)
