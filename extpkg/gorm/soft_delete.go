@@ -1,48 +1,13 @@
 package gorm
 
 import (
-	"database/sql"
-	"database/sql/driver"
-	"encoding/json"
 	"github.com/oldbai555/lbtool/extpkg/gorm/schema"
 	"reflect"
 
 	"github.com/oldbai555/lbtool/extpkg/gorm/clause"
 )
 
-type DeletedAt sql.NullInt32
-
-// Scan implements the Scanner interface.
-func (n *DeletedAt) Scan(value interface{}) error {
-	return (*sql.NullInt32)(n).Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (n DeletedAt) Value() (driver.Value, error) {
-	if !n.Valid {
-		return nil, nil
-	}
-	return n, nil
-}
-
-func (n DeletedAt) MarshalJSON() ([]byte, error) {
-	if n.Valid {
-		return json.Marshal(n)
-	}
-	return json.Marshal(nil)
-}
-
-func (n *DeletedAt) UnmarshalJSON(b []byte) error {
-	if string(b) == "null" {
-		n.Valid = false
-		return nil
-	}
-	err := json.Unmarshal(b, &n)
-	if err == nil {
-		n.Valid = true
-	}
-	return err
-}
+type DeletedAt int32
 
 func (DeletedAt) QueryClauses(f *schema.Field) []clause.Interface {
 	return []clause.Interface{SoftDeleteQueryClause{Field: f}}

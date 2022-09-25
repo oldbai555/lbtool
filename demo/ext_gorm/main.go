@@ -58,7 +58,7 @@ type User struct {
 // InitOrmEngine https://gorm.io/zh_CN/docs/connecting_to_the_database.html
 func InitOrmEngine() (*gorm.DB, error) {
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", "0", "0", "0", 0, "0")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", "root", "123456", "175.178.156.14", 3309, "biz")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   "blog_", // 指点表名前缀
