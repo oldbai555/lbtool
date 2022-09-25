@@ -9,5 +9,5 @@ type Model struct {
 	ID        uint `gorm:"primarykey"`
 	CreatedAt int32
 	UpdatedAt int32
-	DeletedAt DeletedAt `gorm:"index"`
+	DeletedAt DeletedAt `gorm:"index;default:0"`
 }

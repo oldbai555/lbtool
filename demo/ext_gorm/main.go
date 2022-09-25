@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 import (
 	"github.com/oldbai555/lbtool/extpkg/gorm"
@@ -25,17 +27,25 @@ func main() {
 		Password: "123456",
 	})
 	var u User
-	err = db.Where("id =", "1").First(&u).Error
+	err = db.Where("username = ?", "admin").First(&u).Error
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return
 	}
+
+	err = db.Model(&User{}).Where("username = ?", "admin").Update("password", "135246").Error
+	if err != nil {
+		log.Errorf("err:%v", err)
+		return
+	}
+
 	log.Infof("u is %v", u)
-	err = db.Where("id =", "1").Delete(&User{}).Error
+	err = db.Where("username = ?", "admin").Delete(&User{}).Error
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return
 	}
+	log.Infof("delete")
 }
 
 type User struct {
@@ -48,7 +58,7 @@ type User struct {
 // InitOrmEngine https://gorm.io/zh_CN/docs/connecting_to_the_database.html
 func InitOrmEngine() (*gorm.DB, error) {
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", "root", "123456", "0", 0, "0")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", "root", "123456", "175.178.156.14", 3309, "biz")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   "blog_", // 指点表名前缀
@@ -59,6 +69,7 @@ func InitOrmEngine() (*gorm.DB, error) {
 			return int32(time.Now().Unix())
 		},
 		PrepareStmt: true, // 预编译 在执行任何 SQL 时都会创建一个 prepared statement 并将其缓存，以提高后续的效率
+		Logger:      ormlog.Default.LogMode(ormlog.Info),
 	})
 	if err != nil {
 		log.Errorf("err is : %v", err)
