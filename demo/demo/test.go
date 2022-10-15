@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -14,7 +15,8 @@ func main() {
 	s := "23.66"
 	float, _ := strconv.ParseFloat(s, 10)
 	fmt.Println(float)
-
+	format := time.UnixMilli(int64(1665547918542)).Format("2006-01-02T15:04:05.000+0000")
+	fmt.Println(format)
 }
 
 // GetLastXStr 获取最后几个字符
