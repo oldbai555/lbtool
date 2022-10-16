@@ -7,6 +7,8 @@ type JSONResult struct {
 	Message string `json:"message"`
 	// Data 响应数据
 	Data interface{} `json:"data"`
+	// Hint 链路Id
+	Hint string `json:"hint"`
 }
 
 type ItemsData struct {
