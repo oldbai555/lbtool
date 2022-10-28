@@ -15,15 +15,15 @@ type Registry struct {
 	RegistryValue string `json:"registryValue"`
 }
 
-//执行器执行完任务后，回调任务结果时使用
+// 执行器执行完任务后，回调任务结果时使用
 type call []*callElement
 
 type callElement struct {
 	LogID         int64          `json:"logId"`
 	LogDateTim    int64          `json:"logDateTim"`
 	ExecuteResult *ExecuteResult `json:"executeResult"`
-	//以下是7.31版本 v2.3.0 Release所使用的字段
-	HandleCode int    `json:"handleCode"` //200表示正常,500表示失败
+	// 以下是7.31版本 v2.3.0 Release所使用的字段
+	HandleCode int    `json:"handleCode"` // 200表示正常,500表示失败
 	HandleMsg  string `json:"handleMsg"`
 }
 
@@ -35,11 +35,11 @@ type ExecuteResult struct {
 
 /*****************  下行参数  *********************/
 
-//阻塞处理策略
+// 阻塞处理策略
 const (
-	serialExecution = "SERIAL_EXECUTION" //单机串行
-	discardLater    = "DISCARD_LATER"    //丢弃后续调度
-	coverEarly      = "COVER_EARLY"      //覆盖之前调度
+	serialExecution = "SERIAL_EXECUTION" // 单机串行
+	discardLater    = "DISCARD_LATER"    // 丢弃后续调度
+	coverEarly      = "COVER_EARLY"      // 覆盖之前调度
 )
 
 // RunReq 触发任务请求参数
@@ -58,12 +58,12 @@ type RunReq struct {
 	BroadcastTotal        int64  `json:"broadcastTotal"`        // 分片参数：总分片
 }
 
-//终止任务请求参数
+// 终止任务请求参数
 type killReq struct {
 	JobID int64 `json:"jobId"` // 任务ID
 }
 
-//忙碌检测请求参数
+// 忙碌检测请求参数
 type idleBeatReq struct {
 	JobID int64 `json:"jobId"` // 任务ID
 }

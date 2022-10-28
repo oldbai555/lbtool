@@ -19,16 +19,16 @@ type Task struct {
 	Cancel    context.CancelFunc
 	StartTime int64
 	EndTime   int64
-	//日志
+	// 日志
 	log Logger
 }
 
 // Run 运行任务
 func (t *Task) Run(callback func(code int64, msg string)) {
 	defer func(cancel func()) {
-		if err := recover(); err != nil {
+		if err := recover(); err != any(nil) {
 			t.log.Info(t.Info()+" panic: %v", err)
-			debug.PrintStack() //堆栈跟踪
+			debug.PrintStack() // 堆栈跟踪
 			callback(FailureCode, fmt.Sprintf("task panic:%v", err))
 			cancel()
 		}
