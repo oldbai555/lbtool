@@ -1,7 +1,7 @@
 package session
 
 import (
-	"github.com/oldbai555/lbtool/orm/clause"
+	"github.com/oldbai555/lbtool/discard/orm/clause"
 	"github.com/oldbai555/lbtool/pkg/lberr"
 	"reflect"
 )

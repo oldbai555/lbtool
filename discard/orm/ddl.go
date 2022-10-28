@@ -3,15 +3,15 @@ package orm
 import (
 	"database/sql"
 	"fmt"
+	session2 "github.com/oldbai555/lbtool/discard/orm/session"
 	"github.com/oldbai555/lbtool/log"
-	"github.com/oldbai555/lbtool/orm/session"
 	"github.com/oldbai555/lbtool/pkg/lberr"
 	"github.com/oldbai555/lbtool/utils"
 	"strings"
 )
 
 // doDescTable 判断表是否存在,存在则返回表的字段
-func doDescTable(s *session.Session) (*session.DbTable, error) {
+func doDescTable(s *session2.Session) (*session2.DbTable, error) {
 
 	existSql, values := s.Dial.TableExistSQL(s.Table.Name)
 
@@ -29,7 +29,7 @@ func doDescTable(s *session.Session) (*session.DbTable, error) {
 		_ = rows.Close()
 	}()
 
-	d := &session.DbTable{}
+	d := &session2.DbTable{}
 	var field, typ, null, key, def, extra sql.NullString
 
 	for rows.Next() {
@@ -38,7 +38,7 @@ func doDescTable(s *session.Session) (*session.DbTable, error) {
 			log.Errorf("err:%s", err)
 			return nil, err
 		}
-		d.Columns = append(d.Columns, &session.DbTableColumn{
+		d.Columns = append(d.Columns, &session2.DbTableColumn{
 			Field:   field.String,
 			Type:    typ.String,
 			Null:    null.String,
@@ -51,13 +51,13 @@ func doDescTable(s *session.Session) (*session.DbTable, error) {
 }
 
 // dropTable 删除表
-func dropTable(s *session.Session) error {
+func dropTable(s *session2.Session) error {
 	_, err := s.Raw(fmt.Sprintf("DROP TABLE IF EXISTS %s", s.Table.Name)).Exec()
 	return err
 }
 
 // genCreateTableSql 构建创表语句
-func genCreateTableSql(s *session.Session) error {
+func genCreateTableSql(s *session2.Session) error {
 	table := s.Table
 
 	if len(table.Fields) == 0 {
@@ -139,7 +139,7 @@ func genCreateTableSql(s *session.Session) error {
 }
 
 // createTable 创建表
-func createTable(s *session.Session) error {
+func createTable(s *session2.Session) error {
 	err := genCreateTableSql(s)
 	if err != nil {
 		log.Errorf("err:%v", err)
@@ -155,7 +155,7 @@ func createTable(s *session.Session) error {
 }
 
 // createOrUpdateTable 创建或更新表
-func createOrUpdateTable(s *session.Session) error {
+func createOrUpdateTable(s *session2.Session) error {
 	table, err := doDescTable(s)
 
 	if err != nil && lberr.GetErrCode(err) != lberr.ErrOrmTableNotExist {
@@ -184,7 +184,7 @@ func createOrUpdateTable(s *session.Session) error {
 }
 
 // modifyTableColumn 修改表字段
-func modifyTableColumn(s *session.Session, table *session.DbTable) error {
+func modifyTableColumn(s *session2.Session, table *session2.DbTable) error {
 
 	// 比一下要加的新列
 	fieldMap2Create := map[string]bool{}

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/oldbai555/lbtool/rpc/codec"
+	codec2 "github.com/oldbai555/lbtool/discard/rpc/codec"
 	"io"
 	"log"
 	"net"
@@ -63,7 +63,7 @@ func (s *Server) ServeConn(conn io.ReadWriteCloser) {
 	}
 
 	// 得到协商的 连接的消息体协议
-	f := codec.NewCodecFuncMap[opt.CodecType]
+	f := codec2.NewCodecFuncMap[opt.CodecType]
 	if f == nil {
 		log.Printf("rpc server: invalid codec type %s", opt.CodecType)
 		return
@@ -80,7 +80,7 @@ func (s *Server) ServeConn(conn io.ReadWriteCloser) {
 // 读取请求 readRequest
 // 处理请求 handleRequest
 // 回复请求 sendResponse
-func (s *Server) serveCodec(cc codec.Codec, opt *Option) {
+func (s *Server) serveCodec(cc codec2.Codec, opt *Option) {
 	// make sure to send a complete response
 	// 回复请求的报文必须是逐个发送的，并发容易导致多个回复报文交织在一起，客户端无法解析。在这里使用锁(sending)保证。
 	sending := new(sync.Mutex)
@@ -112,8 +112,8 @@ func (s *Server) serveCodec(cc codec.Codec, opt *Option) {
 	_ = cc.Close()
 }
 
-func (s *Server) readRequestHeader(cc codec.Codec) (*codec.Header, error) {
-	var h codec.Header
+func (s *Server) readRequestHeader(cc codec2.Codec) (*codec2.Header, error) {
+	var h codec2.Header
 	if err := cc.ReadHeader(&h); err != nil {
 		if err != io.EOF && err != io.ErrUnexpectedEOF {
 			log.Println("rpc server: read header error:", err)
@@ -124,7 +124,7 @@ func (s *Server) readRequestHeader(cc codec.Codec) (*codec.Header, error) {
 }
 
 // readRequest 读取请求
-func (s *Server) readRequest(cc codec.Codec) (*request, error) {
+func (s *Server) readRequest(cc codec2.Codec) (*request, error) {
 	h, err := s.readRequestHeader(cc)
 	if err != nil {
 		return nil, err
@@ -155,7 +155,7 @@ func (s *Server) readRequest(cc codec.Codec) (*request, error) {
 }
 
 // sendResponse回复请求
-func (s *Server) sendResponse(cc codec.Codec, h *codec.Header, body interface{}, sending *sync.Mutex) {
+func (s *Server) sendResponse(cc codec2.Codec, h *codec2.Header, body interface{}, sending *sync.Mutex) {
 	sending.Lock()
 	defer func() {
 		sending.Unlock()
@@ -170,7 +170,7 @@ func (s *Server) sendResponse(cc codec.Codec, h *codec.Header, body interface{},
 // 1. called 信道接收到消息，代表处理没有超时，继续执行 sendResponse。
 // 2. time.After() 先于 called 接收到消息，说明处理已经超时，called 和 sent 都将被阻塞。
 //    在 case <-time.After(timeout) 处调用 sendResponse。
-func (s *Server) handleRequest(cc codec.Codec, req *request, sending *sync.Mutex, wg *sync.WaitGroup, timeout time.Duration) {
+func (s *Server) handleRequest(cc codec2.Codec, req *request, sending *sync.Mutex, wg *sync.WaitGroup, timeout time.Duration) {
 
 	defer func() {
 		wg.Done()

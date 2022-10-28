@@ -1,7 +1,7 @@
 package rpc
 
 import (
-	"github.com/oldbai555/lbtool/rpc/codec"
+	"github.com/oldbai555/lbtool/discard/rpc/codec"
 	"time"
 )
 

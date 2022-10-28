@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/oldbai555/lbtool/rpc/codec"
+	codec2 "github.com/oldbai555/lbtool/discard/rpc/codec"
 	"log"
 	"net"
 	"time"
@@ -13,7 +13,7 @@ import (
 type newClientFunc func(conn net.Conn, opt *Option) (client *Client, err error)
 
 func NewClient(conn net.Conn, opt *Option) (*Client, error) {
-	f := codec.NewCodecFuncMap[opt.CodecType]
+	f := codec2.NewCodecFuncMap[opt.CodecType]
 	if f == nil {
 		err := fmt.Errorf("invalid codec type %s", opt.CodecType)
 		log.Println("rpc client: codec error:", err)
@@ -31,7 +31,7 @@ func NewClient(conn net.Conn, opt *Option) (*Client, error) {
 	return newClientCodec(cc, opt), nil
 }
 
-func newClientCodec(cc codec.Codec, opt *Option) *Client {
+func newClientCodec(cc codec2.Codec, opt *Option) *Client {
 	client := &Client{
 		cc:      cc,
 		opt:     opt,

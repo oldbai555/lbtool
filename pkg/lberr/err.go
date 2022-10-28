@@ -34,3 +34,10 @@ func NewInvalidArg(format string, args ...interface{}) error {
 		message: fmt.Sprintf(format, args),
 	}
 }
+
+func NewCustomErr(format string, args ...interface{}) error {
+	return &LbErr{
+		code:    ErrCustomError,
+		message: fmt.Sprintf(format, args),
+	}
+}

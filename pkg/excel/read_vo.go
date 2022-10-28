@@ -7,6 +7,7 @@ const DefaultSheet = "Sheet1"
 type ImportExcelLogicFunc func(records []pie.Strings) error
 
 type ImportExcelReq struct {
-	Url   string `json:"url"`
+	Url string `json:"url"`
+	// Sheet 要操作的 sheet
 	Sheet string `json:"sheet"`
 }

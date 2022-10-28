@@ -15,7 +15,7 @@ func GetErrCode(err error) uint32 {
 	return lbErr.code
 }
 
-func GetErrMessage(err error) string {
+func GetErrMsg(err error) string {
 	lbErr := err.(*LbErr)
 	return lbErr.Message()
 }

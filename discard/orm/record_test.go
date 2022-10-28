@@ -1,9 +1,9 @@
 package orm
 
 import (
+	"github.com/oldbai555/lbtool/discard/orm/dialect"
+	"github.com/oldbai555/lbtool/discard/orm/session"
 	"github.com/oldbai555/lbtool/log"
-	"github.com/oldbai555/lbtool/orm/dialect"
-	"github.com/oldbai555/lbtool/orm/session"
 	"testing"
 )
 

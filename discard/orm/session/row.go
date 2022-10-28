@@ -3,10 +3,10 @@ package session
 import (
 	"database/sql"
 	"github.com/jmoiron/sqlx"
+	"github.com/oldbai555/lbtool/discard/orm/clause"
+	"github.com/oldbai555/lbtool/discard/orm/dialect"
+	"github.com/oldbai555/lbtool/discard/orm/schema"
 	"github.com/oldbai555/lbtool/log"
-	"github.com/oldbai555/lbtool/orm/clause"
-	"github.com/oldbai555/lbtool/orm/dialect"
-	"github.com/oldbai555/lbtool/orm/schema"
 	"reflect"
 	"strings"
 )

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"github.com/oldbai555/lbtool/discard/orm/dialect"
+	"github.com/oldbai555/lbtool/discard/orm/session"
 	"github.com/oldbai555/lbtool/log"
-	"github.com/oldbai555/lbtool/orm/dialect"
-	"github.com/oldbai555/lbtool/orm/session"
 	"github.com/oldbai555/lbtool/pkg/lberr"
 	"strings"
 )

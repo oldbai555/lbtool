@@ -9,6 +9,7 @@ const (
 	ErrDelayQueueOptErr = 10003
 	ErrStorageOptErr    = 10004
 	ErrNotFound         = 10005
+	ErrCustomError      = 10007 // 自定义错误
 )
 
 var (

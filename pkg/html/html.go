@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/antchfx/htmlquery"
 	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/pkg/lberr"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -22,7 +23,7 @@ func GetHtmlInfoByUrl(u string) error {
 	host := net.ParseIP(p.Host)
 	if host != nil {
 		log.Errorf("err: %v ip is not allow", host)
-		return fmt.Errorf("网页不允许请求IP")
+		return lberr.NewCustomErr("网页不允许请求IP")
 	}
 	httpRsp, err := http.Get(u)
 	if err != nil {
@@ -30,7 +31,7 @@ func GetHtmlInfoByUrl(u string) error {
 		// 	return fmt.Errorf("网页请求失败")
 		// }
 		log.Errorf("err:%v", err)
-		return fmt.Errorf("网页请求失败")
+		return lberr.NewCustomErr("网页请求失败")
 	}
 
 	rspHeader := httpRsp.Header
@@ -40,7 +41,7 @@ func GetHtmlInfoByUrl(u string) error {
 		// 	return fmt.Errorf("网页请求失败")
 		// }
 		log.Errorf("err:%v", err)
-		return fmt.Errorf("网页请求失败")
+		return lberr.NewCustomErr("网页请求失败")
 	}
 
 	body, err = convertCharset(rspHeader.Get("Content-Type"), body)
@@ -48,7 +49,7 @@ func GetHtmlInfoByUrl(u string) error {
 	doc, err := htmlquery.Parse(bytes.NewReader(body))
 	if err != nil {
 		log.Errorf("err:%v", err)
-		return fmt.Errorf("网页请求失败")
+		return lberr.NewCustomErr("网页请求失败")
 	}
 	nodes, err := htmlquery.QueryAll(doc, "/html/head/title")
 	if err == nil {
