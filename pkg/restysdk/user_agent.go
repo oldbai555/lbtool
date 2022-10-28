@@ -1,4 +1,4 @@
-package resty_utils
+package restysdk
 
 import (
 	"encoding/json"

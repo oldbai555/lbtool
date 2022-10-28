@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/oldbai555/lbtool/log"
-	"github.com/oldbai555/lbtool/pkg/resty_utils"
+	"github.com/oldbai555/lbtool/pkg/restysdk"
 	"github.com/shopspring/decimal"
 	"net/http"
 	"strconv"
 )
 
 func genToken() (string, error) {
-	client := resty_utils.NewRestyClient()
+	client := restysdk.NewRestyClient()
 	var prefix = "https://graph.facebook.com/v15.0/"
 	response, err := client.R().
 		SetQueryParams(map[string]string{

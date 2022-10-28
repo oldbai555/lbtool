@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/oldbai555/lbtool/log"
-	"github.com/oldbai555/lbtool/pkg/resty_utils"
+	"github.com/oldbai555/lbtool/pkg/restysdk"
 )
 
 func main() {
-	c := resty_utils.NewRestyClient()
-	str, err := c.RestyTranslate(&resty_utils.TranslateReq{
+	c := restysdk.NewRestyClient()
+	str, err := c.RestyTranslate(&restysdk.TranslateReq{
 		Text: "你好呀",
 		Sl:   "zh-CN",
 		Tl:   "en",
