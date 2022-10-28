@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/oldbai555/lbtool/internal/lb_interface"
+	"github.com/oldbai555/lbtool/log/_interface"
 	"github.com/oldbai555/lbtool/utils"
 	"github.com/petermattis/goid"
 	"os"
@@ -18,7 +18,7 @@ const (
 	DefaultSkipCall = 5
 )
 
-var _ lb_interface.Formatter = (*simpleFormatter)(nil)
+var _ _interface.Formatter = (*simpleFormatter)(nil)
 
 // SimpleFormatter 格式化日志
 type simpleFormatter struct {

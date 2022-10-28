@@ -1,4 +1,4 @@
-package lb_interface
+package _interface
 
 import "github.com/oldbai555/lbtool/utils"
 

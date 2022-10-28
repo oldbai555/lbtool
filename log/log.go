@@ -3,7 +3,7 @@ package log
 import (
 	"errors"
 	"fmt"
-	"github.com/oldbai555/lbtool/internal/lb_interface"
+	"github.com/oldbai555/lbtool/log/_interface"
 	"github.com/oldbai555/lbtool/utils"
 	"github.com/petermattis/goid"
 	"sync"
@@ -82,7 +82,7 @@ func Errorf(format string, args ...interface{}) {
 // Logger 日志业务
 type logger struct {
 	logLevel  utils.Level
-	logWriter lb_interface.LogWriter
+	logWriter _interface.LogWriter
 	mu        sync.RWMutex
 }
 

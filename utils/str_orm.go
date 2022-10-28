@@ -153,6 +153,15 @@ func EscapeMysqlString(sql string) string {
 	return string(dest)
 }
 
+// AddlrQuotes 加空格 加反引号
 func AddlrQuotes(val string) string {
 	return fmt.Sprintf(" '%s' ", EscapeMysqlLikeWildcardIgnore2End(val))
+}
+
+// QuoteFieldName 加上反引号
+func QuoteFieldName(name string) string {
+	if !strings.HasPrefix(name, "`") {
+		name = fmt.Sprintf("`%s`", name)
+	}
+	return name
 }

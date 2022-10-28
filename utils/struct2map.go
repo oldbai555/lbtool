@@ -2,7 +2,6 @@ package utils
 
 import (
 	"reflect"
-	"strings"
 )
 
 func Struct2Map(obj interface{}) map[string]interface{} {
@@ -51,46 +50,6 @@ func OrmStruct2Map4Update(s interface{}, skip ...string) map[string]interface{} 
 	}
 
 	return n
-}
-
-// Camel2UnderScore 驼峰转下划线
-func Camel2UnderScore(name string) string {
-	// 检查大写字母
-	var checkA2Z = func(s uint8) bool {
-		return 'A' <= s && s <= 'Z'
-	}
-
-	var posList []int
-	// 不从第一个字母开始
-	i := 1
-	for i < len(name) {
-		if checkA2Z(name[i]) {
-			// 记录需要转换的下标
-			posList = append(posList, i)
-			i++
-			// 找到下一个小写字母，作为这个单词的结尾
-			for i < len(name) && name[i] >= 'A' && name[i] <= 'Z' {
-				i++
-			}
-		} else {
-			i++
-		}
-	}
-	// 全部转换为小写
-	lower := strings.ToLower(name)
-	if len(posList) == 0 {
-		return lower
-	}
-	b := strings.Builder{}
-	left := 0
-	// 遍历需要转换的单词开头 进行转换
-	for _, right := range posList {
-		b.WriteString(lower[left:right])
-		b.WriteByte('_')
-		left = right
-	}
-	b.WriteString(lower[left:])
-	return b.String()
 }
 
 // isBlank 判断值是否为空

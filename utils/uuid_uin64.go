@@ -18,10 +18,10 @@ import (
  * 这种测试条件下，每秒可以产生171w+不重复数字,性能不俗
  */
 const (
-	PROJECT_ID_BITS = 8
-	TIMESTAMP_BITS  = 32
-	RAND_BITS       = 16
-	COUNT_BITS      = 8
+	ProjectIdBits = 8
+	TimestampBits = 32
+	RandBits      = 16
+	CountBits     = 8
 )
 
 var pool = make(chan uint64, 5)
@@ -39,7 +39,7 @@ func gen() {
 			lastCount = 1
 			lastSec = current_sec
 		}
-		c := uint64(lastSec << (RAND_BITS + COUNT_BITS))
+		c := uint64(lastSec << (RandBits + CountBits))
 		rand.Seed(time.Now().UnixNano())
 		c += rand.Uint64() & 0x0000000000ffff00
 		c += uint64(lastCount)
@@ -52,6 +52,6 @@ func GetUuid4Uint64(projectId uint8) (uint64, error) {
 	if c, ok := <-pool; !ok {
 		return 0, errors.New("gen uuid fail")
 	} else {
-		return uint64(projectId)<<(TIMESTAMP_BITS+RAND_BITS+COUNT_BITS) + c, nil
+		return uint64(projectId)<<(TimestampBits+RandBits+CountBits) + c, nil
 	}
 }
