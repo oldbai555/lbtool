@@ -4,14 +4,12 @@ package webtool
 // id
 // created_at
 // updated_at
-// sort_weight
 type SortField string
 
 const (
-	SortFieldID         SortField = "id"
-	SortFieldCreatedAt  SortField = "created_at"
-	SortFieldUpdatedAt  SortField = "updated_at"
-	SortFieldSortWeight SortField = "sort_weight"
+	SortFieldID        SortField = "id"
+	SortFieldCreatedAt SortField = "created_at"
+	SortFieldUpdatedAt SortField = "updated_at"
 )
 
 // SortType 排序方式，升序，降序，默认降序

@@ -5,7 +5,6 @@ import (
 	"github.com/oldbai555/lbtool/log/_interface"
 	"github.com/oldbai555/lbtool/utils"
 	"os"
-	"path/filepath"
 	"runtime"
 	"sync/atomic"
 	"time"
@@ -17,19 +16,25 @@ const (
 )
 
 // default linux path
-var defaultBaseDir = "/home/lb/log"
+var defaultBaseDir string
 
-func init() {
-	if runtime.GOOS == "windows" {
-		defaultBaseDir = "./log"
-		if ex, err := os.Executable(); err == nil {
-			defaultBaseDir = filepath.Dir(ex) + "/log"
+// SetBaseDir 没啥用 目前
+func SetBaseDir(dir string) {
+	defaultBaseDir = dir
+}
+
+func initDir() {
+	if defaultBaseDir == "" {
+		defaultBaseDir = "/home/lb/log"
+		if runtime.GOOS == "windows" {
+			defaultBaseDir = utils.GetCurrentAbPath() + "/log"
 		}
 	}
 	utils.CreateDir(defaultBaseDir)
 }
-func newLogWriterImpl(e string) *logWriterImpl {
 
+func newLogWriterImpl(e string) *logWriterImpl {
+	initDir()
 	writer := logWriterImpl{
 		env:                      e,
 		baseDir:                  defaultBaseDir,

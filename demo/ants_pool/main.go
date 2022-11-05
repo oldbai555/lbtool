@@ -3,9 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/utils"
 	"github.com/panjf2000/ants/v2"
 	"time"
 )
+
+func init() {
+	log.SetBaseDir(utils.GetCurrentAbPath() + "/log")
+}
 
 // 线程池
 func main() {
