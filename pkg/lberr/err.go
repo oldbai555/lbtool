@@ -5,11 +5,11 @@ import "fmt"
 var _ error = (*LbErr)(nil)
 
 type LbErr struct {
-	code    uint32 `json:"code"`
+	code    int32  `json:"code"`
 	message string `json:"message"`
 }
 
-func (e *LbErr) Code() uint32 {
+func (e *LbErr) Code() int32 {
 	return e.code
 }
 
@@ -21,7 +21,7 @@ func (e *LbErr) Error() string {
 	return fmt.Sprintf("code: %d, message: %s", e.code, e.message)
 }
 
-func NewErr(code uint32, message string) error {
+func NewErr(code int32, message string) error {
 	return &LbErr{
 		code:    code,
 		message: message,

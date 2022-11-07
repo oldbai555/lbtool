@@ -2,7 +2,7 @@ package lberr
 
 import "fmt"
 
-var errMap = make(map[uint32]*LbErr)
+var errMap = make(map[int32]*LbErr)
 
 func Register(err ...*LbErr) {
 	for _, lbErr := range err {
@@ -10,17 +10,40 @@ func Register(err ...*LbErr) {
 	}
 }
 
-func GetErrCode(err error) uint32 {
-	lbErr := err.(*LbErr)
-	return lbErr.code
+func GetErrCode(err error) int32 {
+	if err == nil {
+		return 0
+	}
+	if p, ok := err.(*LbErr); ok {
+		return p.code
+	}
+
+	return -1
 }
 
-func GetErrMsg(err error) string {
-	lbErr := err.(*LbErr)
-	return lbErr.Message()
+func GetErrMsg(errCode int32) string {
+	if errCode == 0 {
+		return "success"
+	}
+	msg, ok := errMap[errCode]
+	if ok {
+		return msg.message
+	}
+	if errCode < 0 {
+		return "system error"
+	}
+	return "unknown"
 }
 
-func CreateLbErr(code uint32) *LbErr {
+func GetErrMsgByErr(err error) string {
+	if x, ok := err.(*LbErr); ok {
+		return x.message
+	} else {
+		return err.Error()
+	}
+}
+
+func CreateLbErr(code int32) *LbErr {
 	lbErr, ok := errMap[code]
 	if ok {
 		return lbErr
