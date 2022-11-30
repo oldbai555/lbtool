@@ -2,16 +2,15 @@ package webtool
 
 import (
 	"fmt"
-	"github.com/oldbai555/lbtool/extpkg/lbconf/bconf"
 	"github.com/oldbai555/lbtool/extpkg/lblog"
 )
 
 type Option func(tool *WebTool)
 
-func OptionWithOrm(apollo bconf.Config, dto ...interface{}) Option {
+func OptionWithOrm(dto ...interface{}) Option {
 	return func(tool *WebTool) {
 		gorm := &GormMysqlConf{}
-		err := gorm.InitConf(apollo)
+		err := gorm.InitConf(tool.ApoC)
 		if err != nil {
 			panic(fmt.Sprintf("err:%v", err))
 		}
@@ -22,10 +21,10 @@ func OptionWithOrm(apollo bconf.Config, dto ...interface{}) Option {
 	}
 }
 
-func OptionWithRdb(apollo bconf.Config) Option {
+func OptionWithRdb() Option {
 	return func(tool *WebTool) {
 		rdb := &RedisConf{}
-		err := rdb.InitConf(apollo)
+		err := rdb.InitConf(tool.ApoC)
 		if err != nil {
 			panic(fmt.Sprintf("err:%v", err))
 		}
