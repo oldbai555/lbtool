@@ -9,17 +9,12 @@ import (
 	"github.com/oldbai555/lbtool/extpkg/lblog"
 	"github.com/oldbai555/lbtool/log"
 	"github.com/oldbai555/lbtool/utils"
-	"go-lb/client/lbuser"
 	syslog "log"
 	"time"
 )
 
 const defaultApolloMysqlPrefix = "mysql"
 const defaultDatabase = "biz"
-
-func WithGormMysqlOption() Option {
-	return &GormMysqlConf{}
-}
 
 type GormMysqlConf struct {
 	Addr     string `json:"addr"`
@@ -43,7 +38,7 @@ func (m *GormMysqlConf) InitConf(apollo bconf.Config) error {
 	return err
 }
 
-func (m *GormMysqlConf) GenConfTool(tool *WebTool) error {
+func (m *GormMysqlConf) GenConfTool(tool *WebTool, modelObj ...interface{}) error {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", m.Username, m.Password, m.Addr, m.Port, defaultDatabase)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: gorm.NamingStrategy{
@@ -63,11 +58,7 @@ func (m *GormMysqlConf) GenConfTool(tool *WebTool) error {
 	}
 
 	// 自动迁移表 指定建表语句的尾缀
-	err = db.
-		Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin").
-		AutoMigrate(
-			&lbuser.User{},
-		)
+	err = db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin").AutoMigrate(modelObj...)
 	if err != nil {
 		log.Errorf(fmt.Sprintf("err is : %v", err))
 		return err

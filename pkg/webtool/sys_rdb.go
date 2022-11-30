@@ -9,10 +9,6 @@ import (
 
 const defaultApolloRedisPrefix = "redis"
 
-func WithRedisOption() Option {
-	return &RedisConf{}
-}
-
 type RedisConf struct {
 	Database int    `json:"database"`
 	Host     string `json:"host"`

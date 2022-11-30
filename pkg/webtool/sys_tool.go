@@ -36,25 +36,12 @@ func NewWebTool(conf *ApolloConf, option ...Option) (*WebTool, error) {
 
 	// 初始化 mysql redis 等基础组件
 	if len(option) == 0 {
-		option = []Option{WithGormMysqlOption(), WithRedisOption()}
+		option = []Option{OptionWithLog()}
 	}
 
-	// 初始化内置日志服务
-	lblog.NewLogger(lblog.SetWriteFile(true))
-	lb.Log = lblog.GetLogger()
-
-	// 初始化其他组件
+	// 初始化组件
 	for _, o := range option {
-		err = o.InitConf(apollo)
-		if err != nil {
-			log.Errorf("err is %v", err)
-			return nil, err
-		}
-		err = o.GenConfTool(lb)
-		if err != nil {
-			log.Errorf("err is %v", err)
-			return nil, err
-		}
+		o(lb)
 	}
 	return lb, nil
 }
