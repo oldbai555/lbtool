@@ -8,6 +8,7 @@ const (
 	Comment
 )
 
+// https://juejin.cn/post/7090884238588772383
 func main() {
 	ability := Like | Collect | Comment
 
