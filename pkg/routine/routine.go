@@ -1,6 +1,7 @@
 package routine
 
 import (
+	"context"
 	"fmt"
 	"github.com/oldbai555/lbtool/log"
 	"github.com/oldbai555/lbtool/pkg/lberr"
@@ -8,14 +9,14 @@ import (
 	"strings"
 )
 
-func Go(logic func() error) {
+func Go(ctx context.Context, logic func(ctx context.Context) error) {
 	// 可以考虑放 traceId 链路追踪
 	go func() {
 		defer CatchPanic(func(err interface{}) {
 			// 	捕获错误后的补救行为
 
 		})
-		err := logic()
+		err := logic(ctx)
 		if lberr.GetErrCode(err) < 0 {
 			msg := fmt.Sprintf("moduleName : go-routine err %v", err)
 			log.Errorf(msg)

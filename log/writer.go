@@ -27,7 +27,7 @@ func initDir() {
 	if defaultBaseDir == "" {
 		defaultBaseDir = "/home/lb/log"
 		if runtime.GOOS == "windows" {
-			defaultBaseDir = utils.GetCurrentAbPath() + "/log"
+			defaultBaseDir = "c:/log"
 		}
 	}
 	utils.CreateDir(defaultBaseDir)

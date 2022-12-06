@@ -15,6 +15,7 @@ require (
 	github.com/forgoer/openssl v1.2.1
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-basic/ipv4 v1.0.0
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
