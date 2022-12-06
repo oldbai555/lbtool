@@ -18,5 +18,6 @@ func main() {
 	fmt.Println((ability & Collect) == Collect) // true
 	fmt.Println((ability & Comment) == Comment) // true
 
-	fmt.Println(false && false)
+	fmt.Printf("%v\n", ability^Like)
+	fmt.Printf("%v\n", ability^Like^Like)
 }
