@@ -10,6 +10,7 @@ import (
 	"github.com/oldbai555/lbtool/pkg/lberr"
 	"github.com/oldbai555/lbtool/pkg/routine"
 	"reflect"
+	"strings"
 	"time"
 )
 
@@ -299,7 +300,14 @@ func (c *cacheHelper) getTargetModelValue(model interface{}) (reflect.Value, err
 }
 
 func (c *cacheHelper) checkValType(model interface{}) bool {
-	return reflect.TypeOf(c.mType) == reflect.TypeOf(model)
+	typeOfMType := reflect.TypeOf(c.mType)
+	typeOfModel := reflect.TypeOf(model)
+	// 首先它俩得都是指针
+	if typeOfMType.Kind() != typeOfModel.Kind() {
+		return false
+	}
+
+	return strings.TrimPrefix("*", reflect.TypeOf(c.mType).String()) == strings.TrimPrefix("*", reflect.TypeOf(model).String())
 }
 
 func (c *cacheHelper) setJson(ctx context.Context, key string, j interface{}, exp time.Duration) error {

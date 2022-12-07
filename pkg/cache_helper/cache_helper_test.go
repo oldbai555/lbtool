@@ -27,7 +27,8 @@ func TestNewCacheHelper(t *testing.T) {
 		MType:       &User{},
 		FieldNames:  []string{"Id", "Name"},
 	})
-	err := helper.SetJson(ctx, &User{Id: 1, Name: "bai"}, 0)
+	testUser := &User{Id: 1, Name: "bai"}
+	err := helper.SetJson(ctx, &testUser, 0)
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return
