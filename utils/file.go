@@ -32,7 +32,7 @@ func CreateDir(path string) {
 	if _exist {
 		log.Println("文件夹已存在！")
 	} else {
-		err := os.Mkdir(path, os.ModePerm)
+		err := os.MkdirAll(path, os.ModePerm)
 		if err != nil {
 			log.Printf("创建目录异常 -> %v\n", err)
 		} else {
