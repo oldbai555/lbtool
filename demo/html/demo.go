@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	err := html.GetHtmlInfoByUrl("https://zhuanlan.zhihu.com/p/387840381")
+	err := html.GetHtmlInfoByUrl("https://www.yuque.com/wukong-zorrm/qdoy5p/zwre52")
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return

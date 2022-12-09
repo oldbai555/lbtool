@@ -3,6 +3,7 @@ package topdf
 import (
 	"context"
 	"fmt"
+	"github.com/oldbai555/lbtool/pkg/html"
 	"log"
 	"os"
 
@@ -10,21 +11,24 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
-func Do() {
+func Do(url string) {
 	// create context
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
 	// capture pdf
 	var buf []byte
-	if err := chromedp.Run(ctx, printToPDF(`https://zhuanlan.zhihu.com/p/387840381`, &buf)); err != nil {
+	if err := chromedp.Run(ctx, printToPDF(fmt.Sprintf(`%s`, url), &buf)); err != nil {
 		log.Fatal(err)
 	}
-
-	if err := os.WriteFile("sample.pdf", buf, 0o644); err != nil {
+	byUrl, err := html.GetHtmlResultByUrl(url)
+	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("wrote sample.pdf")
+	if err := os.WriteFile(fmt.Sprintf("%s.pdf", byUrl.Title), buf, 0o644); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("write %s.pdf ok \n", byUrl.Title)
 }
 
 // print a specific pdf page.
