@@ -10,9 +10,8 @@ import (
 )
 
 func genToken() (string, error) {
-	client := restysdk.NewRestyClient()
 	var prefix = "https://graph.facebook.com/v15.0/"
-	response, err := client.R().
+	response, err := restysdk.NewRequest().
 		SetQueryParams(map[string]string{
 			"access_token": "EAAHK1WzvV4gBAOCnTYF0OlZBcw99TBHm41xZBXe8a5NhmiqcKCDKJK86cYINTD8IBBgeSUPtLdSjWZCcNE76WL6O6wt0ZBifnGJwmQT2VWo8czv2mqDaZAsGMED2wSfcD4FJKgQuQ1rzZCDxB6eCuEUT3EYZBeGHR3XmPfGPqZAQJhYZC1fKApAiBapJqQfHPMk90bdeKDl0KEdIVnvlu4pVYS73FOqilJvJ9ozi3hYnHamZAGhz2lx6cvgHlZAHGyUw4YZD",
 		}).

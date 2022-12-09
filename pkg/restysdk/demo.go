@@ -47,8 +47,18 @@ type RestyClient struct {
 	*resty.Client
 }
 
+var defaultRestyClient *RestyClient
+
+func init() {
+	defaultRestyClient = NewRestyClient()
+}
+
 func NewRestyClient() *RestyClient {
 	return &RestyClient{
 		resty.New(),
 	}
+}
+
+func NewRequest() *resty.Request {
+	return defaultRestyClient.R()
 }
