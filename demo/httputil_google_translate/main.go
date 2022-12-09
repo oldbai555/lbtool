@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 )
 
-func main() {
+func Get() {
 	c := restysdk.NewRestyClient()
 	str, err := c.RestyTranslate(&restysdk.TranslateReq{
 		Text: "你好呀",
