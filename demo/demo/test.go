@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/oldbai555/lbtool/demo/proto_emicklei"
 	"strconv"
 	"time"
 )
@@ -17,6 +18,8 @@ func main() {
 	fmt.Println(float)
 	format := time.UnixMilli(int64(1665547918542)).Format("2006-01-02T15:04:05.000+0000")
 	fmt.Println(format)
+
+	proto_emicklei.NewDefault().Execute()
 }
 
 // GetLastXStr 获取最后几个字符
