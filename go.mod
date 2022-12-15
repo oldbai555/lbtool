@@ -3,7 +3,6 @@ module github.com/oldbai555/lbtool
 go 1.18
 
 require (
-	github.com/RussellLuo/timingwheel v0.0.0-20220218152713-54845bda3108
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.5+incompatible
 	github.com/antchfx/htmlquery v1.2.5
 	github.com/apolloconfig/agollo/v4 v4.2.0

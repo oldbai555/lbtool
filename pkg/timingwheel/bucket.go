@@ -45,6 +45,8 @@ func (t *Timer) Stop() bool {
 		//     1. removed t from b (through b.Flush -> b.remove)
 		//     2. moved t from b to another bucket ab (through b.Flush -> b.remove and ab.Add)
 		// this may fail to remove t due to the change of t's bucket.
+
+		// 从bucket（时间格）中移除定时器
 		stopped = b.Remove(t)
 
 		// Thus, here we re-get t's possibly new bucket (nil for case 1, or ab (non-nil) for case 2),
