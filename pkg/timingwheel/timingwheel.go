@@ -2,11 +2,10 @@ package timingwheel
 
 import (
 	"errors"
+	"github.com/oldbai555/lbtool/pkg/timingwheel/delayqueue"
 	"sync/atomic"
 	"time"
 	"unsafe"
-
-	"github.com/RussellLuo/timingwheel/delayqueue"
 )
 
 // TimingWheel is an implementation of Hierarchical Timing Wheels.

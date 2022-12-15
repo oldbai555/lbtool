@@ -2,9 +2,8 @@ package timingwheel_test
 
 import (
 	"fmt"
+	"github.com/oldbai555/lbtool/pkg/timingwheel"
 	"time"
-
-	"github.com/RussellLuo/timingwheel"
 )
 
 func Example_startTimer() {

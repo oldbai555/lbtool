@@ -26,23 +26,29 @@ func newPriorityQueue(capacity int) priorityQueue {
 	return make(priorityQueue, 0, capacity)
 }
 
+// Len 绑定len方法,返回长度
 func (pq priorityQueue) Len() int {
 	return len(pq)
 }
 
+// Less 绑定less方法
 func (pq priorityQueue) Less(i, j int) bool {
+	// 如果h[i]<h[j]生成的就是小根堆，如果h[i]>h[j]生成的就是大根堆
 	return pq[i].Priority < pq[j].Priority
 }
 
+// Swap 绑定swap方法，交换两个元素位置
 func (pq priorityQueue) Swap(i, j int) {
 	pq[i], pq[j] = pq[j], pq[i]
 	pq[i].Index = i
 	pq[j].Index = j
 }
 
+// Push 绑定push方法，插入新元素
 func (pq *priorityQueue) Push(x interface{}) {
 	n := len(*pq)
 	c := cap(*pq)
+	// 动态扩容
 	if n+1 > c {
 		npq := make(priorityQueue, n, c*2)
 		copy(npq, *pq)
@@ -54,9 +60,11 @@ func (pq *priorityQueue) Push(x interface{}) {
 	(*pq)[n] = item
 }
 
+// Pop 绑定pop方法，从最后拿出一个元素并返回
 func (pq *priorityQueue) Pop() interface{} {
 	n := len(*pq)
 	c := cap(*pq)
+	// 动态缩容
 	if n < (c/2) && c > 25 {
 		npq := make(priorityQueue, n, c/2)
 		copy(npq, *pq)

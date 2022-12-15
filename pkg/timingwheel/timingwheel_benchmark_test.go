@@ -1,10 +1,9 @@
 package timingwheel_test
 
 import (
+	"github.com/oldbai555/lbtool/pkg/timingwheel"
 	"testing"
 	"time"
-
-	"github.com/RussellLuo/timingwheel"
 )
 
 func genD(i int) time.Duration {
