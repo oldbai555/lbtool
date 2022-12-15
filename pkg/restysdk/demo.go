@@ -62,3 +62,7 @@ func NewRestyClient() *RestyClient {
 func NewRequest() *resty.Request {
 	return defaultRestyClient.R()
 }
+
+func GetRandomUserAgent() (string, error) {
+	return defaultRestyClient.GetRandomUserAgent()
+}
