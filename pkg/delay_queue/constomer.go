@@ -64,7 +64,7 @@ func listen(topics ...Topic) (job Job, err error) {
 	}
 
 	// 获取job元信息
-	job, err = getJob(jobID)
+	job, err = Get(jobID)
 	if err != nil {
 		return
 	}

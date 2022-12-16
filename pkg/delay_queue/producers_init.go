@@ -95,7 +95,7 @@ func tickHandler(t time.Time, bucketName string) {
 		}
 
 		// 延迟时间小于等于当前时间, 取出Job元信息并放入ready queue
-		job, err := getJob(bucketItem.jobID)
+		job, err := Get(bucketItem.jobID)
 		if err != nil && err != redis.Nil {
 			log.Errorf("获取Job元信息失败#jobID is %s, bucket is %s, err is %s", bucketItem.jobID, bucketName, err.Error())
 			continue
