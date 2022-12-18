@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/oldbai555/lbtool/log"
-	base2 "github.com/oldbai555/lbtool/pkg/delayqueue/base"
+	"github.com/oldbai555/lbtool/pkg/delayqueue/base"
 	"time"
 )
 
@@ -20,10 +20,10 @@ type Conf struct {
 	// 调用 blPop 阻塞超时时间, 单位秒, 默认十秒,修改此项, redis Timeout 必须做相应调整,单位为秒
 	blockTimeout time.Duration
 
-	bucket *base2.Bucket
-	queue  *base2.Queue
+	bucket *base.Bucket
+	queue  *base.Queue
 
-	topics []*base2.Topic
+	topics []*base.Topic
 }
 
 type Option func(conf *Conf)
@@ -31,8 +31,8 @@ type Option func(conf *Conf)
 // NewDelayQueue 初始化延时队列配置
 func NewDelayQueue(optList ...Option) *Conf {
 	conf = &Conf{
-		bucket:       base2.NewBucket(),
-		queue:        base2.NewQueue(),
+		bucket:       base.NewBucket(),
+		queue:        base.NewQueue(),
 		blockTimeout: defaultTimeout,
 	}
 	for _, opt := range optList {
@@ -56,25 +56,25 @@ func WithRedisClient(redidOpt *redis.Options) Option {
 	}
 }
 
-func WithBucket(bucket *base2.Bucket) Option {
+func WithBucket(bucket *base.Bucket) Option {
 	return func(conf *Conf) {
 		conf.bucket = bucket
 	}
 }
 
-func WithConf(queue *base2.Queue) Option {
+func WithConf(queue *base.Queue) Option {
 	return func(conf *Conf) {
 		conf.queue = queue
 	}
 }
 
-func (conf *Conf) RegisterHandlerWithTopic(topicName string, handler HandlerFunc) *base2.Topic {
+func (conf *Conf) RegisterHandlerWithTopic(topicName string, handler HandlerFunc) *base.Topic {
 	log.Infof("registry handler to topic,topicName: %s", topicName)
 	_locker.Lock()
 	defer _locker.Unlock()
 	_handlers[topicName] = handler
-	topic := base2.NewTopic(
-		base2.WithTopicName(topicName),
+	topic := base.NewTopic(
+		base.WithTopicName(topicName),
 	)
 	conf.topics = append(conf.topics, topic)
 	return topic
@@ -94,7 +94,7 @@ func (conf *Conf) StopDelayQueue() {
 
 type doTopicHandlerFunc func(data interface{}) error
 
-func (conf *Conf) Process(job *base2.Job, f doTopicHandlerFunc) error {
+func (conf *Conf) Process(job *base.Job, f doTopicHandlerFunc) error {
 	var data interface{}
 	err := json.Unmarshal(job.Data, &data)
 	if err != nil {
@@ -104,7 +104,7 @@ func (conf *Conf) Process(job *base2.Job, f doTopicHandlerFunc) error {
 	return f(data)
 }
 
-func (conf *Conf) PubJob(topic *base2.Topic, data interface{}, executeAt int64) error {
+func (conf *Conf) PubJob(topic *base.Topic, data interface{}, executeAt int64) error {
 	job, err := pubJob(topic, data, executeAt)
 	if err != nil {
 		log.Errorf("err is %v", err)

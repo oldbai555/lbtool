@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/oldbai555/lbtool/log"
-	base2 "github.com/oldbai555/lbtool/pkg/delayqueue/base"
+	"github.com/oldbai555/lbtool/pkg/delayqueue/base"
 	"github.com/oldbai555/lbtool/pkg/routine"
 	"time"
 )
 
 var tickers []*time.Ticker
 
-func StartProducer(bucket *base2.Bucket) {
+func StartProducer(bucket *base.Bucket) {
 	log.Infof("Starting producer")
 	randomBucketNameChan = GenerateRandomBucketCacheKeyChan(bucket)
 	tickers = make([]*time.Ticker, bucket.Size)
@@ -89,9 +89,9 @@ func tickHandler(t time.Time, bucketName string) {
 
 		// 拿到一个随机 bucket ,重新计算delay时间并放入 bucket 中
 		randomBucketName := <-randomBucketNameChan
-		err = pushToBucket(randomBucketName, base2.NewBucketItem(
-			base2.WithBucketItemExecuteAt(job.ExecuteAt),
-			base2.WithBucketItemData(bucketItem.Data),
+		err = pushToBucket(randomBucketName, base.NewBucketItem(
+			base.WithBucketItemExecuteAt(job.ExecuteAt),
+			base.WithBucketItemData(bucketItem.Data),
 		))
 		if err != nil {
 			log.Errorf("err:%v", err)
@@ -116,7 +116,7 @@ func tickHandler(t time.Time, bucketName string) {
 }
 
 // GenerateRandomBucketCacheKeyChan 轮询获取bucket名称, 使job分布到不同bucket中, 提高扫描速度
-func GenerateRandomBucketCacheKeyChan(bucket *base2.Bucket) <-chan string {
+func GenerateRandomBucketCacheKeyChan(bucket *base.Bucket) <-chan string {
 	log.Infof("Starting random bucket")
 	c := make(chan string)
 	routine.Go(context.Background(), func(ctx context.Context) error {

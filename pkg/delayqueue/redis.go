@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/go-redis/redis/v8"
 	"github.com/oldbai555/lbtool/log"
-	base2 "github.com/oldbai555/lbtool/pkg/delayqueue/base"
+	"github.com/oldbai555/lbtool/pkg/delayqueue/base"
 	"github.com/oldbai555/lbtool/utils"
 	"time"
 )
@@ -17,8 +17,8 @@ func ExecRedisCommand(command string, args ...interface{}) (interface{}, error) 
 }
 
 // 获取Job
-func getJob(jobID string) (job *base2.Job, err error) {
-	job = &base2.Job{}
+func getJob(jobID string) (job *base.Job, err error) {
+	job = &base.Job{}
 	value, err := conf.redisClient.Get(context.TODO(), jobID).Result()
 	if err != nil {
 		return
@@ -30,13 +30,13 @@ func getJob(jobID string) (job *base2.Job, err error) {
 
 	// 消息不存在, 可能已被删除
 	if job.Id == "" {
-		return nil, base2.ErrJobNotFound
+		return nil, base.ErrJobNotFound
 	}
 	return
 }
 
 // 添加Job
-func addJob(job *base2.Job) error {
+func addJob(job *base.Job) error {
 	diff := utils.GetDiffTime(job.ExecuteAt) + utils.Minutes
 	err := conf.redisClient.Set(context.TODO(), job.Id, utils.JsonEncode(job), time.Second*time.Duration(diff)).Err()
 	return err
@@ -48,12 +48,12 @@ func delJob(jobID string) error {
 }
 
 // 推送Job入Topic中
-func pubJob(topic *base2.Topic, data interface{}, executeAt int64) (*base2.Job, error) {
-	job := base2.NewJob(
-		base2.WithJobData(data),
-		base2.WithJobId(utils.Md5(data)),
-		base2.WithJobTopic(topic),
-		base2.WithJobExecuteAt(executeAt),
+func pubJob(topic *base.Topic, data interface{}, executeAt int64) (*base.Job, error) {
+	job := base.NewJob(
+		base.WithJobData(data),
+		base.WithJobId(utils.Md5(data)),
+		base.WithJobTopic(topic),
+		base.WithJobExecuteAt(executeAt),
 		//base.WithJobTTR(10), // 定时任务间隔时间
 	)
 
@@ -68,7 +68,7 @@ func pubJob(topic *base2.Topic, data interface{}, executeAt int64) (*base2.Job, 
 	return job, nil
 }
 
-func addJob2Bucket(job *base2.Job) error {
+func addJob2Bucket(job *base.Job) error {
 	err := addJob(job)
 	if err != nil {
 		log.Infof("add job fail , job is %v ,err is %v", job, err)
@@ -76,9 +76,9 @@ func addJob2Bucket(job *base2.Job) error {
 	}
 
 	randomBucketName := <-randomBucketNameChan
-	err = pushToBucket(randomBucketName, base2.NewBucketItem(
-		base2.WithBucketItemExecuteAt(job.ExecuteAt),
-		base2.WithBucketItemData(job.Id),
+	err = pushToBucket(randomBucketName, base.NewBucketItem(
+		base.WithBucketItemExecuteAt(job.ExecuteAt),
+		base.WithBucketItemData(job.Id),
 	))
 	if err != nil {
 		log.Errorf("add job to bucket fail,job is %v,bucket is %v ,err is %v", job, randomBucketName, err)
@@ -88,23 +88,23 @@ func addJob2Bucket(job *base2.Job) error {
 }
 
 // 将之前的Job给替换,用 jobId 作为Key进行替换
-func replaceJob(job *base2.Job) error {
+func replaceJob(job *base.Job) error {
 	err := delJob(job.Id)
 	if err != nil {
 		log.Errorf("err is %v", err)
-		return base2.ErrRemoveJob
+		return base.ErrRemoveJob
 	}
 
 	err = addJob2Bucket(job)
 	if err != nil {
 		log.Errorf("err is %v", err)
-		return base2.ErrPubJob
+		return base.ErrPubJob
 	}
 	return nil
 }
 
 // 添加 桶元素 到bucket中
-func pushToBucket(randomBucketName string, item *base2.BucketItem) error {
+func pushToBucket(randomBucketName string, item *base.BucketItem) error {
 	z := redis.Z{
 		Score:  float64(item.ExecuteAt),
 		Member: item.Data,
@@ -113,7 +113,7 @@ func pushToBucket(randomBucketName string, item *base2.BucketItem) error {
 }
 
 // 从bucket中获取延迟时间最小的 桶元素
-func getFromBucket(bucketName string) (*base2.BucketItem, error) {
+func getFromBucket(bucketName string) (*base.BucketItem, error) {
 	value, err := conf.redisClient.ZRangeWithScores(context.Background(), bucketName, 0, 0).Result()
 	if err != nil {
 		return nil, err
@@ -122,9 +122,9 @@ func getFromBucket(bucketName string) (*base2.BucketItem, error) {
 		return nil, nil
 	}
 
-	return base2.NewBucketItem(
-		base2.WithBucketItemData((value[0].Member).(string)),
-		base2.WithBucketItemExecuteAt(int64(value[0].Score)),
+	return base.NewBucketItem(
+		base.WithBucketItemData((value[0].Member).(string)),
+		base.WithBucketItemExecuteAt(int64(value[0].Score)),
 	), nil
 }
 
