@@ -2,6 +2,7 @@ package utils
 
 import (
 	"crypto/md5"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -25,4 +26,12 @@ func StrMd5(s string) string {
 	m := md5.New()
 	_, _ = m.Write([]byte(s))
 	return fmt.Sprintf("%x", m.Sum(nil))
+}
+
+func Md5(val interface{}) string {
+	m := md5.New()
+	bytes, _ := json.Marshal(val)
+	_, _ = m.Write(bytes)
+	return fmt.Sprintf("%x", m.Sum(nil))
+
 }

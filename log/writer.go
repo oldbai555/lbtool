@@ -25,7 +25,7 @@ func SetBaseDir(dir string) {
 
 func initDir() {
 	if defaultBaseDir == "" {
-		defaultBaseDir = "/home/lb/log"
+		defaultBaseDir = "/tmp/lb/log"
 		if runtime.GOOS == "windows" {
 			defaultBaseDir = "c:/log"
 		}

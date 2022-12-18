@@ -85,3 +85,12 @@ func GetDateList(startDate, endDate uint32) (out []uint32) {
 	}
 	return
 }
+
+// GetDiffTime 获取距离现在的时间差,单位秒
+func GetDiffTime(executeAt int64) int64 {
+	stampNow := time.Now().Unix()
+	if executeAt < stampNow {
+		return 0
+	}
+	return executeAt - stampNow
+}

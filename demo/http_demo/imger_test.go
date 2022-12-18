@@ -5,6 +5,7 @@ import (
 	"github.com/oldbai555/lbtool/log"
 	"github.com/oldbai555/lbtool/pkg/restysdk"
 	"testing"
+	"time"
 )
 
 func TestCheckInterval(t *testing.T) {
@@ -20,4 +21,11 @@ func TestCheckInterval(t *testing.T) {
 		return
 	}
 	log.Infof("%v", base64.StdEncoding.EncodeToString(rsp.Body()) == base64.StdEncoding.EncodeToString(rsp1.Body()))
+}
+
+func TestFor(t *testing.T) {
+	select {
+	case <-time.After(1 * time.Minute):
+		log.Infof("hello world")
+	}
 }
