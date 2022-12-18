@@ -107,7 +107,8 @@ func consume(topic *base2.Topic) {
 		}
 	}
 exit:
-	log.Infof("close consume")
+	log.Infof("====== close consume,topic is %v ======", topic)
+	// 通知其他线程
 	_stopSignal <- 1
 }
 
@@ -139,4 +140,5 @@ func listen(topic *base2.Topic) (job *base2.Job, err error) {
 func StopConsume() {
 	_stopSignal <- 1
 	waitGroup.Wait()
+	close(_stopSignal)
 }
