@@ -11,4 +11,15 @@ func main() {
 		log.Errorf("err:%v", err)
 		return
 	}
+	log.Errorf("err is %v", err)
+	testlog()
+}
+
+func testlog() {
+	log.Infof("hello")
+	helloworld()
+}
+
+func helloworld() {
+	log.Infof("hello world")
 }

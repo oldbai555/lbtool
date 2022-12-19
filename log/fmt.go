@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	DefaultSkipCall = 5
+	DefaultSkipCall = 4
 )
 
 var _ _interface.Formatter = (*simpleFormatter)(nil)
@@ -73,6 +73,7 @@ func (s *simpleFormatter) Sprintf(level utils.Level, color utils.Color, buf stri
 	if err != nil {
 		return "", err
 	}
+	b.WriteString(" ")
 	b.WriteString(levelStr)
 	b.WriteString(" ")
 
@@ -85,6 +86,7 @@ func (s *simpleFormatter) Sprintf(level utils.Level, color utils.Color, buf stri
 	}
 	filePath, fileFunc := getPackageName(callFuncName)
 	b.WriteString(fmt.Sprintf("%s:%d:%s ", path.Join(filePath, path.Base(callFile)), callLine, fileFunc))
+
 	// 颜色结尾
 	b.WriteString(utils.ColorEnd)
 	b.WriteString(" ")
