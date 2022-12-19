@@ -129,11 +129,6 @@ func listen(topic *base.Topic) (job *base.Job, err error) {
 	if err != nil {
 		return
 	}
-
-	// 消息不存在, 可能已被删除
-	if job.Id == "" {
-		return
-	}
 	return
 }
 
