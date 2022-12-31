@@ -10,8 +10,12 @@ const (
 	ErrStorageOptErr    = 10004
 	ErrNotFound         = 10005
 	ErrCustomError      = 10007 // 自定义错误
+	ErrRecordNotFound   = 10008
+	ErrHttpError        = 10009
 )
 
 var (
-	Success = NewErr(SUCCESS, "ok")
+	Success        = NewErr(SUCCESS, "ok")
+	RecordNotFound = NewErr(FAILURE, "record not found")
+	HttpError      = NewErr(ErrHttpError, "http error")
 )
