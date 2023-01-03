@@ -17,10 +17,11 @@ const defaultApolloMysqlPrefix = "mysql"
 const defaultDatabase = "biz"
 
 type GormMysqlConf struct {
-	Addr     string `json:"addr"`
-	Port     int    `json:"port"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Addr        string `json:"addr"`
+	Port        int    `json:"port"`
+	Username    string `json:"username"`
+	Password    string `json:"password"`
+	TablePrefix string `json:"table_prefix"`
 }
 
 func (m *GormMysqlConf) InitConf(apollo bconf.Config) error {
@@ -35,6 +36,9 @@ func (m *GormMysqlConf) InitConf(apollo bconf.Config) error {
 	m.Port = v.Port
 	m.Addr = v.Addr
 	m.Username = v.Username
+	if v.TablePrefix == "" {
+		m.TablePrefix = "lb_"
+	}
 	return err
 }
 
@@ -42,9 +46,9 @@ func (m *GormMysqlConf) GenConfTool(tool *WebTool, modelObj ...interface{}) erro
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", m.Username, m.Password, m.Addr, m.Port, defaultDatabase)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: gorm.NamingStrategy{
-			TablePrefix:   "blog_", // 指点表名前缀
-			SingularTable: true,    // 是否单表，命名是否复数
-			NoLowerCase:   false,   // 是否关闭驼峰命名
+			TablePrefix:   m.TablePrefix, // 指点表名前缀
+			SingularTable: true,          // 是否单表，命名是否复数
+			NoLowerCase:   false,         // 是否关闭驼峰命名
 		},
 		NowFunc: func() int32 {
 			return int32(time.Now().Unix())
@@ -79,6 +83,10 @@ func (m *GormMysqlConf) GenConfTool(tool *WebTool, modelObj ...interface{}) erro
 		})
 
 	sqlDB, err := db.DB()
+	if err != nil {
+		log.Errorf("err is %v", err)
+		return err
+	}
 
 	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
 	sqlDB.SetMaxIdleConns(10)
