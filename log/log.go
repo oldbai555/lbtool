@@ -83,12 +83,14 @@ func Errorf(format string, args ...interface{}) {
 type logger struct {
 	logLevel  utils.Level
 	logWriter _interface.LogWriter
+	fmt       _interface.Formatter
 	mu        sync.RWMutex
 }
 
 func newLogger(e string) *logger {
 	return &logger{
 		logWriter: newLogWriterImpl(e),
+		fmt:       newSimpleFormatter(),
 	}
 }
 
@@ -115,7 +117,13 @@ func (l *logger) write(level utils.Level, args ...interface{}) error {
 		format = fmt.Sprint(format)
 	}
 
-	if err := l.logWriter.Write(level, fmt.Sprintf(format, realArgs...)); err != nil {
+	stdoutColor := utils.LevelToStdoutColorMap[level]
+	logContent, err := l.fmt.Sprintf(level, stdoutColor, fmt.Sprintf(format, realArgs...))
+	if err != nil {
+		return err
+	}
+
+	if _, err := l.logWriter.Write([]byte(logContent)); err != nil {
 		return err
 	}
 

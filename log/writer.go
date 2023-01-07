@@ -40,7 +40,6 @@ func newLogWriterImpl(e string) *logWriterImpl {
 		baseDir:                  defaultBaseDir,
 		maxFileSize:              DefaultMaxFileSize,
 		checkFileFullIntervalSec: utils.Seconds * 5,
-		fmt:                      newSimpleFormatter(),
 		bufCh:                    make(chan []byte, DefaultChannelNumber),
 		flushSignChan:            make(chan struct{}, DefaultChannelNumber),
 		flushDoneSignChan:        make(chan error, DefaultChannelNumber),
@@ -61,11 +60,10 @@ type logWriterImpl struct {
 	env                      string
 	baseDir                  string
 	maxFileSize              int64
-	checkFileFullIntervalSec int64  // 间隔 - 检查文件大小
-	lastCheckIsFullAt        int64  // 上一次检查文件大小时间
-	isFileFull               bool   // 文件是否已经满了
-	currentFileName          string // 当前文件名
-	fmt                      _interface.Formatter
+	checkFileFullIntervalSec int64      // 间隔 - 检查文件大小
+	lastCheckIsFullAt        int64      // 上一次检查文件大小时间
+	isFileFull               bool       // 文件是否已经满了
+	currentFileName          string     // 当前文件名
 	openCurrentFileTime      *time.Time // 打开文件时间
 	bufCh                    chan []byte
 	isFlushing               atomic.Value
@@ -74,18 +72,13 @@ type logWriterImpl struct {
 }
 
 // Write 写日志
-func (s *logWriterImpl) Write(level utils.Level, buf string) error {
-	stdoutColor := utils.LevelToStdoutColorMap[level]
-	logContent, err := s.fmt.Sprintf(level, stdoutColor, buf)
-	if err != nil {
-		return err
-	}
+func (s *logWriterImpl) Write(p []byte) (n int, err error) {
 
-	s.bufCh <- []byte(logContent)
+	s.bufCh <- p
 	if s.env != utils.PROD {
-		fmt.Printf(logContent)
+		fmt.Printf(string(p))
 	}
-	return nil
+	return len(p), nil
 }
 
 // LoopDoLogic 循环执行写日志逻辑
