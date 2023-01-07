@@ -53,7 +53,11 @@ func SetModuleName(name string) {
 }
 
 func GetWriter() io.Writer {
-	return log.LogWriter()
+	return log.logWriter
+}
+
+func GetLogger() *logger {
+	return log
 }
 
 func Debugf(format string, args ...interface{}) {
@@ -90,14 +94,6 @@ type logger struct {
 	logWriter _interface.LogWriter
 	fmt       _interface.Formatter
 	mu        sync.RWMutex
-}
-
-func (l *logger) LogWriter() _interface.LogWriter {
-	return l.logWriter
-}
-
-func (l *logger) Fmt() _interface.Formatter {
-	return l.fmt
 }
 
 func newLogger(e string) *logger {
@@ -145,4 +141,13 @@ func (l *logger) write(level utils.Level, args ...interface{}) error {
 
 func (l *logger) Flush() error {
 	return l.logWriter.Flush()
+}
+
+// Printf calls l.Output to print to the logger.
+// Arguments are handled in the manner of fmt.Printf.
+func (l *logger) Printf(format string, v ...any) {
+	if err := log.write(utils.LevelInfo, append([]interface{}{format}, v...)...); err != nil {
+		panic(any(err))
+	}
+
 }
