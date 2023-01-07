@@ -6,6 +6,7 @@ import (
 	"github.com/oldbai555/lbtool/log/_interface"
 	"github.com/oldbai555/lbtool/utils"
 	"github.com/petermattis/goid"
+	"io"
 	"sync"
 )
 
@@ -49,6 +50,10 @@ func SetEnv(e string) {
 
 func SetModuleName(name string) {
 	moduleName = name
+}
+
+func GetWriter() io.Writer {
+	return log.LogWriter()
 }
 
 func Debugf(format string, args ...interface{}) {
