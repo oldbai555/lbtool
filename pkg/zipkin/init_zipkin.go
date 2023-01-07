@@ -1,12 +1,12 @@
 package zipkin
 
 import (
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/opentracing/opentracing-go"
 	zipkinot "github.com/openzipkin-contrib/zipkin-go-opentracing"
 	openzipkin "github.com/openzipkin/zipkin-go"
 	"github.com/openzipkin/zipkin-go/reporter"
 	zipkinHTTP "github.com/openzipkin/zipkin-go/reporter/http"
+	"log"
 )
 
 var (
@@ -31,13 +31,13 @@ func InitZipkinTracer(req Req) (opentracing.Tracer, error) {
 
 	endpoint, err := openzipkin.NewEndpoint(req.ServiceName, req.ServerAddress)
 	if err != nil {
-		hlog.Fatalf("unable to create local endpoint: %+v\n", err)
+		log.Fatalf("unable to create local endpoint: %+v\n", err)
 		return nil, err
 	}
 
 	nativeTracer, err := openzipkin.NewTracer(zkReporter, openzipkin.WithTraceID128Bit(true), openzipkin.WithLocalEndpoint(endpoint))
 	if err != nil {
-		hlog.Fatalf("unable to create tracer: %+v\n", err)
+		log.Fatalf("unable to create tracer: %+v\n", err)
 		return nil, err
 	}
 
@@ -57,6 +57,6 @@ func InitZipkinTracer(req Req) (opentracing.Tracer, error) {
 func Close() {
 	err := zkReporter.Close()
 	if err != nil {
-		hlog.Errorf("err is : %v", err)
+		log.Fatalf("err is : %v", err)
 	}
 }
