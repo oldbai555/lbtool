@@ -87,6 +87,14 @@ type logger struct {
 	mu        sync.RWMutex
 }
 
+func (l *logger) LogWriter() _interface.LogWriter {
+	return l.logWriter
+}
+
+func (l *logger) Fmt() _interface.Formatter {
+	return l.fmt
+}
+
 func newLogger(e string) *logger {
 	return &logger{
 		logWriter: newLogWriterImpl(e),
