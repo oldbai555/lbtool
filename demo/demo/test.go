@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/oldbai555/lbtool/demo/proto_emicklei"
 	"strconv"
-	"strings"
 	"time"
 )
 

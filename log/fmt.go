@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	DefaultSkipCall = 4
+	DefaultSkipCall = 3
 )
 
 var _ _interface.Formatter = (*simpleFormatter)(nil)
