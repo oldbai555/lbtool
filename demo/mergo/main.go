@@ -7,19 +7,27 @@ import (
 )
 
 type Student struct {
-	MyName string
-	Num    int
-	Age    int
+	MyName string `json:"my_name,omitempty"`
+	Num    int    `json:"num,omitempty"`
+	Age    int    `json:"age,omitempty"`
+	Cate   *Cate
+}
+
+type Cate struct {
+	Id int64 `json:"id,omitempty"`
 }
 
 func main() {
 	var defaultStudent = Student{
 		MyName: "zhang—san",
-		Num:    1,
 		Age:    18,
+		Cate: &Cate{
+			Id: 1,
+		},
 	}
 
 	var m = make(map[string]interface{})
+
 	if err := mergo.Map(&m, defaultStudent); err != nil {
 		log.Fatal(err)
 	}
