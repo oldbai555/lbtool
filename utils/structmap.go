@@ -185,7 +185,24 @@ func StructToMapV2(s interface{}, tag string) (res map[string]interface{}, err e
 		// get kind
 		switch fieldValue.Kind() {
 		case reflect.Slice, reflect.Array:
-			res[tagVal] = fieldValue
+			var vlist []interface{}
+			for i := 0; i < fieldValue.Len(); i++ {
+				elem := fieldValue.Index(i)
+				for elem.Kind() == reflect.Ptr {
+					elem = elem.Elem()
+				}
+				// 如果是nil的，意味着key和value同时不存在，所以跳过不处理
+				if !elem.IsValid() {
+					continue
+				}
+				deepRes, deepErr := StructToMapV2(elem.Interface(), tag)
+				if deepErr != nil {
+					return nil, deepErr
+				}
+				vlist = append(vlist, deepRes)
+			}
+
+			res[tagVal] = vlist
 		case reflect.Struct:
 			// recursive
 			deepRes, deepErr := StructToMapV2(fieldValue.Interface(), tag)
