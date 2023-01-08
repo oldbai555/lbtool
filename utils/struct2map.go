@@ -10,6 +10,9 @@ func Struct2Map(obj interface{}) map[string]interface{} {
 
 	var data = make(map[string]interface{})
 	for i := 0; i < t.NumField(); i++ {
+		if !t.Field(i).IsExported() {
+			continue
+		}
 		data[t.Field(i).Name] = v.Field(i).Interface()
 	}
 	return data
@@ -25,6 +28,9 @@ func OrmStruct2Map(s interface{}, skip ...string) map[string]interface{} {
 	relType := elem.Type()
 
 	for i := 0; i < relType.NumField(); i++ {
+		if !relType.Field(i).IsExported() {
+			continue
+		}
 		n := relType.Field(i).Name
 		if skipMap[n] {
 			continue
