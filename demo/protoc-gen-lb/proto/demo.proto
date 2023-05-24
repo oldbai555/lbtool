@@ -1,0 +1,11 @@
+syntax = "proto3";
+package demo;
+
+option go_package = "../out";
+
+message User {
+  //用户名
+  string Name = 1;
+  //用户资源
+  map<int32,string> Res=2 ;
+}

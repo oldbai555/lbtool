@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Facebook Login JavaScript Example</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div id="fb-root"></div>
+<script>
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId            : 'your-app-id',
+            autoLogAppEvents : true,
+            xfbml            : true,
+            version          : 'v15.0'
+        });
+    };
+</script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+<script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/zh_CN/sdk.js#xfbml=1&version=v15.0&appId=504492981180296&autoLogAppEvents=1"
+        nonce="tXWjbGuM"></script>
+<div class="fb-login-button" data-width="" data-size="large" data-button-type="continue_with" data-layout="default"
+     data-auto-logout-link="false" data-use-continue-as="false"></div>
+<a href="https://www.facebook.com/v2.8/dialog/oauth?client_id=504492981180296&redirect_uri=https://dev4.pinquest.cn/gateway/hwfacebook/LoginCallBack&response_type=token">faceb</a>
+<div id="status">
+</div>
+</body>
+</html>

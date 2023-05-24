@@ -1,71 +1,109 @@
 package log
 
 import (
-	"context"
 	"errors"
 	"fmt"
-	fmt2 "github.com/oldbai555/log/fmt"
-	"github.com/oldbai555/log/writer"
+	"github.com/oldbai555/lbtool/log/_interface"
+	"github.com/oldbai555/lbtool/utils"
+	"github.com/petermattis/goid"
+	"io"
 	"sync"
 )
 
-const (
-	PROD = "PROD"
-	DEV  = "DEV"
-	TEST = "TEST"
-	DEMO = "DEMO"
+var (
+	log        *logger
+	logCtx     = map[int64]string{}
+	logCtxMu   sync.RWMutex
+	env        string
+	moduleName = "UNKNOWN"
 )
 
+func init() {
+	if env == "" {
+		env = utils.DEV
+	}
+	log = newLogger(env)
+}
+
+func SetLogHint(hint string) {
+	i := goid.Get()
+	logCtxMu.Lock()
+	if hint == "" {
+		delete(logCtx, i)
+	} else {
+		logCtx[i] = hint
+	}
+	logCtxMu.Unlock()
+}
+
+func getLogHint() string {
+	i := goid.Get()
+	logCtxMu.RLock()
+	v := logCtx[i]
+	logCtxMu.RUnlock()
+	return v
+}
+
+func SetEnv(e string) {
+	env = e
+}
+
+func SetModuleName(name string) {
+	moduleName = name
+}
+
+func GetWriter() io.Writer {
+	return log.logWriter
+}
+
+func GetLogger() *logger {
+	return log
+}
+
+func Debugf(format string, args ...interface{}) {
+
+	if err := log.write(utils.LevelDebug, append([]interface{}{format}, args...)...); err != nil {
+		panic(any(err))
+	}
+}
+
+func Infof(format string, args ...interface{}) {
+	if err := log.write(utils.LevelInfo, append([]interface{}{format}, args...)...); err != nil {
+		panic(any(err))
+	}
+}
+
+func Warnf(format string, args ...interface{}) {
+	if err := log.write(utils.LevelWarn, append([]interface{}{format}, args...)...); err != nil {
+		panic(any(err))
+	}
+
+}
+
+func Errorf(format string, args ...interface{}) {
+	if err := log.write(utils.LevelError, append([]interface{}{format}, args...)...); err != nil {
+		panic(any(err))
+	}
+}
+
+//===================================logger===================================================
+
 // Logger 日志业务
-type Logger struct {
-	logLevel     fmt2.Level
-	loggerWriter writer.LoggerWriter
-	mu           sync.RWMutex
+type logger struct {
+	logLevel  utils.Level
+	logWriter _interface.LogWriter
+	fmt       _interface.Formatter
+	mu        sync.RWMutex
 }
 
-func NewDefaultLogger(e string) *Logger {
-	return &Logger{
-		loggerWriter: writer.NewDefaultSimpleLoggerWriter(e),
+func newLogger(e string) *logger {
+	return &logger{
+		logWriter: newLogWriterImpl(e),
+		fmt:       newSimpleFormatter(),
 	}
 }
 
-func (l *Logger) SetLogLevel(level fmt2.Level) {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-	l.logLevel = level
-}
-
-func (l *Logger) GetLogLevel() fmt2.Level {
-	l.mu.RLock()
-	defer l.mu.RUnlock()
-	return l.logLevel
-}
-
-func (l *Logger) Debugf(ctx context.Context, format string, args ...interface{}) {
-	if err := l.write(ctx, fmt2.LevelDebug, append([]interface{}{format}, args...)...); err != nil {
-		panic(any(err))
-	}
-}
-
-func (l *Logger) Infof(ctx context.Context, format string, args ...interface{}) {
-	if err := l.write(ctx, fmt2.LevelInfo, append([]interface{}{format}, args...)...); err != nil {
-		panic(any(err))
-	}
-}
-
-func (l *Logger) Warnf(ctx context.Context, format string, args ...interface{}) {
-	if err := l.write(ctx, fmt2.LevelWarn, append([]interface{}{format}, args...)...); err != nil {
-		panic(any(err))
-	}
-}
-
-func (l *Logger) Errorf(ctx context.Context, format string, args ...interface{}) {
-	if err := l.write(ctx, fmt2.LevelError, append([]interface{}{format}, args...)...); err != nil {
-		panic(any(err))
-	}
-}
-
-func (l *Logger) write(ctx context.Context, level fmt2.Level, args ...interface{}) error {
+func (l *logger) write(level utils.Level, args ...interface{}) error {
 	if l.logLevel > level {
 		return nil
 	}
@@ -88,13 +126,28 @@ func (l *Logger) write(ctx context.Context, level fmt2.Level, args ...interface{
 		format = fmt.Sprint(format)
 	}
 
-	if err := l.loggerWriter.Write(ctx, level, format, realArgs...); err != nil {
+	stdoutColor := utils.LevelToStdoutColorMap[level]
+	logContent, err := l.fmt.Sprintf(level, stdoutColor, fmt.Sprintf(format, realArgs...))
+	if err != nil {
+		return err
+	}
+
+	if _, err := l.logWriter.Write([]byte(logContent)); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (l *Logger) Flush() error {
-	return l.loggerWriter.Flush()
+func (l *logger) Flush() error {
+	return l.logWriter.Flush()
+}
+
+// Printf calls l.Output to print to the logger.
+// Arguments are handled in the manner of fmt.Printf.
+func (l *logger) Printf(format string, v ...any) {
+	if err := log.write(utils.LevelInfo, append([]interface{}{format}, v...)...); err != nil {
+		panic(any(err))
+	}
+
 }

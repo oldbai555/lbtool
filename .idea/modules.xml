@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/glb.iml" filepath="$PROJECT_DIR$/.idea/glb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/lbtool.iml" filepath="$PROJECT_DIR$/.idea/lbtool.iml" />
     </modules>
   </component>
 </project>
