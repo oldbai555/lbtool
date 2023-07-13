@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/pkg/alarm"
 	"github.com/oldbai555/lbtool/pkg/lberr"
+	"github.com/oldbai555/lbtool/utils"
 	"runtime/debug"
 	"strings"
 )
@@ -14,7 +16,7 @@ func Go(ctx context.Context, logic func(ctx context.Context) error) {
 	go func() {
 		defer CatchPanic(func(err interface{}) {
 			// 	捕获错误后的补救行为
-
+			alarm.Default("system").Alert("Error", fmt.Sprintf("err:%v\ntime:%d", err, utils.TimeNow()))
 		})
 		err := logic(ctx)
 		if lberr.GetErrCode(err) < 0 {
