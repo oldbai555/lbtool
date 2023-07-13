@@ -2,6 +2,8 @@ module github.com/oldbai555/lbtool
 
 go 1.18
 
+replace google.golang.org/grpc => google.golang.org/grpc v1.29.1
+
 require (
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.5+incompatible
 	github.com/antchfx/htmlquery v1.2.5
@@ -9,6 +11,7 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/chromedp/cdproto v0.0.0-20221126224343-3a0787b8dd28
 	github.com/chromedp/chromedp v0.8.6
+	github.com/coreos/etcd v3.3.13+incompatible
 	github.com/elliotchance/testify-stats v1.0.3
 	github.com/emersion/go-imap v1.2.1
 	github.com/emersion/go-imap-id v0.0.0-20190926060100-f94a56b9ecde
@@ -20,14 +23,13 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/goccy/go-json v0.9.7
 	github.com/gogf/gf v1.16.9
 	github.com/google/uuid v1.3.0
 	github.com/imdario/mergo v0.3.13
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/joeycumines/go-behaviortree v1.8.0
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/json-iterator/go v1.1.12
+	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/nsqio/go-nsq v1.1.0
 	github.com/opentracing/opentracing-go v1.2.0
@@ -36,14 +38,12 @@ require (
 	github.com/panjf2000/ants/v2 v2.5.0
 	github.com/petermattis/goid v0.0.0-20220824145935-af5520614cb6
 	github.com/pkg/errors v0.9.1
-	github.com/sashabaranov/go-gpt3 v1.2.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/shopspring/decimal v1.3.1
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.9.0
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.38
-	github.com/urfave/cli/v2 v2.3.0
 	github.com/xuri/excelize/v2 v2.6.1
 	go.uber.org/zap v1.23.0
 	golang.org/x/net v0.0.0-20220812174116-3211cb980234
@@ -58,7 +58,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/chromedp/sysutil v1.0.0 // indirect
 	github.com/clbanning/mxj v1.8.5-0.20200714211355-ff02cfb8ea28 // indirect
-	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/emersion/go-sasl v0.0.0-20200509203442-7bfe0ed36a21 // indirect
@@ -71,13 +70,14 @@ require (
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.1.0 // indirect
+	github.com/goccy/go-json v0.9.7 // indirect
+	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
-	github.com/joeycumines/go-bigbuff v1.14.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/lib/pq v1.10.4 // indirect
@@ -87,7 +87,6 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/mozillazg/go-httpheader v0.2.1 // indirect
 	github.com/opentracing-contrib/go-observer v0.0.0-20170622124052-a52f23424492 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
@@ -95,14 +94,12 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.3 // indirect
-	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/stretchr/testify v1.8.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
-	github.com/xlab/treeprint v1.1.0 // indirect
 	github.com/xuri/efp v0.0.0-20220603152613-6918739fd470 // indirect
 	github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22 // indirect
 	go.opentelemetry.io/otel v1.0.1 // indirect

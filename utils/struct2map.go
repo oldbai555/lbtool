@@ -31,6 +31,11 @@ func OrmStruct2Map(s interface{}, skip ...string) map[string]interface{} {
 		if !relType.Field(i).IsExported() {
 			continue
 		}
+
+		if !elem.Field(i).IsNil() {
+			continue
+		}
+
 		n := relType.Field(i).Name
 		if skipMap[n] {
 			continue

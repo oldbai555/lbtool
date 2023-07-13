@@ -42,7 +42,7 @@ func InitMq() (err error) {
 	// {{.Description}}
 	_, err = smq.AddTopic(nil, &smq.AddTopicReq{
 		Topic: &smq.Topic{
-			Name: mq.{{.Variable}}.TopicName,
+			ShengXiaoName: mq.{{.Variable}}.TopicName,
 			SubConfig: &smq.SubConfig{
 				ServiceName:     {{.ModelName}}.ServiceName,
 				ServicePath:     {{.ModelName}}.Handler{{.Variable}}CMDPath,
@@ -60,7 +60,7 @@ func InitMq() (err error) {
 	// {{.Description}}
 	_, err = smq.AddTopic(nil, &smq.AddTopicReq{
 		Topic: &smq.Topic{
-			Name: mq.{{.Variable}}.TopicName,
+			ShengXiaoName: mq.{{.Variable}}.TopicName,
 			SubConfig: &smq.SubConfig{
 				ConcurrentCount: 10,
 				MaxRetryCount:   5,
@@ -78,7 +78,7 @@ func InitMq() (err error) {
 	_, err = smq.AddChannel(nil, &smq.AddChannelReq{
 		TopicName: mq.HwShopifyCustomerInfoMq.TopicName,
 		Channel: &smq.Channel{
-			Name: fmt.Sprintf("%s_%s", hwmallconver.SvrName, "customer_info_mq"),
+			ShengXiaoName: fmt.Sprintf("%s_%s", hwmallconver.SvrName, "customer_info_mq"),
 			SubConfig: &smq.SubConfig{
 				ServiceName:     {{.ModelName}}.ServiceName,
 				ServicePath:     {{.ModelName}}.Handler{{.Variable}}CMDPath,

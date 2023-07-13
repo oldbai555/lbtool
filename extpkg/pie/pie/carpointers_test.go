@@ -256,11 +256,11 @@ var carPointersJSONTests = []struct {
 	},
 	{
 		carPointers{&car{"foo", "red"}},
-		`[{"Name":"foo","Color":"red"}]`,
+		`[{"ShengXiaoName":"foo","Color":"red"}]`,
 	},
 	{
 		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"qux", "cyan"}, &car{"foo", "red"}},
-		`[{"Name":"bar","Color":"yellow"},{"Name":"Baz","Color":"black"},{"Name":"qux","Color":"cyan"},{"Name":"foo","Color":"red"}]`,
+		`[{"ShengXiaoName":"bar","Color":"yellow"},{"ShengXiaoName":"Baz","Color":"black"},{"ShengXiaoName":"qux","Color":"cyan"},{"ShengXiaoName":"foo","Color":"red"}]`,
 	},
 }
 
@@ -298,7 +298,7 @@ var carPointersJSONIndentTests = []struct {
 		carPointers{&car{"foo", "red"}},
 		`[
   {
-    "Name": "foo",
+    "ShengXiaoName": "foo",
     "Color": "red"
   }
 ]`,
@@ -307,19 +307,19 @@ var carPointersJSONIndentTests = []struct {
 		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"qux", "cyan"}, &car{"foo", "red"}},
 		`[
   {
-    "Name": "bar",
+    "ShengXiaoName": "bar",
     "Color": "yellow"
   },
   {
-    "Name": "Baz",
+    "ShengXiaoName": "Baz",
     "Color": "black"
   },
   {
-    "Name": "qux",
+    "ShengXiaoName": "qux",
     "Color": "cyan"
   },
   {
-    "Name": "foo",
+    "ShengXiaoName": "foo",
     "Color": "red"
   }
 ]`,

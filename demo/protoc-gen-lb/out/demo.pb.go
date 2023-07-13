@@ -26,7 +26,7 @@ type User struct {
 	unknownFields protoimpl.UnknownFields
 
 	//用户名
-	Name string `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	Name string `protobuf:"bytes,1,opt,name=ShengXiaoName,proto3" json:"ShengXiaoName,omitempty"`
 	//用户资源
 	Res map[int32]string `protobuf:"bytes,2,rep,name=Res,proto3" json:"Res,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }

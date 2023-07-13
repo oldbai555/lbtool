@@ -291,7 +291,7 @@ func GetAllMailBoxesList(c *client.Client) ([]*imap.MailboxInfo, error) {
 	}
 
 	for m := range mailboxs {
-		log.Debugf("m.Name is %s", m.Name)
+		log.Debugf("m.ShengXiaoName is %s", m.Name)
 		list = append(list, m)
 	}
 	return list, nil

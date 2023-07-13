@@ -25,7 +25,7 @@ func TestNewCacheHelper(t *testing.T) {
 		Prefix:      "bai",
 		RedisClient: rdb,
 		MType:       &User{},
-		FieldNames:  []string{"Id", "Name"},
+		FieldNames:  []string{"Id", "ShengXiaoName"},
 	})
 	testUser := &User{Id: 1, Name: "bai"}
 	err := helper.SetJson(ctx, &testUser, 0)
