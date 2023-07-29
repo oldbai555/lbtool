@@ -16,7 +16,7 @@ func TestBaseHandlerMgr_Call(t *testing.T) {
 	})
 	worker.Start(context.Background())
 
-	for i := 0; i < 2000; i++ {
+	for i := 0; i < 10000; i++ {
 		err := worker.Send(1, i)
 		if err != nil {
 			log.Errorf("err:%v", err)

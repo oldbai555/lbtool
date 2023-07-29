@@ -67,7 +67,7 @@ func (e *BaseWorker) Send(t Type, v interface{}) (err error) {
 	select {
 	case e.c <- NewMsg(t, v):
 		log.Infof("send msg type is %v", t)
-	default:
+	default: // 不让消息丢失的话 需要做兜底
 		log.Warnf("%s worker queue is full", e.svr)
 		err = lberr.NewErr(1002, fmt.Sprintf("%s worker queue is full", e.svr))
 	}
