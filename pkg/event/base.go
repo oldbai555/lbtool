@@ -3,6 +3,7 @@ package event
 import (
 	"github.com/golang/protobuf/proto"
 	"github.com/oldbai555/lbtool/log"
+	"github.com/oldbai555/lbtool/pkg/routine"
 	"sync"
 )
 
@@ -28,13 +29,31 @@ func (m BaseMsg) GetValue() interface{} {
 }
 
 type BaseEvent struct {
-	pool map[Type]Fns
-	lock sync.RWMutex
+	asyncDoEvent bool
+	pool         map[Type]Fns
+	lock         sync.RWMutex
 }
 
-func NewBaseEvent() IEvent {
-	return &BaseEvent{
+func NewEvent(ops ...Option) IEvent {
+	return buildByOptions()
+}
+
+type Option func(*BaseEvent)
+
+func buildByOptions(ops ...Option) *BaseEvent {
+	e := &BaseEvent{
 		pool: make(map[Type]Fns),
+	}
+	for i := range ops {
+		ops[i](e)
+	}
+	return e
+}
+
+func WithAsyncDoEvent() Option {
+	return func(event *BaseEvent) {
+		event.asyncDoEvent = true
+		return
 	}
 }
 
@@ -53,6 +72,17 @@ func (e *BaseEvent) Trigger(t Type, m IMsg) {
 		return
 	}
 	for _, fn := range fns {
+		if e.asyncDoEvent {
+			routine.GoV2(func() error {
+				err := fn(m)
+				if err != nil {
+					log.Errorf("err:%v", err)
+					return err
+				}
+				return nil
+			})
+			continue
+		}
 		err := fn(m)
 		if err != nil {
 			log.Errorf("err:%v", err)

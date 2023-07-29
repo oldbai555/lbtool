@@ -11,7 +11,8 @@ var once sync.Once
 func Reg(t Type, fn Fn) {
 	once.Do(func() {
 		if defaultEvent == nil {
-			defaultEvent = NewBaseEvent()
+			// 默认异步去触发事件
+			defaultEvent = NewEvent(WithAsyncDoEvent())
 		}
 	})
 	defaultEvent.Reg(t, fn)
