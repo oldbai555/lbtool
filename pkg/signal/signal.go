@@ -25,7 +25,7 @@ func initReg() {
 	signal.Notify(signalChan, list...)
 }
 
-func GetSignal() chan os.Signal {
+func GetSignalChan() chan os.Signal {
 	once.Do(func() {
 		// Block, otherwise the listener's goroutine will exit when the main Go exits (阻塞,否则主Go退出， listenner的go将会退出)
 		signalChan = make(chan os.Signal, 1)
@@ -45,7 +45,7 @@ func Do() {
 		return
 	}
 	routine.GoV2(func() error {
-		v := <-GetSignal()
+		v := <-GetSignalChan()
 		for i := range regList {
 			err := regList[i](v)
 			if err != nil {
