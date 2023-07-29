@@ -6,7 +6,6 @@ import (
 	"reflect"
 	"sync"
 	"testing"
-	"time"
 )
 
 func TestBaseHandlerMgr_Call(t *testing.T) {
@@ -17,13 +16,12 @@ func TestBaseHandlerMgr_Call(t *testing.T) {
 	})
 	worker.Start(context.Background())
 
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 2000; i++ {
 		err := worker.Send(1, i)
 		if err != nil {
 			log.Errorf("err:%v", err)
 			continue
 		}
-		time.Sleep(time.Millisecond * 100)
 	}
 	select {}
 }

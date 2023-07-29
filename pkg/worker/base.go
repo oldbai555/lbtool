@@ -52,7 +52,7 @@ func (e *BaseWorker) Start(ctx context.Context) {
 			case receive := <-e.c:
 				msgs = append(msgs, receive)
 				msgs = append(msgs, e.receive()...)
-				e.c = nil // 队列满啦 让它先阻塞 可以不至空的
+				// e.c = nil // 队列满啦 让它先阻塞 可以不至空的
 				e.consume(ctx, msgs)
 				msgs = nil
 			}
@@ -61,12 +61,12 @@ func (e *BaseWorker) Start(ctx context.Context) {
 }
 
 func (e *BaseWorker) Send(t Type, v interface{}) (err error) {
-	if e.c == nil {
-		e.c = make(chan IMsg, e.size)
-	}
+	//if e.c == nil {
+	//	e.c = make(chan IMsg, e.size)
+	//}
 	select {
 	case e.c <- NewMsg(t, v):
-		log.Infof("send item type is %v", t)
+		log.Infof("send msg type is %v", t)
 	default:
 		log.Warnf("%s worker queue is full", e.svr)
 		err = lberr.NewErr(1002, fmt.Sprintf("%s worker queue is full", e.svr))
@@ -89,7 +89,7 @@ OUT:
 		case receive := <-e.c:
 			vs = append(vs, receive)
 		default:
-			log.Debugf("not receive ..., srv is %v", e.svr)
+			log.Debugf("not receive srv is %v ...,", e.svr)
 			break OUT
 		}
 	}
@@ -97,7 +97,8 @@ OUT:
 }
 
 func (e *BaseWorker) consume(ctx context.Context, msgs []IMsg) {
-	for i := range msgs {
+	for i := 0; i < len(msgs); i++ {
+		log.Infof("msg[%d] is %v", i, msgs[i].GetValue())
 		err := e.Call(ctx, msgs[i])
 		if err != nil {
 			log.Errorf("err:%v", err)
