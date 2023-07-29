@@ -11,6 +11,7 @@ import (
 
 var signalChan chan os.Signal
 var once sync.Once
+var regList []func(signal os.Signal) error
 
 func initReg() {
 	list := []os.Signal{
@@ -34,14 +35,23 @@ func GetSignal() chan os.Signal {
 	return signalChan
 }
 
+func Reg(fn func(signal os.Signal) error) {
+	regList = append(regList, fn)
+}
+
 // Do 执行信号结束后的方法
-func Do(fn func(signal os.Signal) error) {
+func Do() {
+	if len(regList) == 0 {
+		return
+	}
 	routine.GoV2(func() error {
 		v := <-GetSignal()
-		err := fn(v)
-		if err != nil {
-			log.Errorf("err:%v", err)
-			return err
+		for i := range regList {
+			err := regList[i](v)
+			if err != nil {
+				log.Errorf("err:%v", err)
+				return err
+			}
 		}
 		return nil
 	})
