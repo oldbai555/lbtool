@@ -8,7 +8,7 @@ import (
 )
 
 func TestGenSignal(t *testing.T) {
-	signal := GenSignal()
+	signal := GetSignal()
 	select {
 	case sig := <-signal:
 		log.Infof("into")
