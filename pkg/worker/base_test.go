@@ -10,11 +10,19 @@ import (
 
 func TestBaseHandlerMgr_Call(t *testing.T) {
 	worker := NewWorker(1024, "test")
-	worker.Register(1, func(ctx context.Context, i interface{}) error {
+	mgr := NewHandlerMgr()
+	mgr.Register(1, func(ctx context.Context, i interface{}) error {
 		log.Infof("hhhh i %v", i)
 		return nil
 	})
-	worker.Start(context.Background())
+
+	worker.Start(func(msg IMsg) {
+		err := mgr.Call(context.Background(), msg)
+		if err != nil {
+			log.Errorf("err:%v", err)
+			return
+		}
+	})
 
 	for i := 0; i < 10000; i++ {
 		err := worker.Send(1, i)

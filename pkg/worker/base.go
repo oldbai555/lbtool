@@ -19,22 +19,19 @@ type BaseWorker struct {
 	svr  string
 	size int
 
-	*BaseHandlerMgr
-	fnM map[Type]DoHandlerFn
 	sync.Mutex
 }
 
 func NewWorker(size int, svr string) IWorker {
 	return &BaseWorker{
-		c:              make(chan IMsg, size),
-		svr:            svr,
-		size:           size,
-		BaseHandlerMgr: NewHandlerMgr(),
+		c:    make(chan IMsg, size),
+		svr:  svr,
+		size: size,
 	}
 }
 
-func (e *BaseWorker) Start(ctx context.Context) {
-	routine.Go(ctx, func(ctx context.Context) (err error) {
+func (e *BaseWorker) Start(fn func(msg IMsg)) {
+	routine.GoV2(func() (err error) {
 		log.Infof(fmt.Sprintf("============ %s starting service ============", e.svr))
 		defer func() {
 			log.Infof(fmt.Sprintf("============ %s end service ============", e.svr))
@@ -43,17 +40,16 @@ func (e *BaseWorker) Start(ctx context.Context) {
 		for {
 			select {
 			case <-signal.GetSignalChan():
-				e.Stop()
-				return
-			case <-ctx.Done():
 				log.Infof(fmt.Sprintf("============ %s service done ============", e.svr))
 				e.Stop()
 				return
 			case receive := <-e.c:
 				msgs = append(msgs, receive)
 				msgs = append(msgs, e.receive()...)
-				// e.c = nil // 队列满啦 让它先阻塞 可以不至空的
-				e.consume(ctx, msgs)
+				for i := 0; i < len(msgs); i++ {
+					log.Infof("msg[%d] is %v", i, msgs[i].GetValue())
+					fn(msgs[i])
+				}
 				msgs = nil
 			}
 		}
@@ -94,17 +90,6 @@ OUT:
 		}
 	}
 	return vs
-}
-
-func (e *BaseWorker) consume(ctx context.Context, msgs []IMsg) {
-	for i := 0; i < len(msgs); i++ {
-		log.Infof("msg[%d] is %v", i, msgs[i].GetValue())
-		err := e.Call(ctx, msgs[i])
-		if err != nil {
-			log.Errorf("err:%v", err)
-			continue
-		}
-	}
 }
 
 // =================================================================
