@@ -50,7 +50,7 @@ func Do() {
 			err := regList[i](v)
 			if err != nil {
 				log.Errorf("err:%v", err)
-				return err
+				continue
 			}
 		}
 		return nil
