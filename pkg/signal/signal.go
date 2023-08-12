@@ -39,6 +39,26 @@ func Reg(fn func(signal os.Signal) error) {
 	regList = append(regList, fn)
 }
 
+func RegV2(fn func(signal os.Signal) error) {
+	routine.GoV2(func() error {
+		c := make(chan os.Signal, 1)
+		ss := []os.Signal{
+			syscall.SIGHUP,
+			syscall.SIGINT,
+			syscall.SIGTERM,
+			syscall.SIGQUIT,
+			syscall.SIGKILL,
+		}
+		signal.Notify(c, ss...)
+		err := fn(<-c)
+		if err != nil {
+			log.Errorf("err:%v", err)
+			return err
+		}
+		return nil
+	})
+}
+
 // Do 执行信号结束后的方法
 func Do() {
 	if len(regList) == 0 {
