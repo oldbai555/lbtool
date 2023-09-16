@@ -172,7 +172,9 @@ func (s *logWriterImpl) checkFileIsFull() (bool, error) {
 func (s *logWriterImpl) tryOpenNewFile() error {
 	var err error
 	fileName := fmt.Sprintf("%s.log", time.Now().Format("2006010215"))
-
+	if moduleName != "UNKNOWN" && moduleName != "" {
+		fileName = fmt.Sprintf("%s_%s", moduleName, fileName)
+	}
 	if s.fp == nil {
 		if _, err = os.Stat(s.baseDir); err != nil {
 			if !os.IsNotExist(err) {
