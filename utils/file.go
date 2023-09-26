@@ -89,3 +89,11 @@ func FileExists(name string) bool {
 	}
 	return err == nil
 }
+
+func GetCurDir() string {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		return ""
+	}
+	return strings.Replace(dir, "\\", "/", -1) + "/"
+}
