@@ -617,10 +617,12 @@ func (p *Scope) UpdateOrCreate(ctx context.Context, candMap, attrMap map[string]
 	return rows, nil
 }
 
-func (p *Scope) SetLimit(limit int) {
+func (p *Scope) SetLimit(limit int) *Scope {
 	p.db.Limit(limit)
+	return p
 }
 
-func (p *Scope) SetOffset(offset int) {
+func (p *Scope) SetOffset(offset int) *Scope {
 	p.db.Offset(offset)
+	return p
 }
