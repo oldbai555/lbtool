@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/oldbai555/lbtool/extpkg/pie/pie/util"
 	"math"
 	"math/rand"
 	"sort"
@@ -216,7 +215,7 @@ func (ss Float64s) Each(fn func(float64)) Float64s {
 // if they are the same is considered the slices are equal if all elements are the same is considered the slices are equal
 // if each slice == nil is considered that they're equal
 //
-// if element realizes Equals internal it uses that method, in other way uses default compare
+// if element realizes Equals interface it uses that method, in other way uses default compare
 func (ss Float64s) Equals(rhs Float64s) bool {
 	if len(ss) != len(rhs) {
 		return false
@@ -776,7 +775,7 @@ func (ss Float64s) Sequence(params ...int) Float64s {
 // others params will be ignored
 func (ss Float64s) SequenceUsing(creator func(int) float64, params ...int) Float64s {
 	var seq = func(min, max, step int) (seq Float64s) {
-		lenght := int(util.Round(float64(max-min) / float64(step)))
+		lenght := int(Round(float64(max-min) / float64(step)))
 		if lenght < 1 {
 			return
 		}
@@ -823,7 +822,7 @@ func (ss Float64s) Shuffle(source rand.Source) Float64s {
 
 	rnd := rand.New(source)
 
-	util.Shuffle(rnd, n, func(i, j int) {
+	Shuffle(rnd, n, func(i, j int) {
 		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 	})
 

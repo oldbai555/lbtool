@@ -2,11 +2,10 @@ package pie
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
 	"time"
-
-	"github.com/elliotchance/testify-stats/assert"
 )
 
 var float64sContainsTests = []struct {

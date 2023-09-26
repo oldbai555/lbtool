@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/oldbai555/lbtool/extpkg/pie/pie/util"
 	"math/rand"
 	"sort"
 	"strconv"
@@ -191,7 +190,7 @@ func (ss Strings) Each(fn func(string)) Strings {
 // if they are the same is considered the slices are equal if all elements are the same is considered the slices are equal
 // if each slice == nil is considered that they're equal
 //
-// if element realizes Equals internal it uses that method, in other way uses default compare
+// if element realizes Equals interface it uses that method, in other way uses default compare
 func (ss Strings) Equals(rhs Strings) bool {
 	if len(ss) != len(rhs) {
 		return false
@@ -651,7 +650,7 @@ func (ss Strings) Send(ctx context.Context, ch chan<- string) Strings {
 // others params will be ignored
 func (ss Strings) SequenceUsing(creator func(int) string, params ...int) Strings {
 	var seq = func(min, max, step int) (seq Strings) {
-		lenght := int(util.Round(float64(max-min) / float64(step)))
+		lenght := int(Round(float64(max-min) / float64(step)))
 		if lenght < 1 {
 			return
 		}
@@ -698,7 +697,7 @@ func (ss Strings) Shuffle(source rand.Source) Strings {
 
 	rnd := rand.New(source)
 
-	util.Shuffle(rnd, n, func(i, j int) {
+	Shuffle(rnd, n, func(i, j int) {
 		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 	})
 

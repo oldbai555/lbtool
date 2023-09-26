@@ -2,11 +2,10 @@ package pie
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
 	"time"
-
-	"github.com/elliotchance/testify-stats/assert"
 )
 
 var intsContainsTests = []struct {
@@ -231,7 +230,7 @@ func TestInts_Mode(t *testing.T) {
 	}
 	for _, test := range intsStatsTests {
 		t.Run("", func(t *testing.T) {
-			//assert.Equal(t, demo.mode, Ints(demo.ss).Mode())
+			//assert.Equal(t, test.mode, Ints(test.ss).Mode())
 			assert.True(t, cmp(test.mode, Ints(test.ss).Mode()))
 		})
 	}

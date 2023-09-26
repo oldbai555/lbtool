@@ -13,8 +13,8 @@ import (
 
 // Abs is a function which returns the absolute value of all the
 // elements in the slice.
-func (ss Ints) Abs() Ints {
-	result := make(Ints, len(ss))
+func (ss Int64s) Abs() Int64s {
+	result := make(Int64s, len(ss))
 	for i, val := range ss {
 		if val < 0 {
 			result[i] = -val
@@ -29,7 +29,7 @@ func (ss Ints) Abs() Ints {
 // as the all() function in Python.
 //
 // If the list is empty then true is always returned.
-func (ss Ints) All(fn func(value int) bool) bool {
+func (ss Int64s) All(fn func(value int64) bool) bool {
 	for _, value := range ss {
 		if !fn(value) {
 			return false
@@ -43,7 +43,7 @@ func (ss Ints) All(fn func(value int) bool) bool {
 // as the any() function in Python.
 //
 // If the list is empty then false is always returned.
-func (ss Ints) Any(fn func(value int) bool) bool {
+func (ss Int64s) Any(fn func(value int64) bool) bool {
 	for _, value := range ss {
 		if fn(value) {
 			return true
@@ -56,18 +56,18 @@ func (ss Ints) Any(fn func(value int) bool) bool {
 // Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss Ints) Append(elements ...int) Ints {
+func (ss Int64s) Append(elements ...int64) Int64s {
 	// Copy ss, to make sure no memory is overlapping between input and
 	// output. See issue #97.
-	result := append(Ints{}, ss...)
+	result := append(Int64s{}, ss...)
 
 	result = append(result, elements...)
 	return result
 }
 
 // AreSorted will return true if the slice is already sorted. It is a wrapper
-// for sort.IntsAreSorted.
-func (ss Ints) AreSorted() bool {
+// for sort.Int64sAreSorted.
+func (ss Int64s) AreSorted() bool {
 	return sort.SliceIsSorted(ss, func(i, j int) bool {
 		return ss[i] < ss[j]
 	})
@@ -75,14 +75,14 @@ func (ss Ints) AreSorted() bool {
 
 // AreUnique will return true if the slice contains elements that are all
 // different (unique) from each other.
-func (ss Ints) AreUnique() bool {
+func (ss Int64s) AreUnique() bool {
 	return ss.Unique().Len() == ss.Len()
 }
 
 // Average is the average of all of the elements, or zero if there are no
 // elements.
-func (ss Ints) Average() float64 {
-	if l := int(len(ss)); l > 0 {
+func (ss Int64s) Average() float64 {
+	if l := int64(len(ss)); l > 0 {
 		return float64(ss.Sum()) / float64(l)
 	}
 
@@ -95,7 +95,7 @@ func (ss Ints) Average() float64 {
 // for this [1,2,3] slice with n == 2 will be returned [3,2]
 // if the slice has less elements then n that'll return all elements
 // if n < 0 it'll return empty slice.
-func (ss Ints) Bottom(n int) (top Ints) {
+func (ss Int64s) Bottom(n int) (top Int64s) {
 	var lastIndex = len(ss) - 1
 	for i := lastIndex; i > -1 && n > 0; i-- {
 		top = append(top, ss[i])
@@ -108,7 +108,7 @@ func (ss Ints) Bottom(n int) (top Ints) {
 // Contains returns true if the element exists in the slice.
 //
 // When using slices of pointers it will only compare by address, not value.
-func (ss Ints) Contains(lookingFor int) bool {
+func (ss Int64s) Contains(lookingFor int64) bool {
 	for _, s := range ss {
 		if lookingFor == s {
 			return true
@@ -126,12 +126,12 @@ func (ss Ints) Contains(lookingFor int) bool {
 //
 // The added and removed returned may be blank respectively, or contain upto as
 // many elements that exists in the largest slice.
-func (ss Ints) Diff(against Ints) (added, removed Ints) {
+func (ss Int64s) Diff(against Int64s) (added, removed Int64s) {
 	// This is probably not the best way to do it. We do an O(n^2) between the
 	// slices to see which items are missing in each direction.
 
-	diffOneWay := func(ss1, ss2raw Ints) (result Ints) {
-		ss2 := make(Ints, len(ss2raw))
+	diffOneWay := func(ss1, ss2raw Int64s) (result Int64s) {
+		ss2 := make(Int64s, len(ss2raw))
 		copy(ss2, ss2raw)
 
 		for _, s := range ss1 {
@@ -162,14 +162,14 @@ func (ss Ints) Diff(against Ints) (added, removed Ints) {
 // DropTop will return the rest slice after dropping the top n elements
 // if the slice has less elements then n that'll return empty slice
 // if n < 0 it'll return empty slice.
-func (ss Ints) DropTop(n int) (drop Ints) {
+func (ss Int64s) DropTop(n int) (drop Int64s) {
 	if n < 0 || n >= len(ss) {
 		return
 	}
 
 	// Copy ss, to make sure no memory is overlapping between input and
 	// output. See issue #145.
-	drop = make([]int, len(ss)-n)
+	drop = make([]int64, len(ss)-n)
 	copy(drop, ss[n:])
 
 	return
@@ -177,15 +177,15 @@ func (ss Ints) DropTop(n int) (drop Ints) {
 
 // Drop items from the slice while f(item) is true.
 // Afterwards, return every element until the slice is empty. It follows the same logic as the dropwhile() function from itertools in Python.
-func (ss Ints) DropWhile(f func(s int) bool) (ss2 Ints) {
-	ss2 = make([]int, len(ss))
+func (ss Int64s) DropWhile(f func(s int64) bool) (ss2 Int64s) {
+	ss2 = make([]int64, len(ss))
 	copy(ss2, ss)
 	for i, value := range ss2 {
 		if !f(value) {
 			return ss2[i:]
 		}
 	}
-	return Ints{}
+	return Int64s{}
 }
 
 // Each is more condensed version of Transform that allows an action to happen
@@ -202,7 +202,7 @@ func (ss Ints) DropWhile(f func(s int) bool) (ss2 Ints) {
 //	cars.Each(func (car *Car) {
 //	    car.Color = "Red"
 //	})
-func (ss Ints) Each(fn func(int)) Ints {
+func (ss Int64s) Each(fn func(int64)) Int64s {
 	for _, s := range ss {
 		fn(s)
 	}
@@ -216,7 +216,7 @@ func (ss Ints) Each(fn func(int)) Ints {
 // if each slice == nil is considered that they're equal
 //
 // if element realizes Equals interface it uses that method, in other way uses default compare
-func (ss Ints) Equals(rhs Ints) bool {
+func (ss Int64s) Equals(rhs Int64s) bool {
 	if len(ss) != len(rhs) {
 		return false
 	}
@@ -234,7 +234,7 @@ func (ss Ints) Equals(rhs Ints) bool {
 // end.
 //
 // It is acceptable to provide zero arguments.
-func (ss Ints) Extend(slices ...Ints) (ss2 Ints) {
+func (ss Int64s) Extend(slices ...Int64s) (ss2 Int64s) {
 	ss2 = ss
 
 	for _, slice := range slices {
@@ -248,7 +248,7 @@ func (ss Ints) Extend(slices ...Ints) (ss2 Ints) {
 // true from the condition. The returned slice may contain zero elements (nil).
 //
 // FilterNot works in the opposite way of Filter.
-func (ss Ints) Filter(condition func(int) bool) (ss2 Ints) {
+func (ss Int64s) Filter(condition func(int64) bool) (ss2 Int64s) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -260,7 +260,7 @@ func (ss Ints) Filter(condition func(int) bool) (ss2 Ints) {
 // FilterNot works the same as Filter, with a negated condition. That is, it will
 // return a new slice only containing the elements that returned false from the
 // condition. The returned slice may contain zero elements (nil).
-func (ss Ints) FilterNot(condition func(int) bool) (ss2 Ints) {
+func (ss Int64s) FilterNot(condition func(int64) bool) (ss2 Int64s) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
@@ -274,7 +274,7 @@ func (ss Ints) FilterNot(condition func(int) bool) (ss2 Ints) {
 // It follows the same logic as the findIndex() function in Javascript.
 //
 // If the list is empty then -1 is always returned.
-func (ss Ints) FindFirstUsing(fn func(value int) bool) int {
+func (ss Int64s) FindFirstUsing(fn func(value int64) bool) int {
 	for idx, value := range ss {
 		if fn(value) {
 			return idx
@@ -285,13 +285,13 @@ func (ss Ints) FindFirstUsing(fn func(value int) bool) int {
 }
 
 // First returns the first element, or zero. Also see FirstOr().
-func (ss Ints) First() int {
+func (ss Int64s) First() int64 {
 	return ss.FirstOr(0)
 }
 
 // FirstOr returns the first element or a default value if there are no
 // elements.
-func (ss Ints) FirstOr(defaultValue int) int {
+func (ss Int64s) FirstOr(defaultValue int64) int64 {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -300,7 +300,7 @@ func (ss Ints) FirstOr(defaultValue int) int {
 }
 
 // Float64s transforms each element to a float64.
-func (ss Ints) Float64s() Float64s {
+func (ss Int64s) Float64s() Float64s {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -318,8 +318,8 @@ func (ss Ints) Float64s() Float64s {
 }
 
 // Group returns a map of the value with an individual count.
-func (ss Ints) Group() map[int]int {
-	group := map[int]int{}
+func (ss Int64s) Group() map[int64]int {
+	group := map[int64]int{}
 	for _, n := range ss {
 		group[n]++
 	}
@@ -330,14 +330,14 @@ func (ss Ints) Group() map[int]int {
 //
 // It returns slice without any duplicates.
 // If zero slice arguments are provided, then nil is returned.
-func (ss Ints) Intersect(slices ...Ints) (ss2 Ints) {
+func (ss Int64s) Intersect(slices ...Int64s) (ss2 Int64s) {
 	if slices == nil {
 		return nil
 	}
 
-	var uniqs = make([]map[int]struct{}, len(slices))
+	var uniqs = make([]map[int64]struct{}, len(slices))
 	for i := 0; i < len(slices); i++ {
-		m := make(map[int]struct{})
+		m := make(map[int64]struct{})
 		for _, el := range slices[i] {
 			m[el] = struct{}{}
 		}
@@ -362,16 +362,16 @@ func (ss Ints) Intersect(slices ...Ints) (ss2 Ints) {
 }
 
 // Insert a value at an index
-func (ss Ints) Insert(index int, values ...int) Ints {
+func (ss Int64s) Insert(index int, values ...int64) Int64s {
 	if index >= ss.Len() {
-		return Ints.Extend(ss, Ints(values))
+		return Int64s.Extend(ss, Int64s(values))
 	}
 
-	return Ints.Extend(ss[:index], Ints(values), ss[index:])
+	return Int64s.Extend(ss[:index], Int64s(values), ss[index:])
 }
 
 // Ints transforms each element to an integer.
-func (ss Ints) Ints() Ints {
+func (ss Int64s) Ints() Ints {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -390,8 +390,8 @@ func (ss Ints) Ints() Ints {
 }
 
 // Join returns a string from joining each of the elements.
-func (ss Ints) Join(glue string) (s string) {
-	var slice interface{} = []int(ss)
+func (ss Int64s) Join(glue string) (s string) {
+	var slice interface{} = []int64(ss)
 
 	if y, ok := slice.([]string); ok {
 		// The stdlib is efficient for type []string
@@ -411,7 +411,7 @@ func (ss Ints) Join(glue string) (s string) {
 //
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array.
-func (ss Ints) JSONBytes() []byte {
+func (ss Int64s) JSONBytes() []byte {
 	if ss == nil {
 		return []byte("[]")
 	}
@@ -427,7 +427,7 @@ func (ss Ints) JSONBytes() []byte {
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array. See
 // json.MarshalIndent for details.
-func (ss Ints) JSONBytesIndent(prefix, indent string) []byte {
+func (ss Int64s) JSONBytesIndent(prefix, indent string) []byte {
 	if ss == nil {
 		return []byte("[]")
 	}
@@ -442,7 +442,7 @@ func (ss Ints) JSONBytesIndent(prefix, indent string) []byte {
 //
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array.
-func (ss Ints) JSONString() string {
+func (ss Int64s) JSONString() string {
 	if ss == nil {
 		return "[]"
 	}
@@ -458,7 +458,7 @@ func (ss Ints) JSONString() string {
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array. See
 // json.MarshalIndent for details.
-func (ss Ints) JSONStringIndent(prefix, indent string) string {
+func (ss Int64s) JSONStringIndent(prefix, indent string) string {
 	if ss == nil {
 		return "[]"
 	}
@@ -470,12 +470,12 @@ func (ss Ints) JSONStringIndent(prefix, indent string) string {
 }
 
 // Last returns the last element, or zero. Also see LastOr().
-func (ss Ints) Last() int {
+func (ss Int64s) Last() int64 {
 	return ss.LastOr(0)
 }
 
 // LastOr returns the last element or a default value if there are no elements.
-func (ss Ints) LastOr(defaultValue int) int {
+func (ss Int64s) LastOr(defaultValue int64) int64 {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -484,7 +484,7 @@ func (ss Ints) LastOr(defaultValue int) int {
 }
 
 // Len returns the number of elements.
-func (ss Ints) Len() int {
+func (ss Int64s) Len() int {
 	return len(ss)
 }
 
@@ -494,12 +494,12 @@ func (ss Ints) Len() int {
 // Be careful when using this with slices of pointers. If you modify the input
 // value it will affect the original slice. Be sure to return a new allocated
 // object or deep copy the existing one.
-func (ss Ints) Map(fn func(int) int) (ss2 Ints) {
+func (ss Int64s) Map(fn func(int64) int64) (ss2 Int64s) {
 	if ss == nil {
 		return nil
 	}
 
-	ss2 = make([]int, len(ss))
+	ss2 = make([]int64, len(ss))
 	for i, s := range ss {
 		ss2[i] = fn(s)
 	}
@@ -508,7 +508,7 @@ func (ss Ints) Map(fn func(int) int) (ss2 Ints) {
 }
 
 // Max is the maximum value, or zero.
-func (ss Ints) Max() (max int) {
+func (ss Int64s) Max() (max int64) {
 	if len(ss) == 0 {
 		return
 	}
@@ -528,9 +528,9 @@ func (ss Ints) Max() (max int) {
 //
 // Zero is returned if there are no elements in the slice.
 //
-// If the number of elements is even, then the int mean of the two "median values"
+// If the number of elements is even, then the int64 mean of the two "median values"
 // is returned.
-func (ss Ints) Median() int {
+func (ss Int64s) Median() int64 {
 	n := len(ss)
 	if n == 0 {
 		return 0
@@ -543,7 +543,7 @@ func (ss Ints) Median() int {
 	// It uses the same idea as QuickSort, but makes only 1 recursive
 	// call instead of 2. See also Quickselect.
 
-	work := make(Ints, len(ss))
+	work := make(Int64s, len(ss))
 	copy(work, ss)
 
 	limit1, limit2 := n/2, n/2+1
@@ -589,7 +589,7 @@ func (ss Ints) Median() int {
 }
 
 // Min is the minimum value, or zero.
-func (ss Ints) Min() (min int) {
+func (ss Int64s) Min() (min int64) {
 	if len(ss) == 0 {
 		return
 	}
@@ -608,11 +608,11 @@ func (ss Ints) Min() (min int) {
 //
 // The number of items returned may be the same as the input or less. It will
 // never return zero items unless the input slice has zero items.
-func (ss Ints) Mode() Ints {
+func (ss Int64s) Mode() Int64s {
 	if len(ss) == 0 {
 		return nil
 	}
-	values := make(map[int]int)
+	values := make(map[int64]int)
 	for _, s := range ss {
 		values[s]++
 	}
@@ -624,7 +624,7 @@ func (ss Ints) Mode() Ints {
 		}
 	}
 
-	var maxValues Ints
+	var maxValues Int64s
 	for k, v := range values {
 		if v == maxFrequency {
 			maxValues = append(maxValues, k)
@@ -643,7 +643,7 @@ func (ss Ints) Mode() Ints {
 //	for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
 //	    fmt.Println(*greeting)
 //	}
-func (ss *Ints) Pop() (popped *int) {
+func (ss *Int64s) Pop() (popped *int64) {
 
 	if len(*ss) == 0 {
 		return
@@ -655,7 +655,7 @@ func (ss *Ints) Pop() (popped *int) {
 }
 
 // Product is the product of all of the elements.
-func (ss Ints) Product() (product int) {
+func (ss Int64s) Product() (product int64) {
 	if len(ss) == 0 {
 		return
 	}
@@ -668,7 +668,7 @@ func (ss Ints) Product() (product int) {
 }
 
 // Random returns a random element by your rand.Source, or zero
-func (ss Ints) Random(source rand.Source) int {
+func (ss Int64s) Random(source rand.Source) int64 {
 	n := len(ss)
 
 	// Avoid the extra allocation.
@@ -686,9 +686,9 @@ func (ss Ints) Random(source rand.Source) int {
 // Reduce continually applies the provided function
 // over the slice. Reducing the elements to a single value.
 //
-// Returns a zero value of int if there are no elements in the slice. It will panic if the reducer is nil and the slice has more than one element (required to invoke reduce).
+// Returns a zero value of int64 if there are no elements in the slice. It will panic if the reducer is nil and the slice has more than one element (required to invoke reduce).
 // Otherwise returns result of applying reducer from left to right.
-func (ss Ints) Reduce(reducer func(int, int) int) (el int) {
+func (ss Int64s) Reduce(reducer func(int64, int64) int64) (el int64) {
 	if len(ss) == 0 {
 		return
 	}
@@ -703,14 +703,14 @@ func (ss Ints) Reduce(reducer func(int, int) int) (el int) {
 // This is useful when combined with Sort to get a descending sort order:
 //
 //	ss.Sort().Reverse()
-func (ss Ints) Reverse() Ints {
+func (ss Int64s) Reverse() Int64s {
 	// Avoid the allocation. If there is one element or less it is already
 	// reversed.
 	if len(ss) < 2 {
 		return ss
 	}
 
-	sorted := make([]int, len(ss))
+	sorted := make([]int64, len(ss))
 	for i := 0; i < len(ss); i++ {
 		sorted[i] = ss[len(ss)-i-1]
 	}
@@ -724,7 +724,7 @@ func (ss Ints) Reverse() Ints {
 // it locks execution of gorutine
 // it doesn't close channel after work
 // returns sended elements if len(this) != len(old) considered func was canceled
-func (ss Ints) Send(ctx context.Context, ch chan<- int) Ints {
+func (ss Int64s) Send(ctx context.Context, ch chan<- int64) Int64s {
 	for i, s := range ss {
 		select {
 		case <-ctx.Done():
@@ -751,9 +751,9 @@ func (ss Ints) Send(ctx context.Context, ch chan<- int) Ints {
 // if len(params) > 2 considered that will be returned slice between min and max with step,
 // where min is the first param, max is the second, step is the third one, [min, max) with step,
 // others params will be ignored
-func (ss Ints) Sequence(params ...int) Ints {
-	var creator = func(i int) int {
-		return int(i)
+func (ss Int64s) Sequence(params ...int) Int64s {
+	var creator = func(i int) int64 {
+		return int64(i)
 	}
 
 	return ss.SequenceUsing(creator, params...)
@@ -773,14 +773,14 @@ func (ss Ints) Sequence(params ...int) Ints {
 // if len(params) > 2 considered that will be returned slice between min and max with step,
 // where min is the first param, max is the second, step is the third one, [min, max) with step,
 // others params will be ignored
-func (ss Ints) SequenceUsing(creator func(int) int, params ...int) Ints {
-	var seq = func(min, max, step int) (seq Ints) {
+func (ss Int64s) SequenceUsing(creator func(int) int64, params ...int) Int64s {
+	var seq = func(min, max, step int) (seq Int64s) {
 		lenght := int(Round(float64(max-min) / float64(step)))
 		if lenght < 1 {
 			return
 		}
 
-		seq = make(Ints, lenght)
+		seq = make(Int64s, lenght)
 		for i := 0; i < lenght; min += step {
 			seq[i] = creator(min)
 			i++
@@ -801,12 +801,12 @@ func (ss Ints) SequenceUsing(creator func(int) int, params ...int) Ints {
 }
 
 // Shift will return two values: the shifted value and the rest slice.
-func (ss Ints) Shift() (int, Ints) {
+func (ss Int64s) Shift() (int64, Int64s) {
 	return ss.First(), ss.DropTop(1)
 }
 
 // Shuffle returns shuffled slice by your rand.Source
-func (ss Ints) Shuffle(source rand.Source) Ints {
+func (ss Int64s) Shuffle(source rand.Source) Int64s {
 	n := len(ss)
 
 	// Avoid the extra allocation.
@@ -817,7 +817,7 @@ func (ss Ints) Shuffle(source rand.Source) Ints {
 	// go 1.10+ provides rnd.Shuffle. However, to support older versions we copy
 	// the algorithm directly from the go source: src/math/rand/rand.go below,
 	// with some adjustments:
-	shuffled := make([]int, n)
+	shuffled := make([]int64, n)
 	copy(shuffled, ss)
 
 	rnd := rand.New(source)
@@ -829,18 +829,18 @@ func (ss Ints) Shuffle(source rand.Source) Ints {
 	return shuffled
 }
 
-// Sort works similar to sort.Ints(). However, unlike sort.Ints the
+// Sort works similar to sort.Int64s(). However, unlike sort.Int64s the
 // slice returned will be reallocated as to not modify the input slice.
 //
 // See Reverse() and AreSorted().
-func (ss Ints) Sort() Ints {
+func (ss Int64s) Sort() Int64s {
 	// Avoid the allocation. If there is one element or less it is already
 	// sorted.
 	if len(ss) < 2 {
 		return ss
 	}
 
-	sorted := make(Ints, len(ss))
+	sorted := make(Int64s, len(ss))
 	copy(sorted, ss)
 	sort.Slice(sorted, func(i, j int) bool {
 		return sorted[i] < sorted[j]
@@ -850,7 +850,7 @@ func (ss Ints) Sort() Ints {
 }
 
 // Stddev is the standard deviation
-func (ss Ints) Stddev() float64 {
+func (ss Int64s) Stddev() float64 {
 	if len(ss) == 0 {
 		return 0.0
 	}
@@ -872,7 +872,7 @@ func (ss Ints) Stddev() float64 {
 // will fallback to the result of:
 //
 //	fmt.Sprintf("%v")
-func (ss Ints) Strings() Strings {
+func (ss Int64s) Strings() Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -895,7 +895,7 @@ func (ss Ints) Strings() Strings {
 // Condition 2: If start >= end, nil is returned.
 // Condition 3: Return all elements that exist in the range provided,
 // if start or end is out of bounds, zero items will be placed.
-func (ss Ints) SubSlice(start int, end int) (subSlice Ints) {
+func (ss Int64s) SubSlice(start int, end int) (subSlice Int64s) {
 	if start < 0 || end < 0 {
 		return
 	}
@@ -909,11 +909,11 @@ func (ss Ints) SubSlice(start int, end int) (subSlice Ints) {
 		if end <= length {
 			subSlice = ss[start:end]
 		} else {
-			zeroArray := make([]int, end-length)
+			zeroArray := make([]int64, end-length)
 			subSlice = ss[start:length].Append(zeroArray[:]...)
 		}
 	} else {
-		zeroArray := make([]int, end-start)
+		zeroArray := make([]int64, end-start)
 		subSlice = zeroArray[:]
 	}
 
@@ -921,7 +921,7 @@ func (ss Ints) SubSlice(start int, end int) (subSlice Ints) {
 }
 
 // Sum is the sum of all of the elements.
-func (ss Ints) Sum() (sum int) {
+func (ss Int64s) Sum() (sum int64) {
 	for _, s := range ss {
 		sum += s
 	}
@@ -932,7 +932,7 @@ func (ss Ints) Sum() (sum int) {
 // Top will return n elements from head of the slice
 // if the slice has less elements then n that'll return all elements
 // if n < 0 it'll return empty slice.
-func (ss Ints) Top(n int) (top Ints) {
+func (ss Int64s) Top(n int) (top Int64s) {
 	for i := 0; i < len(ss) && n > 0; i++ {
 		top = append(top, ss[i])
 		n--
@@ -942,7 +942,7 @@ func (ss Ints) Top(n int) (top Ints) {
 }
 
 // StringsUsing transforms each element to a string.
-func (ss Ints) StringsUsing(transform func(int) string) Strings {
+func (ss Int64s) StringsUsing(transform func(int64) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -968,20 +968,20 @@ func (ss Ints) StringsUsing(transform func(int) string) Strings {
 // A slice with zero elements is considered to be unique.
 //
 // See AreUnique().
-func (ss Ints) Unique() Ints {
+func (ss Int64s) Unique() Int64s {
 	// Avoid the allocation. If there is one element or less it is already
 	// unique.
 	if len(ss) < 2 {
 		return ss
 	}
 
-	values := map[int]struct{}{}
+	values := map[int64]struct{}{}
 
 	for _, value := range ss {
 		values[value] = struct{}{}
 	}
 
-	var uniqueValues Ints
+	var uniqueValues Int64s
 	for value := range values {
 		uniqueValues = append(uniqueValues, value)
 	}
@@ -991,8 +991,8 @@ func (ss Ints) Unique() Ints {
 
 // Unshift adds one or more elements to the beginning of the slice
 // and returns the new slice.
-func (ss Ints) Unshift(elements ...int) (unshift Ints) {
-	unshift = append(Ints{}, elements...)
+func (ss Int64s) Unshift(elements ...int64) (unshift Int64s) {
+	unshift = append(Int64s{}, elements...)
 	unshift = append(unshift, ss...)
 
 	return

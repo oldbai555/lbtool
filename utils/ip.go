@@ -37,15 +37,13 @@ func ExternalIP() (net.IP, error) {
 	return nil, fmt.Errorf("connected to the network?")
 }
 
-// GetOutBoundIP 获取对外的 ip
-func GetOutBoundIP() (ip string, err error) {
+func UdpLocalIP() (ip string, err error) {
 	conn, err := net.Dial("udp", "8.8.8.8:53")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	//fmt.Println(localAddr.String())
 	ip = strings.Split(localAddr.String(), ":")[0]
 	return ip, err
 }
