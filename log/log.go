@@ -25,6 +25,13 @@ func init() {
 	log = newLogger(env)
 }
 
+func SetLogLevel(level utils.Level) {
+	if log == nil {
+		log = newLogger(env)
+	}
+	log.logLevel = level
+}
+
 func SetLogHint(hint string) {
 	i := goid.Get()
 	logCtxMu.Lock()
