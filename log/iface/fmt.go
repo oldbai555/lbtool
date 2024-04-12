@@ -1,4 +1,4 @@
-package _interface
+package iface
 
 import (
 	"github.com/oldbai555/lbtool/utils"

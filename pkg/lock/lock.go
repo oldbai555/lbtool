@@ -59,8 +59,9 @@ func (m *WithUsageMu) RUnlock() {
 }
 
 type MulElemMuFactory struct {
-	elemMuMap map[interface{}]*WithUsageMu
-	opMapMu   sync.Mutex
+	elemMuMap      map[interface{}]*WithUsageMu
+	opMapMu        sync.Mutex
+	makeOrGetMapMu sync.Mutex
 }
 
 func NewMulElemMuFactory() *MulElemMuFactory {
@@ -70,6 +71,8 @@ func NewMulElemMuFactory() *MulElemMuFactory {
 }
 
 func (m *MulElemMuFactory) MakeOrGetSpecElemMu(elem interface{}) *WithUsageMu {
+	m.makeOrGetMapMu.Lock()
+	defer m.makeOrGetMapMu.Unlock()
 	mu, ok := m.elemMuMap[elem]
 	if !ok {
 		mu = NewWithUsageMu(

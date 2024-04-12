@@ -50,7 +50,7 @@ const defaultOpTimeoutMs = 5000
 
 func init() {
 	if runtime.GOOS == "windows" {
-		ConfigPath = `etcd.json`
+		ConfigPath = `c:/work/etcd.json`
 	} else {
 		ConfigPath = `/etc/work/etcd.json`
 	}

@@ -3,7 +3,7 @@ package log
 import (
 	"errors"
 	"fmt"
-	"github.com/oldbai555/lbtool/log/_interface"
+	"github.com/oldbai555/lbtool/log/iface"
 	"github.com/oldbai555/lbtool/utils"
 	"github.com/petermattis/goid"
 	"io"
@@ -14,20 +14,16 @@ var (
 	log        *logger
 	logCtx     = map[int64]string{}
 	logCtxMu   sync.RWMutex
-	env        string
 	moduleName = "UNKNOWN"
 )
 
 func init() {
-	if env == "" {
-		env = utils.DEV
-	}
-	log = newLogger(env)
+	log = newLogger()
 }
 
 func SetLogLevel(level utils.Level) {
 	if log == nil {
-		log = newLogger(env)
+		log = newLogger()
 	}
 	log.logLevel = level
 }
@@ -49,10 +45,6 @@ func getLogHint() string {
 	v := logCtx[i]
 	logCtxMu.RUnlock()
 	return v
-}
-
-func SetEnv(e string) {
-	env = e
 }
 
 func SetModuleName(name string) {
@@ -98,14 +90,14 @@ func Errorf(format string, args ...interface{}) {
 // Logger 日志业务
 type logger struct {
 	logLevel  utils.Level
-	logWriter _interface.LogWriter
-	fmt       _interface.Formatter
+	logWriter iface.LogWriter
+	fmt       iface.Formatter
 	mu        sync.RWMutex
 }
 
-func newLogger(e string) *logger {
+func newLogger() *logger {
 	return &logger{
-		logWriter: newLogWriterImpl(e),
+		logWriter: newLogWriterImpl(),
 		fmt:       newSimpleFormatter(),
 	}
 }

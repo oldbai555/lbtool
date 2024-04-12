@@ -2,7 +2,8 @@ package log
 
 import (
 	"fmt"
-	"github.com/oldbai555/lbtool/log/_interface"
+	"github.com/oldbai555/lbtool/env"
+	"github.com/oldbai555/lbtool/log/iface"
 	"github.com/oldbai555/lbtool/utils"
 	"os"
 	"runtime"
@@ -25,18 +26,17 @@ func SetBaseDir(dir string) {
 
 func initDir() {
 	if defaultBaseDir == "" {
-		defaultBaseDir = "/tmp/lb/log"
+		defaultBaseDir = "/home/work/log"
 		if runtime.GOOS == "windows" {
-			defaultBaseDir = "c:/log"
+			defaultBaseDir = "c:/work/log"
 		}
 	}
 	utils.CreateDir(defaultBaseDir)
 }
 
-func newLogWriterImpl(e string) *logWriterImpl {
+func newLogWriterImpl() *logWriterImpl {
 	initDir()
 	writer := logWriterImpl{
-		env:                      e,
 		baseDir:                  defaultBaseDir,
 		maxFileSize:              DefaultMaxFileSize,
 		checkFileFullIntervalSec: utils.Seconds * 5,
@@ -57,16 +57,15 @@ func newLogWriterImpl(e string) *logWriterImpl {
 // logWriterImpl 写日志
 type logWriterImpl struct {
 	fp                       *os.File
-	env                      string
-	baseDir                  string
-	maxFileSize              int64
-	checkFileFullIntervalSec int64      // 间隔 - 检查文件大小
-	lastCheckIsFullAt        int64      // 上一次检查文件大小时间
-	isFileFull               bool       // 文件是否已经满了
-	currentFileName          string     // 当前文件名
-	openCurrentFileTime      *time.Time // 打开文件时间
-	bufCh                    chan []byte
-	isFlushing               atomic.Value
+	baseDir                  string        // 日志存放的目录
+	maxFileSize              int64         // 文件的最大上限
+	checkFileFullIntervalSec int64         // 间隔 - 检查文件大小
+	lastCheckIsFullAt        int64         // 上一次检查文件大小时间
+	isFileFull               bool          // 文件是否已经满了
+	currentFileName          string        // 当前文件名
+	openCurrentFileTime      *time.Time    // 打开文件时间
+	bufCh                    chan []byte   // 缓冲区
+	isFlushing               atomic.Value  // 刷盘标识
 	flushSignChan            chan struct{} // 结束 flush 信号
 	flushDoneSignChan        chan error    // 接收 flush 错误
 }
@@ -75,7 +74,7 @@ type logWriterImpl struct {
 func (s *logWriterImpl) Write(p []byte) (n int, err error) {
 
 	s.bufCh <- p
-	if s.env != utils.PROD {
+	if !env.IsRelease() {
 		fmt.Printf(string(p))
 	}
 	return len(p), nil
@@ -217,4 +216,4 @@ func (s *logWriterImpl) finishFlush(err error) {
 	s.flushDoneSignChan <- err
 }
 
-var _ _interface.LogWriter = (*logWriterImpl)(nil)
+var _ iface.LogWriter = (*logWriterImpl)(nil)
