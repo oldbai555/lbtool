@@ -7,30 +7,28 @@
 package jsonpb
 
 import (
-	"github.com/golang/protobuf/jsonpb"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
-	"io"
 )
 
 // 简单封装 jsonpb
 
-var m = jsonpb.Marshaler{
-	EmitDefaults: true,
-	OrigName:     true,
-}
+//var m = protojson.MarshalOptions{}
 
-var um = jsonpb.Unmarshaler{
-	AllowUnknownFields: true,
-}
+//var um = protojson.UnmarshalOptions{}
 
 func MarshalToString(msg proto.Message) (string, error) {
-	return m.MarshalToString(msg)
+	bytes, err := protojson.Marshal(msg)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }
 
-func Marshal(w io.Writer, msg proto.Message) error {
-	return m.Marshal(w, msg)
+func Marshal(msg proto.Message) ([]byte, error) {
+	return protojson.Marshal(msg)
 }
 
-func Unmarshal(r io.Reader, msg proto.Message) error {
-	return um.Unmarshal(r, msg)
+func Unmarshal(buf []byte, msg proto.Message) error {
+	return protojson.Unmarshal(buf, msg)
 }

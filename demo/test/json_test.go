@@ -3,7 +3,7 @@ package test
 //
 //import (
 //	"bytes"
-//	"github.com/golang/protobuf/jsonpb"
+//	"google.golang.org/protobuf/jsonpb"
 //	jsoniter "github.com/json-iterator/go"
 //	"github.com/oldbai555/lbtool/log"
 //	"testing"
