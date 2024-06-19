@@ -1,9 +1,9 @@
 package event
 
 import (
-	"github.com/golang/protobuf/proto"
 	"github.com/oldbai555/lbtool/log"
 	"github.com/oldbai555/lbtool/pkg/routine"
+	"google.golang.org/protobuf/proto"
 	"sync"
 )
 
