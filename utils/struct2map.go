@@ -2,13 +2,23 @@ package utils
 
 import (
 	"reflect"
+	"strings"
+	"unicode"
 )
 
+// Struct2Map 将结构体转换为map
 func Struct2Map(obj interface{}) map[string]interface{} {
-	t := reflect.TypeOf(obj)
 	v := reflect.ValueOf(obj)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
 
-	var data = make(map[string]interface{})
+	if v.Kind() != reflect.Struct {
+		panic("input must be a struct or a pointer to a struct")
+	}
+
+	data := make(map[string]interface{})
+	t := v.Type()
 	for i := 0; i < t.NumField(); i++ {
 		if !t.Field(i).IsExported() {
 			continue
@@ -18,57 +28,59 @@ func Struct2Map(obj interface{}) map[string]interface{} {
 	return data
 }
 
+// OrmStruct2Map 转换结构体到map，并允许忽略某些字段
 func OrmStruct2Map(s interface{}, skip ...string) map[string]interface{} {
 	m := make(map[string]interface{})
+	v := reflect.ValueOf(s)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
 
-	elem := ValueOfData(s)
+	if v.Kind() != reflect.Struct {
+		panic("input must be a struct or a pointer to a struct")
+	}
 
-	skipMap := SliceBasis2MapValueByBool(skip).(map[string]bool)
+	skipMap := make(map[string]bool)
+	for _, s := range skip {
+		skipMap[s] = true
+	}
 
-	relType := elem.Type()
-
-	for i := 0; i < relType.NumField(); i++ {
-		if !relType.Field(i).IsExported() {
+	t := v.Type()
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		if !field.IsExported() {
 			continue
 		}
 
-		if !elem.Field(i).IsNil() {
+		if skipMap[field.Name] {
 			continue
 		}
 
-		n := relType.Field(i).Name
-		if skipMap[n] {
+		if len(field.Name) >= 3 && field.Name[:3] == "XXX" {
 			continue
 		}
-		if len(n) >= 3 &&
-			n[0] == 'X' && n[1] == 'X' && n[2] == 'X' {
+
+		if field.Name == "DeletedAt" || field.Name == "CreatedAt" || field.Name == "UpdatedAt" || field.Name == "Id" {
 			continue
 		}
-		if n == "DeletedAt" || n == "CreatedAt" || n == "UpdatedAt" || n == "Id" {
-			// skip
-			continue
-		}
-		// 转换小驼峰
-		key := Camel2UnderScore(n)
-		// 把值重新写入
-		m[key] = elem.Field(i).Interface()
+
+		key := Camel2UnderScoreV2(field.Name)
+		m[key] = v.Field(i).Interface()
 	}
 
 	return m
 }
 
-// OrmStruct2Map4Update 对比 OrmStruct2Map 会过滤空值
+// OrmStruct2Map4Update 过滤掉空值
 func OrmStruct2Map4Update(s interface{}, skip ...string) map[string]interface{} {
 	m := OrmStruct2Map(s, skip...)
-
-	n := map[string]interface{}{}
+	filtered := make(map[string]interface{})
 	for k, v := range m {
 		if !isBlank(reflect.ValueOf(v)) {
-			n[k] = v
+			filtered[k] = v
 		}
 	}
-
-	return n
+	return filtered
 }
 
 // isBlank 判断值是否为空
@@ -86,6 +98,19 @@ func isBlank(value reflect.Value) bool {
 		return value.Float() == 0
 	case reflect.Interface, reflect.Ptr:
 		return value.IsNil()
+	default:
+		return reflect.DeepEqual(value.Interface(), reflect.Zero(value.Type()).Interface())
 	}
-	return reflect.DeepEqual(value.Interface(), reflect.Zero(value.Type()).Interface())
+}
+
+// Camel2UnderScoreV2 将驼峰命名转换为下划线命名
+func Camel2UnderScoreV2(s string) string {
+	var result strings.Builder
+	for i, r := range s {
+		if i > 0 && unicode.IsUpper(r) {
+			result.WriteRune('_')
+		}
+		result.WriteRune(unicode.ToLower(r))
+	}
+	return result.String()
 }

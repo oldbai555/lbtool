@@ -6,6 +6,7 @@ import (
 	"github.com/oldbai555/lbtool/log/iface"
 	"github.com/oldbai555/lbtool/utils"
 	"os"
+	"path/filepath"
 	"runtime"
 	"sync/atomic"
 	"time"
@@ -105,11 +106,8 @@ func (s *logWriterImpl) LoopDoLogic() error {
 			return err
 		}
 
-		if isFull, err := s.checkFileIsFull(); err != nil {
+		if err := s.checkAndRotateFile(); err != nil {
 			return err
-		} else if isFull {
-			fmt.Printf("log file %s is overflow max size %d bytes.", s.currentFileName, s.maxFileSize)
-			return nil
 		}
 
 		bufLen := len(buf)
@@ -214,6 +212,56 @@ func (s *logWriterImpl) Flush() error {
 func (s *logWriterImpl) finishFlush(err error) {
 	s.isFlushing.Store(false)
 	s.flushDoneSignChan <- err
+}
+
+// checkAndRotateFile 检查文件大小并决定是否需要备份和创建新文件
+func (s *logWriterImpl) checkAndRotateFile() error {
+	// 检查时间间隔
+	if s.lastCheckIsFullAt+s.checkFileFullIntervalSec < time.Now().Unix() {
+		return nil
+	}
+
+	// 获取当前文件的大小
+	fileInfo, err := s.fp.Stat()
+	if err != nil {
+		return fmt.Errorf("无法获取文件信息: %w", err)
+	}
+
+	// 如果文件大小超过最大限制，备份并创建新文件
+	if fileInfo.Size() >= s.maxFileSize {
+		err := s.rotateFile()
+		if err != nil {
+			return fmt.Errorf("备份文件失败: %w", err)
+		}
+	}
+	return nil
+}
+
+// rotateFile 备份当前文件并创建新文件
+func (s *logWriterImpl) rotateFile() error {
+	// 关闭当前文件
+	err := s.fp.Close()
+	if err != nil {
+		return fmt.Errorf("关闭文件失败: %w", err)
+	}
+
+	// 创建备份文件名，添加时间戳或递增序号
+	backupFileName := s.currentFileName + "." + time.Now().Format("20060102-150405")
+	backupFilePath := filepath.Join(s.baseDir, backupFileName)
+
+	// 将当前文件重命名为备份文件
+	err = os.Rename(s.currentFileName, backupFilePath)
+	if err != nil {
+		return fmt.Errorf("重命名文件失败: %w", err)
+	}
+
+	// 创建新的日志文件
+	newFile, err := os.Create(s.currentFileName)
+	if err != nil {
+		return fmt.Errorf("创建新日志文件失败: %w", err)
+	}
+	s.fp = newFile
+	return nil
 }
 
 var _ iface.LogWriter = (*logWriterImpl)(nil)

@@ -16,12 +16,18 @@ const (
 	Release = "release"
 )
 
+var env string
+
 func GetMode() string {
-	env := os.Getenv("LB_TOOL_MODE")
+	env = os.Getenv("LB_TOOL_MODE")
 	if env == "" {
 		env = Dev
 	}
 	return env
+}
+
+func SetMode(mode string) {
+	env = mode
 }
 
 func IsRelease() bool {
