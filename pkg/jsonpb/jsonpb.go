@@ -13,12 +13,14 @@ import (
 
 // 简单封装 jsonpb
 
-//var m = protojson.MarshalOptions{}
+var m = protojson.MarshalOptions{
+	UseProtoNames: true,
+}
 
-//var um = protojson.UnmarshalOptions{}
+var um = protojson.UnmarshalOptions{}
 
 func MarshalToString(msg proto.Message) (string, error) {
-	bytes, err := protojson.Marshal(msg)
+	bytes, err := m.Marshal(msg)
 	if err != nil {
 		return "", err
 	}
@@ -26,9 +28,9 @@ func MarshalToString(msg proto.Message) (string, error) {
 }
 
 func Marshal(msg proto.Message) ([]byte, error) {
-	return protojson.Marshal(msg)
+	return m.Marshal(msg)
 }
 
 func Unmarshal(buf []byte, msg proto.Message) error {
-	return protojson.Unmarshal(buf, msg)
+	return um.Unmarshal(buf, msg)
 }
