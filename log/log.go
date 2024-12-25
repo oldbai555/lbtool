@@ -102,6 +102,10 @@ func newLogger() *logger {
 	}
 }
 
+func (l *logger) SetSkipCall(skipCall int) {
+	l.fmt.SetSkipCall(skipCall)
+}
+
 func (l *logger) write(level utils.Level, args ...interface{}) error {
 	if l.logLevel > level {
 		return nil

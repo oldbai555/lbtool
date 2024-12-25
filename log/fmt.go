@@ -103,6 +103,10 @@ func (s *simpleFormatter) Sprintf(level utils.Level, color utils.Color, buf stri
 	}
 }
 
+func (s *simpleFormatter) SetSkipCall(skipCall int) {
+	s.skipCall = skipCall
+}
+
 func transferLevelToStr(level utils.Level) (string, error) {
 	if str, ok := utils.LevelToStrMap[level]; ok {
 		return str, nil

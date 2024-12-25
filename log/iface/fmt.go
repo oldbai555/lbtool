@@ -6,4 +6,5 @@ import (
 
 type Formatter interface {
 	Sprintf(level utils.Level, color utils.Color, buf string) (string, error)
+	SetSkipCall(skipCall int)
 }
