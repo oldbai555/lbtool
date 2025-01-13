@@ -31,6 +31,9 @@ func (e *Error) Error() string {
 		b = append(b, err.Error()...)
 	}
 	appendErrorStr := string(b)
+	if len(appendErrorStr) == 0 {
+		return fmt.Sprintf("Error[%d]:[%s]", e.code, e.message)
+	}
 	return fmt.Sprintf("Error[%d]:[%s]\n Stack:\n%s", e.code, e.message, appendErrorStr)
 }
 
