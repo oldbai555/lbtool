@@ -16,15 +16,6 @@ func TestExternalIP(t *testing.T) {
 	fmt.Println(ip)
 }
 
-func TestGetOutBoundIP(t *testing.T) {
-	ip, err := GetOutBoundIP()
-	if err != nil {
-		fmt.Printf("err is : %v", err)
-		return
-	}
-	fmt.Println(ip)
-}
-
 func Test_getIpFromAddr(t *testing.T) {
 	type args struct {
 		addr net.Addr

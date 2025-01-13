@@ -1,6 +1,6 @@
 module github.com/oldbai555/lbtool
 
-go 1.20
+go 1.21
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.29.1
 

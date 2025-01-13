@@ -12,6 +12,7 @@ const (
 	ErrCustomError      = 10007 // 自定义错误
 	ErrRecordNotFound   = 10008
 	ErrHttpError        = 10009
+	ErrWrapError        = 10010 // 包装错误
 )
 
 var (
