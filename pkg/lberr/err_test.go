@@ -10,6 +10,6 @@ import "testing"
 
 func TestWrapByCall(t *testing.T) {
 	err := NewInvalidArg("111")
-	err = WrapByCall(err)
+	err = Wrap(err)
 	t.Logf("err:%v", err)
 }

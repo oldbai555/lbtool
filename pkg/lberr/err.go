@@ -9,8 +9,9 @@ import (
 var _ error = (*Error)(nil)
 
 type Error struct {
-	code    int32  `json:"code"`
-	message string `json:"message"`
+	code    int32
+	message string
+	errs    []error
 }
 
 func (e *Error) Code() int32 {
@@ -22,7 +23,32 @@ func (e *Error) Message() string {
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("Error[%d]:[%s]", e.code, e.message)
+	var b []byte
+	for i, err := range e.errs {
+		if i > 0 {
+			b = append(b, '\n')
+		}
+		b = append(b, err.Error()...)
+	}
+	appendErrorStr := string(b)
+	return fmt.Sprintf("Error[%d]:[%s]\n Stack:\n%s", e.code, e.message, appendErrorStr)
+}
+
+func (e *Error) join(errs ...error) {
+	n := 0
+	for _, err := range errs {
+		if err != nil {
+			n++
+		}
+	}
+	if n == 0 {
+		return
+	}
+	for _, err := range errs {
+		if err != nil {
+			e.errs = append(e.errs, err)
+		}
+	}
 }
 
 func NewErr(code int32, format string, args ...interface{}) error {
@@ -45,7 +71,11 @@ func NewCustomErr(format string, args ...interface{}) error {
 
 }
 
-func Join(errList ...error) error {
+func Join(oldErr error, errList ...error) error {
+	if e, ok := oldErr.(*Error); ok {
+		e.join(errList...)
+		return e
+	}
 	return errors.Join(errList...)
 }
 
