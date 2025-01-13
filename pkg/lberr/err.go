@@ -76,7 +76,10 @@ func Join(oldErr error, errList ...error) error {
 		e.join(errList...)
 		return e
 	}
-	return errors.Join(errList...)
+	var errs []error
+	errs = append(errs, oldErr)
+	errs = append(errs, errList...)
+	return errors.Join(errs...)
 }
 
 func WrapByDesc(oldErr error, format string, args ...interface{}) error {
