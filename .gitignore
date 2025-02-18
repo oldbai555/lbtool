@@ -2,3 +2,5 @@
 /utils/log/**
 /.idea/**
 /.idea
+/**/Test*.test.exe
+/pkg/parsehtmlbookbookmark/*.txt
