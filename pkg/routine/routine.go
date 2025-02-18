@@ -27,6 +27,18 @@ func Go(ctx context.Context, logic func(ctx context.Context) error) {
 	}()
 }
 
+func Run(logic func() error) {
+	defer CatchPanic(func(err interface{}) {
+		alarm.Default("system").Alert("Error", fmt.Sprintf("err:%v\ntime:%d", err, utils.TimeNow()))
+	})
+	err := logic()
+	if lberr.GetErrCode(err) < 0 {
+		msg := fmt.Sprintf("moduleName : go-routine err %v", err)
+		log.Errorf(msg)
+		// 错误通知
+	}
+}
+
 func GoV2(fn func() error) {
 	go func() {
 		defer CatchPanic(func(err interface{}) {
