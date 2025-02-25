@@ -32,5 +32,5 @@ func GetCaller(skipCall int) string {
 		return
 	}
 	filePath, fileFunc := getPackageName(callFuncName)
-	return fmt.Sprintf("%s:%d:%s", path.Join(filePath, path.Base(callFile)), callLine, fileFunc)
+	return fmt.Sprintf("%s:%d:%s", path.Join(path.Base(filePath), path.Base(callFile)), callLine, fileFunc)
 }
